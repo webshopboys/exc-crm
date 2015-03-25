@@ -1,0 +1,24 @@
+#headerContent {z-index:20 !important; }
+#headerContent div{overflow:visible;}
+
+.ui-layout-container {background-color: #545454;} #body
+.ui-layout-resizer-closed_ {background-color: #B6061A;}
+
+.ui-menuitem-text_ { color: #B6061A;}
+
+.ui-state-hover_ {background-color: #B6061A !important;} 
+
+.ui-menuitem-link.ui-corner-all.ui-state-hover {
+    background-color: #B6061A !important; background: red;
+}
+         
+.calendarSpan { white-space:nowrap; }          
+.calendarSpan input[type=text] { width: 70px; }
+.calendarSpan .ui-datepicker-trigger { width: 20px; }
+
+.sliderPanel .ui-accordion-content { padding: 0px !important; }
+
+.sliderGrid { vertical-align: top; }
+
+.filterSelectorList { width: 95% !important;} 
+.filterSelectorList .ui-selectlistbox-listcontainer {height: 120px !important; }

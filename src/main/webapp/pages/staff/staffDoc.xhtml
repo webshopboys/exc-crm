@@ -1,0 +1,144 @@
+<ui:composition 
+ 	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+    
+   	<h:outputStylesheet name="exc-style.css" />
+
+	<h:form enctype="multipart/form-data">
+		
+		<p:growl id="messages" showDetail="true" />
+		
+		<p:accordionPanel multiple="true" styleClass="sliderPanel" id="sliderPanel">
+
+			<p:tab title="Dokumentumok">
+				<table style="width: 99%;">
+					<tr>
+						<td colspan="2">
+							<h:outputText value="Dokumentumok típusa:" />
+						</td>
+					</tr>	
+					<tr>
+						<td colspan="2">
+						
+						 	<p:selectOneMenu id="contract" value="#{documentView.contract}" style="width:99% !important;">
+	            				<f:selectItem itemLabel="Select One" itemValue="" />
+					            <f:selectItems value="#{documentView.documents}" var="d" itemLabel="#{d.documentType} - #{d.documentSubtype}" itemValue="#{didDocument}" />
+	        			  	</p:selectOneMenu>
+	        			  	
+						</td>
+					</tr>
+					
+					<tr>
+						<td colspan="2">
+							<p:commandButton actionListener="#{staffController.createDocument}" immediate="true" value="Dokumentum kitöltése" icon="ui-icon-folder-open" style="width: 95%;"/>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<p:commandButton actionListener="#{staffController.createDocument}" immediate="true" value="Dokumentum feltöltése" icon="ui-icon-plus" style="width: 95%;"/>
+						</td>
+					</tr>
+					
+					<tr>
+						<td colspan="2">
+							<h:graphicImage name="images/conract_pre.jpg" />
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<h:graphicImage name="images/conract_pre.jpg" />
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<h:graphicImage name="images/conract_pre.jpg" />
+						</td>
+					</tr>
+					
+				</table>
+			</p:tab>
+
+			<p:tab title="Egyéb dokumentumok">
+				<table style="width: 99%;">
+					<tr>
+						<td colspan="2">
+							<h:outputText value="Új feljegyzés:" />
+						</td>
+					</tr>
+					<tr>	
+						<td>
+							<p:inputTextarea rows="6" cols="33" />
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<p:commandButton actionListener="#{staffController.createDocument}" immediate="true" value="Feljegyzés rögzítése" icon="ui-icon-plus" style="width: 95%;"/>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<h:outputText value="Korábbi feljegyzések:" />
+						</td>
+					</tr>
+					
+					<tr>
+						<td colspan="2" >
+							<h:graphicImage name="conract_pre.jpg" />
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<h:graphicImage name="conract_pre.jpg" />
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<h:graphicImage name="conract_pre.jpg" />
+						</td>
+					</tr>
+					
+				</table>
+			</p:tab>	
+
+			<p:tab title="Üzemorvosi igazolások">
+				<table style="width: 99%;">
+					<tr>
+						<td colspan="2"><h:outputText value="Igazolás felvitele:" /></td>
+					</tr>
+					
+					<tr>
+						<td><h:outputText value="Igazolás dátuma:" /></td>
+						<td><p:calendar pattern="yyyy.MM.dd" mask="true" showOn="button" styleClass="calendarSpan"/></td>
+					</tr>
+					<tr>
+						<td><h:outputText value="Lejárat dátuma:" /></td>
+						<td><p:calendar pattern="yyyy.MM.dd" mask="true" showOn="button" styleClass="calendarSpan"/></td>
+					</tr>
+
+
+					<tr>
+						<td><p:fileUpload value="#{documentView.fileDrDoc}" mode="simple" skinSimple="true"/></td>
+						<td><p:commandButton value="Feltölt" ajax="true" actionListener="#{documentView.uploadDrDoc}" disabled="true" /></td>
+					</tr>
+					
+  
+					<tr>
+						<td colspan="2">
+							<p:commandButton actionListener="#{staffController.createDocument}" immediate="true" value="Igazolás rögzítése" icon="ui-icon-plus" style="width: 95%;"/>
+						</td>
+					</tr>
+					
+										
+				</table>
+			</p:tab>	
+
+		</p:accordionPanel>
+    
+    
+	</h:form> 
+
+</ui:composition>    

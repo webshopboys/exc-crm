@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html 
+    xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	
+<h:head>
+	 
+	<link rel="shortcut icon" href="favicon.ico" type="image/vnd.microsoft.icon" />
+	<title>EXC CRM</title>
+	
+	<h:outputStylesheet name="exc-style.css" />
+	
+</h:head>
+<h:body>
+	
+	 <p:layout fullPage="true">
+
+         <p:layoutUnit position="north"  resizable="false" closable="false" collapsible="true" id="headerContent">
+            <ui:include src="#{navigator.headerContent}" />
+         </p:layoutUnit>
+
+
+		 <p:layoutUnit position="west" size="300" header="&#160;" collapsible="true" id="sliderContent" collapsed="true">
+		  	
+             	<ui:include src="#{navigator.sliderContent}" />
+            
+         </p:layoutUnit>
+
+         <p:layoutUnit position="center" id="centerContent">
+           <h:panelGroup  id="mainContent">
+<!--          	  <h:form id="mainForm">  	 -->
+			
+         	 	<ui:include src="#{navigator.mainContent}" />
+			
+<!-- 			</h:form> -->
+			</h:panelGroup>
+		   	
+         </p:layoutUnit>
+
+     </p:layout>
+
+		
+</h:body>
+
+</html>
+

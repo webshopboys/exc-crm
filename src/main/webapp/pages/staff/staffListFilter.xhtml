@@ -1,0 +1,132 @@
+<ui:composition 
+ 	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+    
+   		<h:outputStylesheet name="exc-style.css" />
+   		
+		<h:form id="filterForm" onkeypress="if (event.keyCode == 13) { document.getElementById('filterForm:mainSubmit').click(); return false; }">
+		
+		
+		<p:accordionPanel multiple="true" styleClass="sliderPanel" id="sliderPanel">
+	        <p:tab title="Személyes adatok" titleStyleClass="filterTab">
+	            <h:panelGrid columns="2" styleClass="sliderGrid">
+	                <h:outputText value="Munkatárs neve:"/>
+					<h:inputText value="#{staffController.filter.fullName}" />
+					
+					<h:outputText value="Születési név:"/>
+					<h:inputText value="#{staffController.filter.birthName}" />
+					
+					<h:outputText value="Születési dátum (tól-ig):"/>
+					<h:column>    
+						<p:calendar value="#{staffController.filter.birthDateFrom}" pattern="yyyy.MM.dd" mask="true" showOn="button" styleClass="calendarSpan"/>
+						<p:calendar value="#{staffController.filter.birthDateTo}" pattern="yyyy.MM.dd" mask="true" showOn="button" styleClass="calendarSpan"/>
+					</h:column>    
+					
+					<h:outputText value="Születési hely:"/>
+					<h:inputText value="#{staffController.filter.birthPlace}" />
+					
+					<h:outputText value="Anyja neve:"/>
+					<h:inputText value="#{staffController.filter.motherName}" />
+					
+					<h:outputText value="Állandó lakhely:"/>
+					<h:inputText value="#{staffController.filter.homeAddress}" />
+					
+					<h:outputText value="Tartozkodási hely:"/>
+					<h:inputText value="#{staffController.filter.residentAddress}" />
+					      
+	            </h:panelGrid>
+	        </p:tab>
+
+			<p:tab title="Munkaköri feltételek">
+				<table>
+					<tr>
+						<td><h:outputText value="Állapota:" /></td>
+						<td><p:selectManyCheckbox value="#{staffController.filter.status}">
+								<f:selectItem itemLabel="Aktív" itemValue="Aktív" />
+								<f:selectItem itemLabel="Passzív" itemValue="Passzív" />
+								<f:selectItem itemLabel="Kilépett" itemValue="Kilépett" />
+							</p:selectManyCheckbox></td>
+					</tr>
+					<tr>
+						<td><h:outputText value="Munkakörei:" /></td>
+						<td><p:selectManyMenu value="#{staffController.filter.jobtitles}" showCheckbox="true" styleClass="filterSelectorList" >
+								<f:selectItems value="#{parameterView.jobtitles}" var="job" itemLabel="#{job.jobtitle}" itemValue="#{job.idJobtitle}" />
+							</p:selectManyMenu></td>
+					</tr>
+					<tr>
+						<td><h:outputText value="Csoportok:" /></td>
+						<td><p:selectManyMenu value="#{staffController.filter.workgroups}" showCheckbox="true" styleClass="filterSelectorList">
+								<f:selectItems value="#{parameterView.workgroups}" var="g" itemLabel="#{g.groupName}" itemValue="#{g.idWorkgroup}" />
+							</p:selectManyMenu></td>
+					</tr>
+					<tr>
+						<td><h:outputText value="Munkahelyek:" /></td>
+						<td><p:selectManyMenu value="#{staffController.filter.workplaces}" showCheckbox="true" styleClass="filterSelectorList">
+								<f:selectItems value="#{parameterView.workplaces}" var="p" itemLabel="#{p.workplaceName}" itemValue="#{p.idWorkplace}" />
+							</p:selectManyMenu></td>
+					</tr>
+					<tr>
+						<td><h:outputText value="Riasztó kód:" /></td>
+						<td><h:inputText value="#{staffController.filter.alarmCode}" /></td>
+					</tr>
+					<tr>	
+						<td colspan="2">
+							<h:outputText value="Riasztóhoz van rendelve:" /> 
+							<h:selectBooleanCheckbox value="#{staffController.filter.hasAlarm}" /></td>
+					</tr>
+				</table>
+			</p:tab>
+
+
+		</p:accordionPanel>
+    
+    
+			<h:panelGrid columns="2" >
+				
+				<h:outputText value="Megjegyzés:"/>
+				<h:inputText value="#{staffController.filter.privateNote}" />
+				
+		    	<h:outputText value="Bármelyik feltétel elég:"/>
+		  	 	<h:selectBooleanCheckbox value="#{staffController.filter.anyEnought}" />
+			    
+		    </h:panelGrid>
+	    
+	    	<p:separator />
+ 
+ 			<p:commandButton actionListener="#{staffController.filter.reset}" immediate="true" value="Alapállapot" process="@this" update="filterForm" style="width: 95%;"/>
+			    
+	    	<p:separator />
+ 
+    		<p:commandButton value="Szűrés" update=":mainContentPanel :filterForm:filtersInfo" style="float:right;" id="mainSubmit"/>
+    		
+    		<p:separator />
+    		<h:outputText value="#{staffController.filter.actualFiltersInfo}" id="filtersInfo" escape="false"/>
+ 	    
+	    </h:form> 
+	    
+</ui:composition>    
+
+
+
+<!--     private Integer[] ; -->
+<!--     private Integer workgroup; -->
+<!--     private Integer workplace; -->
+
+<!--     private Date employStartFrom; -->
+<!--     private Date employStartTo; -->
+<!--     private Date employFinishFrom; -->
+<!--     private Date employFinishTo; -->
+<!--     private Integer[] employTypes; -->
+<!--     private String salaryType; -->
+<!--     private String sidSerial; -->
+<!--     private String tajSerial; -->
+<!--     private String taxSerial; -->
+<!--     private boolean trialPeriod; // Probaidőn van-e? Ha igen, akkor a trialPeriod napjaival növelt employStart még nem múlt el. -->
+
+
+
+<!--     private String privateNote; -->

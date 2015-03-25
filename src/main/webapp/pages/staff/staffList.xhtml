@@ -1,0 +1,80 @@
+<ui:composition 
+ 	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+   		
+   		<h:form>
+		    <p:growl id="messages" showDetail="true" />
+
+
+       	<p:dataTable
+       	   	id="staffTable" 
+           	var="r"
+           	value="#{staffController.staffModel}"
+           	lazy="true"
+           	sortMode="multiple"
+           	paginator="true"
+           	paginatorAlwaysVisible="true"
+           	resizableColumns="true"
+           	rows="30"
+           	paginatorTemplate="{PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
+           	rowsPerPageTemplate="10,30,50,100"
+           	currentPageReportTemplate="Látható: ({startRecord} - {endRecord} / {totalRecords}),  Oldal: ({currentPage}/{totalPages})"
+           	style="height: 100% !important; width: 100% !important;"
+         >
+         
+	    
+			<p:column width="15%">
+				<f:facet name="header">
+					<h:outputText value="Teljes név" />
+				</f:facet>
+				<h:outputText value="#{r.fullName}"  />
+			</p:column>
+			<p:column width="5%">
+				<f:facet name="header">
+					<h:outputText value="Állapot" />
+				</f:facet>
+				<h:outputText value="#{r.status}"/>
+			</p:column>
+			<p:column width="25%">
+				<f:facet name="header">
+					<h:outputText value="Csoport-Munkahely" />
+				</f:facet>
+				<p:outputLabel value="#{parameterView.getStaffWorkGroupPlace(r.idStaff)}"/>
+			</p:column>
+			<p:column width="10%">
+				<f:facet name="header">
+					<h:outputText value="Munkakör" />
+				</f:facet>
+				<p:outputLabel value="#{parameterView.getStaffJobTitles(r.idStaff)}" escape="false" styleClass="preformatted"/>
+			</p:column>
+			<p:column width="10%">
+				<f:facet name="header">
+					<h:outputText value="Születési dátum" />
+				</f:facet>
+				<h:outputText value="#{r.birthDate}" >
+					<f:convertDateTime pattern="yyyy.MM.dd" />
+				</h:outputText>
+			</p:column>
+			<p:column width="10%">
+				<f:facet name="header">
+					<h:outputText value="Munkába állás" />
+				</f:facet>
+				<h:outputText value="#{r.employStart}" >
+					<f:convertDateTime pattern="yyyy.MM.dd" />
+				</h:outputText>	
+			</p:column>
+			<p:column width="25%">
+				<f:facet name="header">
+					<h:outputText value="Megjegyzés" />
+				</f:facet>
+				<h:outputText value="#{r.privateNote}" />
+			</p:column>
+		</p:dataTable>
+
+	 </h:form>
+		
+</ui:composition>   		
