@@ -1,23 +1,27 @@
 package hu.exclusive.crm.controller;
 
+import hu.exclusive.crm.model.DocBean;
+import hu.exclusive.crm.model.DocFilter;
 import hu.exclusive.crm.model.StaffFilter;
+import hu.exclusive.crm.service.AttachmentService;
+import hu.exclusive.crm.service.ParametersService;
+import hu.exclusive.crm.service.StaffService;
 import hu.exclusive.dao.DaoFilter;
+import hu.exclusive.dao.model.Jobtitle;
 import hu.exclusive.dao.model.Staff;
 import hu.exclusive.dao.model.StaffBase;
-import hu.exclusive.dao.model.StaffDocument;
-import hu.exclusive.dao.service.StaffService;
+import hu.exclusive.dao.model.StaffDetail;
+import hu.exclusive.utils.FacesAccessor;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 
 import org.hibernate.service.spi.ServiceException;
 import org.primefaces.context.RequestContext;
@@ -30,57 +34,83 @@ import org.springframework.stereotype.Component;
 @Component
 @ManagedBean(name = "staffController")
 @ViewScoped
-public class StaffController implements Serializable {
+public class StaffController extends Commontroller implements Serializable {
 
     private static final long serialVersionUID = 3826321633790448440L;
-    protected final Logger log = Logger.getLogger(this.getClass().getName());
 
-    private List<Staff> staffList;
     private LazyDataModel<Staff> staffModel;
-    private StaffFilter filter;
+    private LazyDataModel<Staff> docModel;
+    private StaffFilter staffFilter;
+    private DocFilter docFilter;
+    private Map<Integer, List<DocBean>> staffDocCache = new HashMap<Integer, List<DocBean>>();
+    private StaffDetail activeStaff;
 
     @Autowired
     StaffService service;
+    @Autowired
+    AttachmentService attachments;
+
+    @Autowired
+    ParametersService parameters;
 
     @PostConstruct
     public void init() {
+        if (service == null)
+            service = (StaffService) FacesAccessor.getManagedBean("staffService");
+
+        if (parameters == null)
+            parameters = (ParametersService) FacesAccessor.getManagedBean("parametersService");
+
+        if (attachments == null)
+            attachments = (AttachmentService) FacesAccessor.getManagedBean("attachmentService");
 
         this.staffModel = new LazyDataModel<Staff>() {
             private static final long serialVersionUID = 1L;
 
             @Override
             public List<Staff> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
-                return pageDataTable(first, pageSize, sortField, sortOrder, filters);
+                return pageDataTable(this, first, pageSize, sortField, sortOrder, getFilter(), filters);
             }
 
             @Override
             public List<Staff> load(int first, int pageSize, List<SortMeta> multiSortMeta, Map<String, Object> filters) {
-                return pageDataTable(first, pageSize, null, multiSortMeta, filters);
+                return pageDataTable(this, first, pageSize, null, multiSortMeta, getFilter(), filters);
             }
         };
 
-        System.err.println("StaffController init size: " + staffModel.getRowCount());
+        this.docModel = new LazyDataModel<Staff>() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public List<Staff> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
+                return pageDataTable(this, first, pageSize, sortField, sortOrder, getDocFilter(), filters);
+            }
+
+            @Override
+            public List<Staff> load(int first, int pageSize, List<SortMeta> multiSortMeta, Map<String, Object> filters) {
+                return pageDataTable(this, first, pageSize, null, multiSortMeta, getDocFilter(), filters);
+            }
+        };
+
+        System.err.println("==============================================================");
+        System.err.println("                EXC CRM (2015.03.30) ");
+        System.err.println("==============================================================");
+
     }
 
-    @SuppressWarnings("unchecked")
-    private List<Staff> pageDataTable(int first, int pageSize, String sortField, Object sortOrderOrSortMeta,
-            Map<String, Object> filters) {
+    private List<Staff> pageDataTable(LazyDataModel<Staff> dataModel, int first, int pageSize, String sortField,
+            Object sortOrderOrSortMeta, DaoFilter filter, Map<String, Object> filters) {
 
+        // System.err.println("pageDataTable filter: " + filter.getClass().getSimpleName());
+        staffDocCache.clear();
+
+        List<Staff> staffList = null;
         try {
-
-            DaoFilter filter = getFilter();
             filter.setStartIndex(first);
             filter.setPageSize(pageSize);
-
-            // filter.addFilter("birthDate", "notnull", null);
-
             staffList = service.getStaffList(filter);
-            // ServiceResult result = demoDao.getTestList(demoFilter);
-            //
-            // staffList = (List<TestRecord>) result.getResultList();
-            //
-            staffModel.setPageSize(pageSize);
-            staffModel.setRowCount((int) filter.getTotalCount());
+            dataModel.setPageSize(pageSize);
+            dataModel.setRowCount((int) filter.getTotalCount());
 
         } catch (ServiceException e) {
             showErrorHint(e);
@@ -95,11 +125,26 @@ public class StaffController implements Serializable {
      * @return
      */
     public StaffFilter getFilter() {
-        if (filter == null) {
-            filter = new StaffFilter();
-            filter.setStatus(new String[] { StaffBase.DEFAULT_STATUS });
+        if (staffFilter == null) {
+            staffFilter = new StaffFilter();
+            staffFilter.setStatus(new String[] { StaffBase.DEFAULT_STATUS });
         }
-        return filter;
+        return staffFilter;
+    }
+
+    public DocFilter getDocFilter() {
+        if (docFilter == null) {
+            docFilter = new DocFilter();
+            docFilter.setStatus(new String[] { StaffBase.DEFAULT_STATUS });
+        }
+        return docFilter;
+    }
+
+    public void resetDocFilter() {
+        System.out.println("resetDocfilter....");
+        getDocFilter().reset();
+        RequestContext.getCurrentInstance().reset("docFilterForm");
+        staffDocCache.clear();
     }
 
     public void resetFilter() {
@@ -108,35 +153,79 @@ public class StaffController implements Serializable {
         RequestContext.getCurrentInstance().reset("filterForm");
     }
 
-    public List<Staff> getStaffList() {
-        return staffList;
-    }
-
     public LazyDataModel<Staff> getStaffModel() {
         return staffModel;
     }
 
-    private StaffDocument document;
+    public LazyDataModel<Staff> getDocModel() {
 
-    /**
-     * A document alapján megadott sablonba kitölteni a munkatárs adatait és a készült fájlt letölteni.
-     */
-    public void createDocument() {
-
+        return docModel;
     }
 
-    private void showErrorHint(Exception e) {
-        log.log(Level.WARNING, "", e);
-        FacesContext context = FacesContext.getCurrentInstance();
-        context.addMessage("error", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Hiba!", "" + e));
+    public List<DocBean> getStaffDocuments(Integer staffId) {
+        if (staffId == null || staffId == 0)
+            return null;
+        if (!staffDocCache.containsKey(staffId))
+            staffDocCache.put(staffId, attachments.getStaffDocuments(staffId));
+
+        return staffDocCache.get(staffId);
     }
 
-    public StaffDocument getDocument() {
-        return document;
+    public int[] getAsJobtitles() {
+        return toIdArray(getActiveStaff().getJobtitles());
     }
 
-    public void setDocument(StaffDocument document) {
-        this.document = document;
+    public void setAsJobtitles(int[] titles) {
+        List<Jobtitle> list = new ArrayList<Jobtitle>();
+        if (titles != null && titles.length > 0) {
+            for (int i = 0; i < titles.length; i++) {
+                int titleId = Integer.valueOf(titles[i]);
+                list.add(parameters.getJobtitle(titleId));
+            }
+        }
+        System.err.println("setAsJobtitles int[] " + list);
+        getActiveStaff().setJobtitles(list);
+    }
+
+    public StaffDetail getActiveStaff() {
+        if (activeStaff == null)
+            activeStaff = new StaffDetail();
+        return activeStaff;
+    }
+
+    public void setActiveStaff(Integer idStaff) {
+        if (idStaff != null) {
+            setActiveStaff(service.getStaffDetail(idStaff));
+        }
+    }
+
+    public void setActiveStaff(StaffDetail activeStaff) {
+        this.activeStaff = activeStaff;
+    }
+
+    public void saveStaff() {
+        System.err.println("SaveStaff " + activeStaff);
+
+        service.saveStaff(activeStaff);
+        closeActiveStaff();
+    }
+
+    public void closeActiveStaff() {
+        // FIXME az adatlap bezárása és a lista újratltése a korábbi felterekkel. Vagyis mi van, ha új munkatárs? Akkor is.
+        Navigator navigator = (Navigator) FacesAccessor.getManagedBean("navigator");
+        navigator.setContent("staff/staffList", "staff/staffListFilter");
+
+        // getFilter().reset();
+        // getFilter().setFullName(activeStaff.getFullName());
+
+        activeStaff = null;
+
+        RequestContext.getCurrentInstance().update("mainContentPanel");
+        RequestContext.getCurrentInstance().update("sliderContentPanel");
+    }
+
+    public void deleteStaff(Integer idStaff) {
+        message("Feldolgozási eredmény", "Csak a fejlesztő törölheti");
     }
 
 }

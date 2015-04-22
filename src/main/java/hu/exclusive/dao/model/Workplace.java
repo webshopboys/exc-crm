@@ -188,4 +188,22 @@ public class Workplace implements Serializable {
         this.Workgroup = Workgroup;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null && obj instanceof Workplace) {
+            return this.idWorkplace == ((Workplace) obj).idWorkplace;
+        }
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return Workplace.class.hashCode() + this.idWorkplace;
+    }
+
+    @Override
+    public String toString() {
+        return "Workplace [idWorkplace=" + idWorkplace + ", workplaceName=" + workplaceName + "]";
+    }
+
 }

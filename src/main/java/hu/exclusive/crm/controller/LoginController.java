@@ -1,5 +1,7 @@
 package hu.exclusive.crm.controller;
 
+import hu.exclusive.utils.FacesAccessor;
+
 import java.util.logging.Logger;
 
 import javax.faces.application.FacesMessage;
@@ -8,6 +10,17 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.primefaces.context.RequestContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Controller;
+
+@Controller
 @ManagedBean(name = "loginController")
 @SessionScoped
 public class LoginController {
@@ -52,16 +65,42 @@ public class LoginController {
 
     }
 
+    @Autowired
+    private AuthenticationManager authenticationManager = null;
+    private String userMenuClass;
+
     public String login() {
+
         try {
-
-            // log.debug("before login context: " + SecurityContextHolder.getContext().getAuthentication());
-
             resetNavigator();
+
+            if (authenticationManager == null)
+                authenticationManager = (AuthenticationManager) FacesAccessor.getManagedBean("authenticationManager");
+
+            Authentication request = new UsernamePasswordAuthenticationToken(this.getUserName(), this.getPassword());
+
+            Authentication result = authenticationManager.authenticate(request);
+            SecurityContextHolder.getContext().setAuthentication(result);
+            log.fine(userName + " authenticated...");
 
             return "/pages/exc.xhtml";
 
-        } catch (Exception e) {
+        } catch (BadCredentialsException e) {
+            FacesMessage msg = new FacesMessage("Érvénytelen adatok!");
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+            log.warning("Érvénytelen jelszó " + userName + "/" + password);
+
+        } catch (UsernameNotFoundException e) {
+            FacesMessage msg = new FacesMessage("Érvénytelen adatok!");
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+            log.warning("Érvénytelen user " + userName);
+
+        } catch (java.lang.IllegalArgumentException ie) {
+            ie.printStackTrace();
+            FacesMessage msg = new FacesMessage("Érvénytelen adatok!");
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+        } catch (Throwable e) {
+
             e.printStackTrace();
             FacesMessage msg = new FacesMessage("Hiba a köbön: " + e.getLocalizedMessage());
             FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -95,4 +134,24 @@ public class LoginController {
         this.password = password;
     }
 
+    /**
+     * Ezen át lehet kijelezni, ha a user pl. kapott valami üzenetet. Ez után frissíthető a menü, és akkor megjelenik a vizuális
+     * effekt.
+     * 
+     * @return
+     */
+    public String getUserMenuClass() {
+        return this.userMenuClass;
+    }
+
+    /**
+     * Ezen át lehet kijelezni, ha a user pl. kapott valami üzenetet. Ez után frissíthető a menü, és akkor megjelenik a vizuális
+     * effekt.
+     * 
+     * @param userMenuClass
+     */
+    public void setUserMenuClass(String userMenuClass) {
+        this.userMenuClass = userMenuClass;
+        RequestContext.getCurrentInstance().update("menuForm:excMenu");
+    }
 }

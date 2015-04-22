@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html 
+    xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+	
+<h:head>
+</h:head>
+<h:body>
+
+	  	 
+	 <p:media value="#{attachmentProvider.streamedContent}" player="#{attachmentProvider.player}" width="100%" height="100%" rendered="#{attachmentProvider.media}">
+	 	<p:outputPanel layout="block">
+	        A tartalom nem jeleníthető meg közvetlenül. <h:outputLink value="#{attachmentProvider.downloadLink}">Letöltés</h:outputLink>
+	    </p:outputPanel>
+	 </p:media>   
+	
+	 <p:panel rendered="#{attachmentProvider.object}">
+	 	<object type="#{attachmentProvider.mime}" data="#{attachmentProvider.downloadLink}" height="100%" width="100%">
+            A tartalom nem jeleníthető meg közvetlenül.  <a href="#{attachmentProvider.downloadLink}">Letöltés</a>
+     	</object>	
+	</p:panel>
+	
+	 <p:graphicImage value="#{attachmentProvider.streamedContent}" rendered="#{attachmentProvider.image}">
+     </p:graphicImage>
+	
+	
+	 <p:panel rendered="#{attachmentProvider.downloadable}">
+	 	<p:fileDownload value="#{attachmentProvider.streamedContent}" contentDisposition="inline"/>
+	 </p:panel>
+	 
+</h:body>
+
+</html>

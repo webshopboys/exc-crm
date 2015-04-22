@@ -90,4 +90,22 @@ public class Workgroup implements Serializable {
         return Workplace;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null && obj instanceof Workgroup) {
+            return this.idWorkgroup == ((Workgroup) obj).idWorkgroup;
+        }
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return Workgroup.class.hashCode() + this.idWorkgroup;
+    }
+
+    @Override
+    public String toString() {
+        return "Workgroup [idWorkgroup=" + idWorkgroup + ", groupName=" + groupName + "]";
+    }
+
 }

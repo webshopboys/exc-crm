@@ -2,7 +2,6 @@ package hu.exclusive.dao.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -44,19 +43,24 @@ public class StaffBase implements Serializable {
     @Column(name = "birth_place")
     private String birthPlace;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "employ_finish")
-    private Timestamp employFinish;
+    private Date employFinish;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "employ_period")
     private Date employPeriod;
 
+    /** Munkaviszony kezdete date */
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "employ_start")
-    private Timestamp employStart;
+    private Date employStart;
 
+    /** Munkaideje (teljes munkaidős, részmunkadős) */
     @Column(name = "employ_time")
     private String employTime;
 
+    /** Munkaviszony jellege: határozatlan vagy határozott, ennek ideje */
     @Column(name = "employ_type")
     private String employType;
 
@@ -76,6 +80,7 @@ public class StaffBase implements Serializable {
     @Column(name = "resident_address")
     private String residentAddress;
 
+    /** Alapbér: Órabér / Havibér */
     @Column(name = "salary_type")
     private String salaryType;
 
@@ -136,11 +141,11 @@ public class StaffBase implements Serializable {
         this.birthPlace = birthPlace;
     }
 
-    public Timestamp getEmployFinish() {
+    public Date getEmployFinish() {
         return this.employFinish;
     }
 
-    public void setEmployFinish(Timestamp employFinish) {
+    public void setEmployFinish(Date employFinish) {
         this.employFinish = employFinish;
     }
 
@@ -152,11 +157,11 @@ public class StaffBase implements Serializable {
         this.employPeriod = employPeriod;
     }
 
-    public Timestamp getEmployStart() {
+    public Date getEmployStart() {
         return this.employStart;
     }
 
-    public void setEmployStart(Timestamp employStart) {
+    public void setEmployStart(Date employStart) {
         this.employStart = employStart;
     }
 

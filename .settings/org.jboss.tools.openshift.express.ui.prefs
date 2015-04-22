@@ -1,7 +1,0 @@
-eclipse.preferences.version=1
-org.jboss.tools.openshift.ApplicationId=54e768aafcf9335e8600016e
-org.jboss.tools.openshift.ApplicationName=exc
-org.jboss.tools.openshift.Connection=https\://petnehazi%40gmail.com@
-org.jboss.tools.openshift.DeployFolder=webapps
-org.jboss.tools.openshift.Domain=petnehazi
-org.jboss.tools.openshift.RemoteName=origin

@@ -1,3 +1,8 @@
+.edit-input.wide-text { width: 320px; }
+.edit-input.medium-text { width: 200px; }
+.edit-input.short-text { width: 100px; }
+.edit-input.date-text .hasDatepicker { width: 80px; }
+
 #headerContent {z-index:20 !important; }
 #headerContent div{overflow:visible;}
 
@@ -22,3 +27,32 @@
 
 .filterSelectorList { width: 95% !important;} 
 .filterSelectorList .ui-selectlistbox-listcontainer {height: 120px !important; }
+
+#docListForm:docTable {}
+
+.rf-true .ui-chkbox-label { background-color: rgba(182, 6, 26, 0.5); width: 500px;}
+
+.usergetmessage {  background-color: rgba(182, 6, 26, 1) !important; }
+.usergetmessage>a.ui-submenu-link { color: yellow !important; }
+
+.usergetmessage .messagemenu { color: yellow !important; }
+
+.ui-state-highlight {  box-shadow: 0 0 8px #B6061A !important;  color: yellow !important; } 
+
+.noBorderedPgrid tr, .noBorderedPgrid td {
+    border: none !important;
+}
+
+.editorPanel .ui-panel-title_ {margin: 0 !important; margin-bottom:  10px !important; }
+.headerDiv img.headerIcon {  margin-bottom: -10px; }
+ 
+table.editorTable td { vertical-align: top;} 
+
+div.editorNoteContainer { 
+	/* background-image: url(#{resource['paper_back4.png']});
+	background-position: -110px 98px; */
+	padding-left: 10px; padding-bottom: 10px; 
+} 
+
+div.editorNoteContainer .removeIcon { margin-left: 5px; margin-bottom: 15px; }
+.editorNote { border: 1px; border-radius: 10px; -moz-border-radius: 10px; background-color: #ffffbb; margin-bottom: -5px;}

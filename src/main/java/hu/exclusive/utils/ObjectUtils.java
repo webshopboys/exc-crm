@@ -1,14 +1,140 @@
 package hu.exclusive.utils;
 
+import hu.exclusive.dao.model.EntityCommons;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 public class ObjectUtils {
 
     public final static SimpleDateFormat SDF_YYYYMMDD = new SimpleDateFormat("yyyy.MM.dd");
+
+    public static <T> T getFromList(List<? extends T> list, int id) {
+        for (T t : list) {
+            if (t instanceof EntityCommons && ((EntityCommons) t).getId() == id) {
+                return t;
+            }
+        }
+        return null;
+    }
+
+    public static int[] toIdArray(List<? extends EntityCommons> list) {
+
+        if (list == null || list.isEmpty())
+            return new int[0];
+
+        int[] ids = new int[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            ids[i] = list.get(i).getId();
+        }
+
+        return ids;
+    }
+
+    public static String getTagX_String(String separatedMultiHolder, int splittedIndex) {
+        return getTagX_String(separatedMultiHolder, splittedIndex, "_", null);
+    }
+
+    public static String getTagX_String(String separatedMultiHolder, int splittedIndex, String separator, String defaulValue) {
+        try {
+            if (separatedMultiHolder != null && separatedMultiHolder.contains(separator)) {
+
+                String splittedString = separatedMultiHolder.split(separator)[splittedIndex];
+                return isEmpty(splittedString) ? defaulValue : (splittedString);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return defaulValue;
+    }
+
+    public static Double getTagX_Double(String separatedMultiHolder, int splittedIndex) {
+        return getTagX_Double(separatedMultiHolder, splittedIndex, "_", null);
+    }
+
+    public static Double getTagX_Double(String separatedMultiHolder, int splittedIndex, String separator, Double defaulValue) {
+        try {
+            if (separatedMultiHolder != null && separatedMultiHolder.contains(separator)) {
+                String splittedString = separatedMultiHolder.split(separator)[splittedIndex];
+                splittedString = splittedString.replace(',', '.');
+                return isEmpty(splittedString) ? defaulValue : Double.valueOf(splittedString);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return defaulValue;
+    }
+
+    public static Integer getTagX_Integer(String separatedMultiHolder, int splittedIndex) {
+        return getTagX_Integer(separatedMultiHolder, splittedIndex, "_", null);
+    }
+
+    public static Integer getTagX_Integer(String separatedMultiHolder, int splittedIndex, String separator, Integer defaulValue) {
+        try {
+            if (separatedMultiHolder != null && separatedMultiHolder.contains(separator)) {
+                String splittedString = separatedMultiHolder.split(separator)[splittedIndex];
+                splittedString = splittedString.replaceAll(" ", "");
+                return isEmpty(splittedString) ? defaulValue : Integer.valueOf(splittedString);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return defaulValue;
+    }
+
+    public static boolean getTagX_Boolean(String separatedMultiHolder, int splittedIndex) {
+        return getTagX_Boolean(separatedMultiHolder, splittedIndex, "_", false);
+    }
+
+    public static boolean getTagX_Boolean(String separatedMultiHolder, int splittedIndex, String separator, boolean defaulValue) {
+        try {
+            if (separatedMultiHolder != null && separatedMultiHolder.contains(separator)) {
+                String splittedString = separatedMultiHolder.split(separator)[splittedIndex];
+                return isEmpty(splittedString) ? defaulValue : Boolean.getBoolean(splittedString);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return defaulValue;
+    }
+
+    public static boolean isEmpty(Object o) {
+        if (o != null) {
+            if (o instanceof String) {
+                return ((String) o).trim().length() == 0;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public static String getFileName(String path) {
+        if (isEmpty(path))
+            return "";
+        int lastper = path.lastIndexOf("/");
+        if (lastper > -1) {
+            return path.substring(lastper + 1);
+        }
+        return path;
+    }
+
+    public static String getFilePath(String path) {
+        if (isEmpty(path))
+            return "";
+        int lastper = path.lastIndexOf("/");
+        if (lastper > -1) {
+            return path.substring(0, lastper + 1);
+        }
+        return path;
+    }
 
     public static Object nv(Object o) {
         if (o != null && o instanceof String) {
@@ -62,9 +188,13 @@ public class ObjectUtils {
 
     public static void main(String[] args) {
         try {
-            Date[] dt = { new Date(), new Date() };
-            System.out.println(toCollection(dt, Object.class));
-            System.out.println(new SimpleDateFormat("yyyy").parse("3000").getTime());
+            // Date[] dt = { new Date(), new Date() };
+            // System.out.println(toCollection(dt, Object.class));
+            // System.out.println(new SimpleDateFormat("yyyy").parse("3000").getTime());
+
+            String p = "c:/a/b/c/abc.txt";
+            System.out.println(getFilePath(p));
+            System.out.println(getFileName(p));
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

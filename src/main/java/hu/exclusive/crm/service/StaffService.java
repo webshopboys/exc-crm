@@ -1,7 +1,8 @@
-package hu.exclusive.dao.service;
+package hu.exclusive.crm.service;
 
 import hu.exclusive.dao.DaoFilter;
 import hu.exclusive.dao.model.Staff;
+import hu.exclusive.dao.model.StaffDetail;
 
 import java.util.List;
 
@@ -16,6 +17,14 @@ public class StaffService {
 
     public List<Staff> getStaffList(DaoFilter filter) {
         return excDao.getStaffList(filter);
+    }
+
+    public StaffDetail getStaffDetail(Integer idStaff) {
+        return excDao.getStaffDetail(idStaff);
+    }
+
+    public void saveStaff(StaffDetail staff) {
+        excDao.saveStaff(staff);
     }
 
 }

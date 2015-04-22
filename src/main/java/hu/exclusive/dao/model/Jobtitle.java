@@ -20,13 +20,13 @@ import javax.persistence.Table;
 @NamedQueries({
         @NamedQuery(name = "Jobtitle.findAll", query = "SELECT j FROM Jobtitle j ORDER BY j.jobtitle"),
         @NamedQuery(name = "Jobtitle.findForStaff", query = "SELECT j FROM Jobtitle j  WHERE j.idJobtitle in (SELECT k.idJobtitle FROM StaffJobtitleK k WHERE k.idStaff = :idStaff) ORDER BY j.jobtitle") })
-public class Jobtitle implements Serializable {
+public class Jobtitle extends EntityCommons implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id_jobtitle", unique = true, nullable = false)
-    private int idJobtitle;
+    private Integer idJobtitle;
 
     @Column(nullable = false, length = 100)
     private String jobtitle;
@@ -34,11 +34,16 @@ public class Jobtitle implements Serializable {
     public Jobtitle() {
     }
 
-    public int getIdJobtitle() {
+    @Override
+    public Integer getId() {
+        return getIdJobtitle();
+    }
+
+    public Integer getIdJobtitle() {
         return this.idJobtitle;
     }
 
-    public void setIdJobtitle(int idJobtitle) {
+    public void setIdJobtitle(Integer idJobtitle) {
         this.idJobtitle = idJobtitle;
     }
 
@@ -53,6 +58,19 @@ public class Jobtitle implements Serializable {
     @Override
     public String toString() {
         return "Jobtitle [idJobtitle=" + idJobtitle + ", jobtitle=" + jobtitle + "]";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null && obj instanceof Jobtitle) {
+            return this.idJobtitle == ((Jobtitle) obj).idJobtitle;
+        }
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return Jobtitle.class.hashCode() + this.idJobtitle;
     }
 
 }

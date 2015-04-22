@@ -1,0 +1,116 @@
+<ui:composition 
+ 	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+    
+  	<h:outputStylesheet name="exc-style.css" />
+
+	<h:form id="userForm" >
+	
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+      		<p:commandButton value="Igen" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+      		<p:commandButton value="Nem" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+	    </p:confirmDialog>
+	    
+	    <p:growl id="error" showDetail="true" sticky="true" redisplay="false" severity="error"/>
+	    <p:growl id="info" showDetail="true" sticky="false" redisplay="false" severity="info"/>
+		 
+		<p:panel header="Felhasználó adatai" id="selectedUserPanel">
+	       
+	       <p:commandButton icon="ui-icon-circle-arrow-w" iconPos="left" type="button" value="Az oldalsávban választhatod ki a felhasználót"  rendered="#{sysController.selectedUser == null}" />
+	       
+	       <h:panelGrid cellspacing="4" columns="4" rendered="#{sysController.selectedUser != null}">
+	        
+	            <h:column>
+	            	<h:inputHidden value="#{sysController.originalPass}" />
+	            	<h:inputHidden value="#{sysController.selectedUser.idCrmUser}"/>
+	            	<p:outputLabel value="Felhasználó login neve:"/>
+		    	</h:column>
+		    	<h:column>
+		    		<p:inputText value="#{sysController.selectedUser.loginName}" style="width: 100px;" autocomplete="off"/>
+		    	</h:column>
+		    	<h:column>
+		    		<p:outputLabel value="Felhasználó teljes neve:"/>
+		    	</h:column>
+		    	<h:column>
+		    		<p:inputText value="#{sysController.selectedUser.userName}" style="width: 200px;" autocomplete="off"/>
+		    	</h:column>
+		    
+		    	<h:column>
+		    		<p:outputLabel value="Felhasználó jelszava:"/>
+		    	</h:column>
+		    	<h:column>
+		    		<p:password value="#{sysController.selectedUser.crmPass}" style="width: 200px;" autocomplete="off"/>
+		    	</h:column>
+		    	<h:column>
+		    		<p:outputLabel value="Jelszó újra:"/>
+		    	</h:column>
+		    	<h:column>
+		    		<p:password value="#{sysController.selectedUser.hintPass}" style="width: 200px;" autocomplete="off"/>
+		    	</h:column>
+			    					           
+	        </h:panelGrid>
+	        
+	        <p:panel header="Szerepek" style="margin-left: 2px; width: 700px;" rendered="#{sysController.selectedUser != null}">
+	        
+	       		 <p:dataList value="#{sysController.selectedUser.roles}" var="ur" type="definition" style="padding-left: 20px;">
+			          <p:selectBooleanCheckbox value="#{sysController.getSelectedUserRole(ur.idRole).selected}" itemLabel="#{ur.roleComment}" />
+		        </p:dataList>
+	        	
+    			<p:commandButton actionListener="#{sysController.updateUser()}" immediate="false" value="Felhasználó módosítása" update="" />
+    
+    			<p:commandButton actionListener="#{sysController.deleteUser()}" immediate="true" value="Felhasználó törlése" update="" />
+			    
+			</p:panel>
+			    
+	    </p:panel>
+    
+    
+    	 <p:panel header="Új felhasználó" id="newUserPanel">
+	        <h:panelGrid cellspacing="4" columns="4">
+	            	<h:column>
+			    		<p:outputLabel value="Felhasználó login neve:"/>
+			    	</h:column>
+			    	<h:column>
+			    		<p:inputText value="#{sysController.newUser.loginName}" style="width: 100px;" autocomplete="off"/>
+			    	</h:column>
+			    	<h:column>
+			    		<p:outputLabel value="Felhasználó teljes neve:"/>
+			    	</h:column>
+			    	<h:column>
+			    		<p:inputText value="#{sysController.newUser.userName}" style="width: 200px;" autocomplete="off"/>
+			    	</h:column>
+			    
+			    	<h:column>
+			    		<p:outputLabel value="Felhasználó jelszava:"/>
+			    	</h:column>
+			    	<h:column>
+			    		<p:password value="#{sysController.newUser.crmPass}" style="width: 200px;" autocomplete="off"/>
+			    	</h:column>
+			    	<h:column>
+			    		<p:outputLabel value="Jelszó újra:"/>
+			    	</h:column>
+			    	<h:column>
+			    		<p:password value="#{sysController.newUser.hintPass}" style="width: 200px;" autocomplete="off"/>
+			    	</h:column>
+			 
+				           
+	        </h:panelGrid>
+	        
+	      	<p:panel header="Szerepek" style="margin-left: 2px; width: 700px;">
+		        
+		        <p:dataList value="#{sysController.newUser.roles}" var="ur" type="definition"  style="padding-left: 20px;">
+			          <p:selectBooleanCheckbox value="#{sysController.getNewUserRole(ur.idRole).selected}" itemLabel="#{ur.roleComment}" />
+		        </p:dataList>
+	        	<p:commandButton actionListener="#{sysController.createUser()}" immediate="false" value="Felhasználó létrehozása" update="" />
+	    	</p:panel>
+	    
+	    </p:panel>
+    
+    
+    </h:form>
+	    
+</ui:composition>    

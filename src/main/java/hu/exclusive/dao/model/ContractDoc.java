@@ -9,46 +9,46 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * The persistent class for the t_documents database table.
+ * The persistent class for the t_contractdoc database table.
  * 
  */
 @Entity
-@Table(name = "T_DOCUMENTS")
-@NamedQuery(name = "Document.findAll", query = "SELECT d FROM StaffDocument d")
-public class StaffDocument implements Serializable {
+@Table(name = "T_CONTRACTDOC")
+@NamedQueries({
+        @NamedQuery(name = "ContractDoc.findAll", query = "SELECT c FROM ContractDoc c"),
+        @NamedQuery(name = "ContractDoc.findForStaff", query = "SELECT c FROM ContractDoc c WHERE c.idStaff = :idStaff ORDER BY c.documentCreated"),
+        @NamedQuery(name = "ContractDoc.find", query = "SELECT c FROM ContractDoc c WHERE c.idContractdoc = :idDoc") })
+public class ContractDoc extends EntityCommons implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public static final String TYPE_CONTRACT = "Munkaszerződés";
-    public static final String TYPE_CONTRACT_MODIFICATION = "Munkaszerződés módosítás";
     @Id
+    @Column(name = "id_contractdoc")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id_document")
-    private Integer idDocument;
+    private Integer idContractdoc;
 
     @Lob
     @Column(name = "document_bin")
     private byte[] documentBin;
 
+    @Column(name = "document_created", updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "document_created")
     private Date documentCreated;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "document_expire")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date documentExpire;
 
-    @Lob
     @Column(name = "document_note")
     private String documentNote;
-
-    @Column(name = "document_subtype")
-    private String documentSubtype;
 
     @Column(name = "document_type")
     private String documentType;
@@ -59,15 +59,26 @@ public class StaffDocument implements Serializable {
     @Column(name = "id_staff")
     private Integer idStaff;
 
-    public StaffDocument() {
+    public ContractDoc() {
     }
 
-    public Integer getIdDocument() {
-        return this.idDocument;
+    @PreUpdate
+    @PrePersist
+    public void updateTimeStamps() {
+
     }
 
-    public void setIdDocument(Integer idDocument) {
-        this.idDocument = idDocument;
+    @Override
+    public Integer getId() {
+        return getIdContractdoc();
+    }
+
+    public Integer getIdContractdoc() {
+        return this.idContractdoc;
+    }
+
+    public void setIdContractdoc(Integer idContractdoc) {
+        this.idContractdoc = idContractdoc;
     }
 
     public byte[] getDocumentBin() {
@@ -102,14 +113,6 @@ public class StaffDocument implements Serializable {
         this.documentNote = documentNote;
     }
 
-    public String getDocumentSubtype() {
-        return this.documentSubtype;
-    }
-
-    public void setDocumentSubtype(String documentSubtype) {
-        this.documentSubtype = documentSubtype;
-    }
-
     public String getDocumentType() {
         return this.documentType;
     }
@@ -132,6 +135,13 @@ public class StaffDocument implements Serializable {
 
     public void setIdStaff(Integer idStaff) {
         this.idStaff = idStaff;
+    }
+
+    @Override
+    public String toString() {
+        return "Szerződés neve '" + getDocumentType() + "', fájl neve '" + getFileName(documentUrl) + "', létrehozva "
+                + getDateTime(documentCreated) + " időpontban."
+                + (isEmpty(documentNote) ? "" : "Megjegyzés: '" + documentNote + "'");
     }
 
 }

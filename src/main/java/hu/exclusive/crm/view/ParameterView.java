@@ -1,12 +1,13 @@
 package hu.exclusive.crm.view;
 
+import hu.exclusive.crm.service.ParametersService;
 import hu.exclusive.dao.DaoFilter;
 import hu.exclusive.dao.DaoFilter.RELATION;
+import hu.exclusive.dao.model.Function;
 import hu.exclusive.dao.model.Jobtitle;
-import hu.exclusive.dao.model.StaffDocument;
+import hu.exclusive.dao.model.Role;
 import hu.exclusive.dao.model.Workgroup;
 import hu.exclusive.dao.model.Workplace;
-import hu.exclusive.dao.service.ParametersService;
 import hu.exclusive.utils.PageUtils;
 
 import java.io.Serializable;
@@ -68,6 +69,16 @@ public class ParameterView implements Serializable {
         };
     }
 
+    public List<Role> getRoles() {
+        List<Role> r = service.getRoles((DaoFilter) null);
+        System.err.println("Van most " + r.size() + " szerep a rendszerben");
+        return r;
+    }
+
+    public List<Function> getFunctions() {
+        return service.getFunctions((DaoFilter) null);
+    }
+
     public List<Jobtitle> getJobtitles() {
         return service.getJobtitles(null);
     }
@@ -78,15 +89,6 @@ public class ParameterView implements Serializable {
 
     public List<Workplace> getWorkplaces() {
         return service.getWorkplaces(null);
-    }
-
-    public List<StaffDocument> getDocuments() {
-        DaoFilter filter = new DaoFilter();
-        filter.addFilter("idStaff", RELATION.ISNULL, null);
-        filter.addFilter("documentType", RELATION.IN, new String[] { StaffDocument.TYPE_CONTRACT,
-                StaffDocument.TYPE_CONTRACT_MODIFICATION });
-        filter.setAnyEnought(false);
-        return service.getDocuments(filter);
     }
 
     /**
@@ -276,5 +278,9 @@ public class ParameterView implements Serializable {
 
     private void addMessage(FacesMessage message) {
         FacesContext.getCurrentInstance().addMessage(null, message);
+    }
+
+    public String getSystemVersion() {
+        return service.getSystemVersion();
     }
 }

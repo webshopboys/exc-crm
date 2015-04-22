@@ -5,140 +5,81 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets">
-    
-   	<h:outputStylesheet name="exc-style.css" />
+   		
+	<h:form id="docListForm">
+	    <p:growl id="messages" showDetail="true" />
 
-	<h:form enctype="multipart/form-data">
+
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
+		    <p:graphicImage name="ajaxloadingbar.gif" />
+		</p:dialog>
+
+       	<p:dataTable
+       	   	id="docTable" 
+           	var="r"
+           	value="#{staffController.docModel}"
+           	lazy="true"
+           	sortMode="multiple"
+           	paginator="true"
+           	paginatorAlwaysVisible="true"
+           	resizableColumns="true"
+           	rows="20"
+           	paginatorTemplate="{PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
+           	rowsPerPageTemplate="10,20,30,50"
+           	currentPageReportTemplate="Látható: ({startRecord} - {endRecord} / {totalRecords}),  Oldal: ({currentPage}/{totalPages})"
+           	style="height: 100% !important; width: 100% !important;"
+           	rowKey="#{r.idStaff}"
+         >
+            
+            
+         	<f:facet name="header">
+	            Munkatársak és dokumentumok
+	        </f:facet>
+	    
+            <p:columnGroup type="header">
+	            <p:row>
+	                <p:column  width="15%" colspan="1" headerText="Teljes név"/>
+	                <p:column width="5%" colspan="1" headerText="Állapot"/>
+	                <p:column width="25%" colspan="1" headerText="Csoport-Munkahely"/>
+	                <p:column width="10%" colspan="1" headerText="Munkakör"/>
+	                <p:column width="45%" colspan="1" headerText="Csatolmányok"/>
+	            </p:row>
+	        </p:columnGroup>
+	             	
+ 			<p:column>
+				<h:outputText value="#{r.fullName}"  />
+			</p:column>
+			<p:column >
+				<h:outputText value="#{r.status}"/>
+			</p:column>
+			<p:column >
+				<p:outputLabel value="#{parameterView.getStaffWorkGroupPlace(r.idStaff)}"/>
+			</p:column>
+			<p:column >
+				<p:outputLabel value="#{parameterView.getStaffJobTitles(r.idStaff)}" escape="false" styleClass="preformatted"/>
+			</p:column>
+			
+			<p:column >
+                <ui:repeat value="#{staffController.getStaffDocuments(r.idStaff)}" var="d" >   	
+                   	<p:commandLink ajax="false" immediate="true" update="">
+                   		<h:graphicImage name="#{d.iconPath}" height="32" title="#{d.title}"/>
+		                <p:fileDownload value="#{documentumView.getDocumentStream(d.documentKey)}" />
+                    </p:commandLink>
+                </ui:repeat>
+			</p:column>
+			
+		</p:dataTable>
+
+
+	 </h:form>
 		
-		<p:growl id="messages" showDetail="true" />
-		
-		<p:accordionPanel multiple="true" styleClass="sliderPanel" id="sliderPanel">
-
-			<p:tab title="Dokumentumok">
-				<table style="width: 99%;">
-					<tr>
-						<td colspan="2">
-							<h:outputText value="Dokumentumok típusa:" />
-						</td>
-					</tr>	
-					<tr>
-						<td colspan="2">
-						
-						 	<p:selectOneMenu id="contract" value="#{documentView.contract}" style="width:99% !important;">
-	            				<f:selectItem itemLabel="Select One" itemValue="" />
-					            <f:selectItems value="#{documentView.documents}" var="d" itemLabel="#{d.documentType} - #{d.documentSubtype}" itemValue="#{didDocument}" />
-	        			  	</p:selectOneMenu>
-	        			  	
-						</td>
-					</tr>
-					
-					<tr>
-						<td colspan="2">
-							<p:commandButton actionListener="#{staffController.createDocument}" immediate="true" value="Dokumentum kitöltése" icon="ui-icon-folder-open" style="width: 95%;"/>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<p:commandButton actionListener="#{staffController.createDocument}" immediate="true" value="Dokumentum feltöltése" icon="ui-icon-plus" style="width: 95%;"/>
-						</td>
-					</tr>
-					
-					<tr>
-						<td colspan="2">
-							<h:graphicImage name="images/conract_pre.jpg" />
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<h:graphicImage name="images/conract_pre.jpg" />
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<h:graphicImage name="images/conract_pre.jpg" />
-						</td>
-					</tr>
-					
-				</table>
-			</p:tab>
-
-			<p:tab title="Egyéb dokumentumok">
-				<table style="width: 99%;">
-					<tr>
-						<td colspan="2">
-							<h:outputText value="Új feljegyzés:" />
-						</td>
-					</tr>
-					<tr>	
-						<td>
-							<p:inputTextarea rows="6" cols="33" />
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<p:commandButton actionListener="#{staffController.createDocument}" immediate="true" value="Feljegyzés rögzítése" icon="ui-icon-plus" style="width: 95%;"/>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<h:outputText value="Korábbi feljegyzések:" />
-						</td>
-					</tr>
-					
-					<tr>
-						<td colspan="2" >
-							<h:graphicImage name="conract_pre.jpg" />
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<h:graphicImage name="conract_pre.jpg" />
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<h:graphicImage name="conract_pre.jpg" />
-						</td>
-					</tr>
-					
-				</table>
-			</p:tab>	
-
-			<p:tab title="Üzemorvosi igazolások">
-				<table style="width: 99%;">
-					<tr>
-						<td colspan="2"><h:outputText value="Igazolás felvitele:" /></td>
-					</tr>
-					
-					<tr>
-						<td><h:outputText value="Igazolás dátuma:" /></td>
-						<td><p:calendar pattern="yyyy.MM.dd" mask="true" showOn="button" styleClass="calendarSpan"/></td>
-					</tr>
-					<tr>
-						<td><h:outputText value="Lejárat dátuma:" /></td>
-						<td><p:calendar pattern="yyyy.MM.dd" mask="true" showOn="button" styleClass="calendarSpan"/></td>
-					</tr>
-
-
-					<tr>
-						<td><p:fileUpload value="#{documentView.fileDrDoc}" mode="simple" skinSimple="true"/></td>
-						<td><p:commandButton value="Feltölt" ajax="true" actionListener="#{documentView.uploadDrDoc}" disabled="true" /></td>
-					</tr>
-					
-  
-					<tr>
-						<td colspan="2">
-							<p:commandButton actionListener="#{staffController.createDocument}" immediate="true" value="Igazolás rögzítése" icon="ui-icon-plus" style="width: 95%;"/>
-						</td>
-					</tr>
-					
-										
-				</table>
-			</p:tab>	
-
-		</p:accordionPanel>
-    
-    
-	</h:form> 
-
-</ui:composition>    
+	<script type="text/javascript">
+function start() {
+    PF('statusDialog').show();
+}
+ 
+function stop() {
+    PF('statusDialog').hide();
+}
+</script>			
+</ui:composition>   		

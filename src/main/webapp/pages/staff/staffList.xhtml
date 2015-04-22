@@ -26,6 +26,9 @@
            	style="height: 100% !important; width: 100% !important;"
          >
          
+         	<f:facet name="header">
+	            Munkatársak listája
+	        </f:facet>
 	    
 			<p:column width="15%">
 				<f:facet name="header">
@@ -73,6 +76,10 @@
 				</f:facet>
 				<h:outputText value="#{r.privateNote}" />
 			</p:column>
+			<p:column width="25%">
+				<p:commandButton value="Szerkeszt" actionListener="#{staffController.setActiveStaff(r.idStaff)}" action="#{navigator.setContent('staff/staffEditor','staff/staffEditorSlider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+			</p:column>
+			
 		</p:dataTable>
 
 	 </h:form>

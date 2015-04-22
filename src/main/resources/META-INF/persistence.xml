@@ -9,11 +9,20 @@ xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org
 		<class>hu.exclusive.dao.model.StaffBase</class>
 		<class>hu.exclusive.dao.model.Staff</class>
 		<class>hu.exclusive.dao.model.StaffDetail</class>
-		<class>hu.exclusive.dao.model.StaffDocument</class>
 		<class>hu.exclusive.dao.model.StaffJobtitleK</class>
 		<class>hu.exclusive.dao.model.StaffWorkgroupK</class>
 		<class>hu.exclusive.dao.model.StaffWorkgroupPK</class>
 		<class>hu.exclusive.dao.model.StaffWorkplaceK</class>
 		<class>hu.exclusive.dao.model.StaffWorkplacePK</class>
+		<class>hu.exclusive.dao.model.ContractDoc</class>
+		<class>hu.exclusive.dao.model.DrDoc</class>
+		<class>hu.exclusive.dao.model.StaffNote</class>
+		<class>hu.exclusive.dao.model.Attachment</class>
+		<class>hu.exclusive.dao.model.Function</class>
+		<class>hu.exclusive.dao.model.Role</class>
+		<class>hu.exclusive.dao.model.CrmUser</class>
+		<class>hu.exclusive.dao.model.UserRoleK</class>
+		<class>hu.exclusive.dao.model.UserRolePK</class>
+		<class>hu.exclusive.dao.model.SSystem</class>
 	</persistence-unit>
 </persistence>

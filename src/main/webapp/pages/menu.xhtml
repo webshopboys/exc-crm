@@ -4,102 +4,126 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets">
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
     
    		<h:outputStylesheet name="exc-style.css" />
 		<style type="text/css">
 		   .ui-exc-menubar   {mouseover: #ff0000; background-color: #A80000 !important; background: red;}
 		</style>
 
-		<h:form styleClass="header-panel-form" >
+		<h:form styleClass="header-panel-form" id="menuForm">
 		
-		    <p:menubar styleClass="ui-exc-menubar_">
-		        <p:submenu label="Munkaügy" icon="ui-icon-person">
-		            <p:menuitem value="Munkatársak felvitele" action="#{navigator.setContent('staff/staff','staff/staffEditorSlider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		
+<!-- 		<sec:authorize ifAnyGranted="02-01-01-04" >ifAnyGranted=",02-01-01-04"</sec:authorize> -->
+<!-- 		<sec:authorize access="hasRole('02-01-M')" >access="02-01-M"</sec:authorize> -->
+		
+		
+		    <p:menubar styleClass="ui-exc-menubar_" id="excMenu">
+		    
+		        <p:submenu label="Munkaügy" icon="ui-icon-person" rendered="#{sec:areAnyGranted('02-01-M')}">
+		            <p:menuitem value="Munkatársak felvitele" action="#{navigator.setContent('staff/staffEditor','staff/staffEditorSlider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
 		            <p:menuitem value="Munkatársak listázása" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
 		            <p:menuitem value="Dokumentumok" action="#{navigator.setContent('staff/staffDoc','staff/staffDocSlider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
 		         </p:submenu>
 		        
-		         <p:submenu label="Telephely" icon="ui-icon-home">
-		            <p:menuitem value="Telephelyek" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Csoportok" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Munkahelyek" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Érkezések és távozások" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Riasztó felhasználók" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Bejáratok kezelése" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Riasztási szabályok" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		         <p:submenu label="Telephely" icon="ui-icon-home" rendered="#{sec:areAnyGranted('02-02-M')}">
+		            <p:menuitem value="Telephelyek" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Csoportok" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Munkahelyek" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Érkezések és távozások" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Riasztó felhasználók" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Bejáratok kezelése" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Riasztási szabályok" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
 		         </p:submenu>
   	    
-			 	<p:submenu label="Beosztás" icon="ui-icon-calculator">
-		            <p:menuitem value="Beosztások" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Beosztás készítés" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Beosztás beállítások" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Éves szabadság" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Szabadság tervező" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+			 	<p:submenu label="Beosztás" icon="ui-icon-calculator" rendered="#{sec:areAnyGranted('07-10-M')}">
+		            <p:menuitem value="Beosztások" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Beosztás készítés" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Beosztás beállítások" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Éves szabadság" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Szabadság tervező" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
 		         </p:submenu>
   				
-  				<p:submenu label="Cafetéria" icon="ui-icon-heart">		        
+  				<p:submenu label="Cafetéria" icon="ui-icon-heart" rendered="#{sec:areAnyGranted('08-05-M')}">		        
 		         </p:submenu>
 		         
-		         <p:submenu label="Hiányok" icon="ui-icon-notice">
+		         <p:submenu label="Hiányok" icon="ui-icon-notice" rendered="#{sec:areAnyGranted('HIANY-M')}">
 		         </p:submenu>
 		         
-		         <p:submenu label="Szállítói" icon="ui-icon-extlink">
+		         <p:submenu label="Szállítói" icon="ui-icon-extlink" rendered="#{sec:areAnyGranted('SZALL-M')}">
 		         </p:submenu>
 		         
-		         <p:submenu label="Házipénztár" icon="ui-icon-script">
+		         <p:submenu label="Házipénztár" icon="ui-icon-script" rendered="#{sec:areAnyGranted('HAZIP-M')}">
 		         </p:submenu>
 		         
-		         <p:submenu label="Raktár" icon="ui-icon-tag">
-		            <p:menuitem value="Keresés a raktárban" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Beszerzés" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Mozgatás raktárak között" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Készletérték" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Minimimum-maximum" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Raktárak" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Kategóriák" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Cikknevek" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		         <p:submenu label="Raktár" icon="ui-icon-tag" rendered="#{sec:areAnyGranted('03-M')}">
+		            <p:menuitem value="Keresés a raktárban" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Beszerzés" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Mozgatás raktárak között" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Készletérték" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Minimimum-maximum" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Raktárak" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Kategóriák" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Cikknevek" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
 		         </p:submenu>
 		         
-		         <p:submenu label="Naptár" icon="ui-icon-calendar">
-		            <p:menuitem value="Naptár" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Szabályok" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Figyelmeztetések" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		         <p:submenu label="Naptár" icon="ui-icon-calendar" rendered="#{sec:areAnyGranted('06-M')}">
+		            <p:menuitem value="Naptár" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Szabályok" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Figyelmeztetések" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
 		         </p:submenu>
 		         
-		         <p:submenu label="Ellenőrzések" icon="ui-icon-search" >
-		            <p:menuitem value="Ellenőrzések típusa" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Ellenőrzés típusok láthatósága" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Értesítendők listája" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Szabálytalanság kategóriák" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Szabálytalanság hiba típusok" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Új ellenőrzés felvitele" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Jegyzőkönyv kitöltése" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Jegyzőkönyvek listája" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Ellenőrzések kimutatása" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Jutalékok feltöltése" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Jutalék kimutatása" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Jutalék kifizetés szüneteltetése" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		         <p:submenu label="Ellenőrzések" icon="ui-icon-search" rendered="#{sec:areAnyGranted('EBC-M')}">
+		            <p:menuitem value="Ellenőrzések típusa" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Ellenőrzés típusok láthatósága" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Értesítendők listája" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Szabálytalanság kategóriák" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Szabálytalanság hiba típusok" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Új ellenőrzés felvitele" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Jegyzőkönyv kitöltése" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Jegyzőkönyvek listája" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Ellenőrzések kimutatása" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Jutalékok feltöltése" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Jutalék kimutatása" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Jutalék kifizetés szüneteltetése" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
 		         </p:submenu>
 		         
-		         <p:submenu label="Gépjármű" icon="ui-icon-wrench">
+		         <p:submenu label="Gépjármű" icon="ui-icon-wrench" rendered="#{sec:areAnyGranted('09-M')}">
 		         </p:submenu>
 		         
 		         <p:submenu label="Rendszer" icon="ui-icon-gear">
-		            <p:menuitem value="Munkakörök" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Riasztási esemény típusok" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Jogok" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Verzió" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Munkakörök" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Riasztási esemény típusok" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Jogok" action="#{navigator.setContent('system/sysRoles','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Felhasználók" action="#{navigator.setContent('system/sysUser','system/sysUsersSlider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Dokumentumok" action="#{navigator.setContent('system/sysDocuments','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Verzió: #{parameterView.systemVersion}" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
 		         </p:submenu>
 		         
-		         <p:submenu label="#{loginController.userName}" icon="ui-icon-power">
-		            <p:menuitem value="Üzeneteim" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Adataim" action="#{navigator.setContent('staff/staffList','staff/staffListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Kijelentkezés"  url="j_spring_security_logout" />
+		         <p:submenu label="Felhasználó: #{loginController.userName}" icon="ui-icon-power" id="userMenu" styleClass="#{loginController.userMenuClass}">
+		            <p:menuitem value="Verzió:  #{parameterView.systemVersion}" />
+		            <p:menuitem value="Üzeneteim" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true" styleClass="messagemenu"/>
+		            <p:menuitem value="Adataim" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Üzit kaptam teszt #{loginController.userMenuClass}" action="#{loginController.setUserMenuClass('usergetmessage')}" immediate="true"/>		     
+		            <p:menuitem value="Üzit olvastam" action="#{loginController.setUserMenuClass('')}" immediate="true"/>		             
+		         	<p:menuitem value="Kijelentkezés" url="j_spring_security_logout" />
+		            
 		         </p:submenu>
   	
       		</p:menubar>
 	      
+	      
+	       <script>
+		       setInterval(function(){
+		    	   if(jQuery(".usergetmessage").length>0){
+		    		   jQuery(".usergetmessage>a.ui-submenu-link").effect( "pulsate" );
+		    		   //jQuery(".usergetmessage .messagemenu").effect( "pulsate" );
+		    	   }
+		    	   
+		        },5000)
+	       		
+	       </script>
 	    
 	    </h:form>
 	    

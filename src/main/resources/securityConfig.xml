@@ -2,57 +2,84 @@
 	xmlns="http://www.springframework.org/schema/security"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:beans="http://www.springframework.org/schema/beans"
-    xmlns:sec="http://www.springframework.org/schema/security"
     xsi:schemaLocation="
       http://www.springframework.org/schema/security
       http://www.springframework.org/schema/security/spring-security.xsd
       http://www.springframework.org/schema/beans
       http://www.springframework.org/schema/beans/spring-beans.xsd">
       
-	<sec:global-method-security pre-post-annotations="enabled" secured-annotations="enabled" >
+    <debug /> 
+	<global-method-security pre-post-annotations="enabled" secured-annotations="enabled" >
 <!-- 	  <sec:expression-handler ref="expressionHandler"/> -->
-	</sec:global-method-security>
+	</global-method-security>
 	
-	<sec:http auto-config="true" use-expressions="true" entry-point-ref="myPermissionEvaluator">
 	
-		<sec:form-login 
+	<http pattern="/resources/**" security="none"/>
+    <http pattern="/error/**" security="none"/>
+    
+    <http use-expressions="true">
+      
+        <intercept-url pattern="/pages/**" access="isAuthenticated()"/>
+        <intercept-url pattern="/pages/exc.xhtml" access="permitAll" />
+        <!-- Allow all other requests. In a real application you should adopt a whitelisting approach where access is not allowed by default -->
+        <!-- intercept-url pattern="/**" access="permitAll" /-->
+        
+        <form-login 
 			login-page="/login.xhtml" 
 			login-processing-url="/j_spring_security_check"
 			default-target-url="/pages/exc.xhtml" 
 			always-use-default-target="false" 
 			authentication-failure-url="/login.xhtml?r=login_error" />
-			
-
-			
-		<sec:logout invalidate-session="true" logout-success-url="/login.xhtml?r=logout" delete-cookies="JSESSIONID"/>
 		
- 		<sec:intercept-url pattern="/pages/**" access="permitAll" />
- 		<sec:intercept-url pattern="/**" access="permitAll" />
- 		
-<!-- 		<sec:access-denied-handler ref="myPermissionEvaluator"/> -->
-		<sec:access-denied-handler error-page="login.xhtml?r=403"/>
-	</sec:http>
+        <logout logout-success-url="/login.xhtml?r=logout" delete-cookies="JSESSIONID" invalidate-session="true"/>
+        <remember-me />
+<!--         <csrf disabled="true"/>	 -->
+        
+       
+        <!-- Uncomment to limit the number of sessions a user can have -->
+<!--         <session-management invalid-session-url="/error/timeout.xhtml"> -->
+            <!--<concurrency-control max-sessions="1" error-if-maximum-exceeded="true" />-->
+<!--         </session-management> -->
 
-	  	<!-- Set customUserDetailsService class as the authentication Manager for Spring Security-->
-	  
-	    <sec:authentication-manager alias="authenticationManager">
-	        <sec:authentication-provider user-service-ref="userService">
-<!-- 	        <sec:authentication-provider>     -->	            
-<!-- 	            <sec:user-service> -->
-<!-- 	                <sec:user name="lokesh" password="password" authorities="ROLE_USER" /> -->
-<!-- 	                <sec:user name="admin" password="admin" authorities="ROLE_USER,ROLE_ADMIN" /> -->
-<!-- 	            </sec:user-service> -->
-				<sec:password-encoder hash="md5"></sec:password-encoder>
-	        </sec:authentication-provider>
-	    </sec:authentication-manager>
-    
-    
-    <beans:bean id="myPermissionEvaluator" class="hu.unisoft.cplm.service.PermissionHandler" />
+    </http>
+	
+	<beans:bean id="encoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder" />
+	
+	
+    <!--
+    Usernames/Passwords are
+        rod/koala
+        dianne/emu
+        scott/wombat
+        peter/opal
+    -->    
 
-
-<!-- 	<beans:bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler"> -->
-<!-- 	     <beans:property name="permissionEvaluator" ref="myPermissionEvaluator"/> -->
-<!-- 	</beans:bean> -->
+    <authentication-manager alias="authenticationManager" >
+        <authentication-provider user-service-ref="userService">
+            <password-encoder hash="plaintext"/>
+<!--             <user-service> -->
+<!--                 <user name="rod" password="4efe081594ce25ee4efd9f7067f7f678a347bccf2de201f3adf2a3eb544850b465b4e51cdc3fcdde" authorities="ROLE_SUPERVISOR, ROLE_USER, ROLE_TELLER" /> -->
+<!--                 <user name="dianne" password="957ea522524a41cbfb649a3e293d56268f840fd5b661b499b07858bc020d6d223f912e3ab303b00f" authorities="ROLE_USER,ROLE_TELLER" /> -->
+<!--                 <user name="scott" password="fb1f9e48058d30dc21c35ab4cf895e2a80f2f03fac549b51be637196dfb6b2b7276a89c65e38b7a1" authorities="ROLE_USER" /> -->
+<!--                 <user name="peter" password="e175750688deee19d7179d444bfaf92129f4eea8b4503d83eb8f92a7dd9cda5fbae73638c913e420" authorities="ROLE_USER" /> -->
+<!--             </user-service> -->
+        </authentication-provider>
+    </authentication-manager>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

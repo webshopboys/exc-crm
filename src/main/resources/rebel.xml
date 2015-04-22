@@ -2,18 +2,18 @@
 <application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.zeroturnaround.com" xsi:schemaLocation="http://www.zeroturnaround.com http://www.zeroturnaround.com/alderaan/rebel-2_0.xsd">
 
 	<classpath>
-		<dir name="P:/exclusive.hu/openshift-rhcloud-git/exc/target/classes">
+		<dir name="P:/exclusive.hu/GITHUB/exc-crm/target/classes">
 		</dir>
 	</classpath>
 
 	<web>
 		<link target="/">
-			<dir name="P:/exclusive.hu/openshift-rhcloud-git/exc/target/m2e-wtp/web-resources">
+			<dir name="P:/exclusive.hu/GITHUB/exc-crm/target/m2e-wtp/web-resources">
 				<exclude name="/"/>
 			</dir>
 		</link>
 		<link target="/">
-			<dir name="P:/exclusive.hu/openshift-rhcloud-git/exc/src/main/webapp">
+			<dir name="P:/exclusive.hu/GITHUB/exc-crm/src/main/webapp">
 			</dir>
 		</link>
 	</web>

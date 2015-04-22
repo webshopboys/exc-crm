@@ -81,6 +81,23 @@ public class DaoFilter {
 
     private boolean anyEnought = true;
 
+    public DaoFilter(String emtityOrNamedQuery, String fieldName, RELATION relation, Object anyValue) {
+        this._fieldName = fieldName;
+        this._relation = relation;
+        this._values = anyValue;
+        this._entity = emtityOrNamedQuery;
+    }
+
+    public DaoFilter() {
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[_entity=" + _entity + ", _fieldName=" + _fieldName + ", _relation=" + _relation
+                + ", _values=" + ObjectUtils.toString(_values)
+                + (filterItems.isEmpty() ? "" : ", items: " + ObjectUtils.toString(filterItems)) + "]";
+    }
+
     public long getTotalCount() {
         return totalCount;
     }
@@ -125,14 +142,11 @@ public class DaoFilter {
     }
 
     public void addFilter(IExitsPredicator exists, String fieldName, RELATION relation, Object anyValue) {
-        DaoFilter filter = new DaoFilter();
-        filter._fieldName = fieldName;
-        filter._relation = relation;
-        filter._values = anyValue;
-        filter._exists = exists;
+        DaoFilter _item = new DaoFilter(null, fieldName, relation, anyValue);
+        _item._exists = exists;
 
-        if (!filterItems.contains(filter)) {
-            filterItems.add(filter);
+        if (!filterItems.contains(_item)) {
+            filterItems.add(_item);
         }
     }
 
@@ -161,22 +175,15 @@ public class DaoFilter {
  * @param anyValue
  */
     public void addFilter(String subEntity, String fieldName, RELATION relation, Object anyValue) {
-        DaoFilter filter = new DaoFilter();
-        filter._fieldName = fieldName;
-        filter._relation = relation;
-        filter._values = anyValue;
-        filter._entity = subEntity;
-
-        // System.out.println("addFilter " + filter + " exists? " + filterItems.contains(filter));
+        DaoFilter _item = new DaoFilter(subEntity, fieldName, relation, anyValue);
 
         if (relation != RELATION.ISNULL && relation != RELATION.NOTNULL && ObjectUtils.nv(anyValue) == null)
             return;
 
-        if (!filterItems.contains(filter)) {
-            filterItems.add(filter);
+        if (!filterItems.contains(_item)) {
+            filterItems.add(_item);
         }
 
-        // System.out.println("new filterItems " + filterItems);
     }
 
     /**
@@ -223,7 +230,7 @@ public class DaoFilter {
     public <T> List<Predicate> createPredicates(CriteriaBuilder builder, CriteriaQuery<?> query, Root<T> root) {
         List<Predicate> predicateList = new ArrayList<Predicate>();
 
-        System.err.println("predicate filteritems: " + filterItems);
+        System.err.println("predicate anyEnought=" + anyEnought + " filteritems: " + filterItems);
 
         for (DaoFilter item : filterItems) {
 
@@ -406,12 +413,6 @@ public class DaoFilter {
         filterItems.clear();
     }
 
-    @Override
-    public String toString() {
-        return "DaoFilter [startIndex=" + startIndex + ", pageSize=" + pageSize + ", anyEnought=" + anyEnought + ", _fieldName="
-                + _fieldName + ", _relation=" + _relation + ", _values=" + ObjectUtils.toString(_values) + "]";
-    }
-
     public String getInfo() {
         if (_relation != null) {
             return "{" + _fieldName + "} " + _relation.info()
@@ -441,5 +442,9 @@ public class DaoFilter {
 
     public void setRelation(RELATION relation) {
         this._relation = relation;
+    }
+
+    public List<DaoFilter> getFilterItems() {
+        return filterItems;
     }
 }

@@ -13,12 +13,9 @@
 	http://www.springframework.org/schema/tx 
 	http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
 
-	<bean id="excDao"
-		class="hu.exclusive.dao.service.ExcDaoServiceImpl"
-		autowire="constructor">
-	</bean>
-
-	<bean id="staffService" class="hu.exclusive.dao.service.StaffService" autowire="constructor"></bean>
-	<bean id="parametersService" class="hu.exclusive.dao.service.ParametersService" autowire="constructor"></bean>
-	
+	<bean id="excDao" class="hu.exclusive.dao.service.ExcDaoServiceImpl" autowire="constructor"></bean>
+	<bean id="userService" class="hu.exclusive.crm.service.UserService" autowire="constructor"></bean>
+	<bean id="staffService" class="hu.exclusive.crm.service.StaffService" autowire="constructor"></bean>
+	<bean id="parametersService" class="hu.exclusive.crm.service.ParametersService" autowire="constructor"></bean>
+	<bean id="attachmentService" class="hu.exclusive.crm.service.AttachmentService" autowire="constructor"></bean>
 </beans>

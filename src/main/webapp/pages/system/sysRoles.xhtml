@@ -1,0 +1,123 @@
+<ui:composition 
+ 	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+    
+   		<h:outputStylesheet name="exc-style.css" />
+
+		<h:form id="roleForm">
+			
+			<p:notificationBar position="top" effect="slide" widgetVar="topBar" styleClass="top">  
+		        <h:outputText value="What PrimeFaces has so far is just the beginning!" style="color:#FFCC00;font-size:36px;" />  
+		    </p:notificationBar>  
+		    
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+	      		<p:commandButton value="Igen" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+	      		<p:commandButton value="Nem" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		    </p:confirmDialog>
+		    
+		    <p:growl id="error" showDetail="true" sticky="true" redisplay="false" severity="error"/>
+		    <p:growl id="info" showDetail="true" sticky="false" redisplay="false" severity="info"/>
+			 
+			 
+			 <p:panel header="Szerepek" footer="A szerepek a jobboldali ikonnal kinyithatók-becsukhatók" toggleable="true" collapsed="false" style="margin-bottom:20px"> 
+				
+				<h:panelGrid cellpadding="0">
+		        
+		            <p:row>
+		            	<p:column colspan="5">
+							<p:dataList value="#{sysController.adminRoles}" var="role" type="definition">
+						       <p:panel header=" #{role.roleName} (#{role.title})" toggleable="true" collapsed="true">
+				        			
+				        		   <h:inputText value="#{role.roleName}" style="width: 100px;"/>
+						           <h:inputText value="#{role.roleComment}" style="width: 250px;" />
+						           
+						           <p:commandButton actionListener="#{sysController.updateRole(role.idRole)}" immediate="false" value="Módosít" update=":roleForm" />
+					    		   <p:commandButton actionListener="#{sysController.deleteRole(role.idRole)}" immediate="false" value="Töröl" update=":roleForm">
+					    		     	<p:confirm header="Rekord törlése" message="Biztosan törlöd ez a szerepet '#{role.roleName}'?" icon="ui-icon-alert" />
+								   </p:commandButton>
+				        			
+				        			<p:dataList value="#{sysController.getRoleFunctions(role.idRole)}" var="rf" type="definition">
+				        			
+				        				<p:selectBooleanCheckbox value="#{role.getFunction(rf.idFunction).selected}" itemLabel="#{rf.functionCode} #{rf.functionName}" styleClass="rf-#{rf.selected} rf-checkbox" 
+				        				onchange="this.checked ? jQuery(this).closest('.rf-checkbox').addClass('rf-true') : jQuery(this).closest('.rf-checkbox').removeClass('rf-true')"/>
+					                   
+				        			</p:dataList>
+				        			
+						       </p:panel>
+						    </p:dataList>
+			    		</p:column>
+					</p:row> 
+					
+					<p:row class="buttonrow">
+		            	<p:column>
+				    		<p:outputLabel value="Új szerep neve:"/>
+				    	</p:column>
+				    	<p:column>
+				    		<h:inputText value="#{sysController.roleName}" style="width: 100px;"/>
+				    	</p:column>
+				    	<p:column>
+				    		<p:outputLabel value="Új szerep leírása:"/>
+				    	</p:column>
+				    	<p:column>
+				    		<h:inputText value="#{sysController.roleComment}" style="width: 250px;"/>
+				    	</p:column>
+				    	<p:column>
+				    		<p:commandButton actionListener="#{sysController.addRole}" immediate="false" value="Rögzít" update="roleForm" />
+				    	</p:column>
+				    </p:row>	
+				               
+		        </h:panelGrid>
+			    
+		    </p:panel>
+		    
+		    
+		    
+		    
+			
+	    	 <p:panel header="Funkciók" footer="A funkciók a jobboldali ikonnal kinyithatók-becsukhatók" toggleable="true" collapsed="true" style="margin-bottom:20px">
+		        <h:panelGrid cellpadding="0">
+		        
+		            <p:row>
+		            	<p:column colspan="5">
+				            <p:dataList value="#{sysController.adminFunctions}" var="f" type="definition">
+				               <div style="width: 50px;"/>
+					           <h:inputText value="#{f.functionCode}" style="width: 100px;"/>
+					           <h:inputText value="#{f.functionName}" style="width: 250px;" />
+					           <p:commandButton actionListener="#{sysController.updateFunction(f.idFunction)}" immediate="false" value="Módosít" update=":roleForm" />
+				    		   <p:commandButton actionListener="#{sysController.deleteFunction(f.idFunction)}" immediate="false" value="Töröl" update=":roleForm">
+				    		     	<p:confirm header="Rekord törlése" message="Biztosan törlöd ez a funkciót '#{f.functionName}'?" icon="ui-icon-alert" />
+							   </p:commandButton>
+						    </p:dataList>
+					    </p:column>
+					</p:row> 
+					
+					<p:row class="buttonrow">
+		            	<p:column>
+				    		<p:outputLabel value="Új funkció kódja:"/>
+				    	</p:column>
+				    	<p:column>
+				    		<h:inputText value="#{sysController.functionCode}" style="width: 100px;"/>
+				    	</p:column>
+				    	<p:column>
+				    		<p:outputLabel value="Új funkció neve:"/>
+				    	</p:column>
+				    	<p:column>
+				    		<h:inputText value="#{sysController.functionName}" style="width: 250px;"/>
+				    	</p:column>
+				    	<p:column>
+				    		<p:commandButton actionListener="#{sysController.addFunction}" immediate="false" value="Rögzít" update="roleForm" />
+				    	</p:column>
+				    </p:row>	
+				               
+		        </h:panelGrid>
+		    </p:panel>
+	    
+	    
+	    
+	    </h:form>
+	    
+</ui:composition>    

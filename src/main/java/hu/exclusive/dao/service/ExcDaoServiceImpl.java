@@ -1,9 +1,18 @@
 package hu.exclusive.dao.service;
 
 import hu.exclusive.dao.DaoFilter;
+import hu.exclusive.dao.model.Attachment;
+import hu.exclusive.dao.model.ContractDoc;
+import hu.exclusive.dao.model.CrmUser;
+import hu.exclusive.dao.model.DrDoc;
+import hu.exclusive.dao.model.EntityCommons;
+import hu.exclusive.dao.model.Function;
 import hu.exclusive.dao.model.Jobtitle;
+import hu.exclusive.dao.model.Role;
+import hu.exclusive.dao.model.SSystem;
 import hu.exclusive.dao.model.Staff;
-import hu.exclusive.dao.model.StaffDocument;
+import hu.exclusive.dao.model.StaffDetail;
+import hu.exclusive.dao.model.StaffNote;
 import hu.exclusive.dao.model.Workgroup;
 import hu.exclusive.dao.model.Workplace;
 
@@ -18,13 +27,214 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.hibernate.metamodel.domain.Entity;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class ExcDaoServiceImpl implements IExcDaoService {
 
     @PersistenceContext
     private EntityManager em;
+
+    public ExcDaoServiceImpl() {
+        System.err.println("ExcDaoServiceImpl implements IExcDaoService created. " + hashCode());
+    }
+
+    @Transactional
+    @Override
+    public void saveStaff(StaffDetail staff) {
+        System.err.println("ExcDaoServiceImpl.saveStaff(" + staff + ")");
+        if (staff.getIdStaff() == null)
+            em.persist(staff);
+        else
+            em.merge(staff);
+    }
+
+    @Transactional
+    @Override
+    public void saveDocument(Attachment document) {
+        if (document.getId() == null)
+            em.persist(document);
+        else
+            em.merge(document);
+    }
+
+    @Transactional
+    @Override
+    public void saveDocument(ContractDoc document) {
+        System.out.println("save " + document);
+        if (document.getId() == null)
+            em.persist(document);
+        else
+            em.merge(document);
+    }
+
+    @Transactional
+    @Override
+    public void saveDocument(DrDoc document) {
+        if (document.getId() == null)
+            em.persist(document);
+        else
+            em.merge(document);
+    }
+
+    @Transactional
+    @Override
+    public void saveDocument(StaffNote document) {
+        if (document.getId() == null)
+            em.persist(document);
+        else
+            em.merge(document);
+    }
+
+    @Transactional
+    @Override
+    public List<ContractDoc> getContractDocs(DaoFilter filter) {
+
+        if (filter == null) {
+            return em.createNamedQuery("ContractDoc.findAll", ContractDoc.class).getResultList();
+
+        } else if (DaoFilter.RELATION.NAMED_QUERY == filter.getRelation()) {
+
+            return getNamedEntities(ContractDoc.class, filter);
+
+        } else {
+
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<ContractDoc> cq = cb.createQuery(ContractDoc.class);
+
+            Root<ContractDoc> r = cq.from(ContractDoc.class);
+
+            Path<String> p = r.get("documentType");
+            cq.orderBy(cb.asc(p));
+
+            List<Predicate> predicateList = filter.createPredicates(cb, cq, r);
+            Predicate[] predicates = new Predicate[predicateList.size()];
+            predicateList.toArray(predicates);
+
+            if (predicates.length == 1) {
+                cq.where(predicates[0]);
+            } else if (predicates.length > 1) {
+                cq.where(filter.isAnyEnought() ? cb.or(predicates) : cb.and(predicates));
+            }
+
+            TypedQuery<ContractDoc> tq = em.createQuery(cq);
+            return tq.getResultList();
+        }
+    }
+
+    @Transactional
+    @Override
+    public List<DrDoc> getDrDocs(DaoFilter filter) {
+        if (filter != null && DaoFilter.RELATION.NAMED_QUERY == filter.getRelation()) {
+            return getNamedEntities(DrDoc.class, filter);
+        } else {
+            return em.createNamedQuery("DrDoc.findAll", DrDoc.class).getResultList();
+        }
+    }
+
+    @Transactional
+    @Override
+    public List<StaffNote> getStaffNotes(DaoFilter filter) {
+        if (filter != null && DaoFilter.RELATION.NAMED_QUERY == filter.getRelation()) {
+            return getNamedEntities(StaffNote.class, filter);
+
+        } else {
+            return em.createNamedQuery("StaffNote.findAll", StaffNote.class).getResultList();
+        }
+    }
+
+    @Transactional
+    @Override
+    public List<Attachment> getAttachments(DaoFilter filter) {
+        if (filter != null && DaoFilter.RELATION.NAMED_QUERY == filter.getRelation()) {
+            return getNamedEntities(Attachment.class, filter);
+        } else {
+            return em.createNamedQuery("Attachment.findAll", Attachment.class).getResultList();
+        }
+    }
+
+    private <T> List<T> getNamedEntities(Class<T> klass, DaoFilter filter) {
+
+        if (filter.getFilterItems() == null || filter.getFilterItems().isEmpty()) {
+            // simple filter
+            return em.createNamedQuery(filter.getEntity(), klass).setParameter(filter.getFieldName(), filter.getValues())
+                    .getResultList();
+
+        } else {
+            // multiple filters
+            // if (true)
+            // throw new RuntimeException("Not implemented yet");
+
+            List<DaoFilter> params = filter.getFilterItems();
+
+            String[] parameterNames = new String[params.size()];
+            Object[] parameterValues = new Object[params.size()];
+            String namedQuery = null;
+            int x = 0;
+            for (DaoFilter item : params) {
+                if (namedQuery == null)
+                    namedQuery = item.getEntity();
+                parameterNames[x] = item.getFieldName();
+                parameterValues[x] = item.getValues();
+            }
+
+            return getNamedEntities(namedQuery, klass, parameterNames, parameterValues);
+        }
+    }
+
+    private <T> List<T> getNamedEntities(String namedQuery, Class<T> klass, String[] parameterNames, Object[] parameterValues) {
+        TypedQuery<T> nq = em.createNamedQuery(namedQuery, klass);
+        for (int i = 0; i < parameterNames.length; i++) {
+            nq.setParameter(parameterNames[i], parameterValues[i]);
+        }
+
+        return nq.getResultList();
+    }
+
+    @Transactional
+    @Override
+    public void saveUser(CrmUser user) {
+
+        if (user.getIdCrmUser() == null || user.getIdCrmUser() == 0)
+            em.persist(user);
+        else
+            em.merge(user);
+
+        System.out.println(user + " user persisted? " + user);
+
+    }
+
+    @Transactional
+    @Override
+    public void saveFunction(Function f) {
+        em.merge(f);
+        System.out.println(f + " function persisted? ");
+    }
+
+    @Transactional
+    @Override
+    public void saveRole(Role r) {
+        em.merge(r);
+        System.out.println(r + " role persisted? ");
+    }
+
+    @Override
+    public CrmUser getUser(String login) {
+        return em.createNamedQuery("CrmUser.find", CrmUser.class).setParameter("loginName", login).getSingleResult();
+    }
+
+    @Override
+    public List<CrmUser> getUsers(DaoFilter filter) {
+        return em.createNamedQuery("CrmUser.findAll", CrmUser.class).getResultList();
+
+    }
+
+    @Override
+    public StaffDetail getStaffDetail(Integer idStaff) {
+        return em.createNamedQuery("StaffDetail.findStaff", StaffDetail.class).setParameter("idStaff", idStaff).getSingleResult();
+    }
 
     @Override
     public List<Staff> getStaffList(DaoFilter filter) {
@@ -60,7 +270,8 @@ public class ExcDaoServiceImpl implements IExcDaoService {
 
         filter.setTotalCount(count == null ? 0 : count);
 
-        System.err.println("count " + count + " or " + filter.getTotalCount() + " per " + results.size());
+        System.err.println("[startIndex=" + filter.getStartIndex() + ", pageSize=" + filter.getPageSize() + ", count " + count
+                + " or " + filter.getTotalCount() + " per " + results.size());
 
         return results;
     }
@@ -124,39 +335,6 @@ public class ExcDaoServiceImpl implements IExcDaoService {
     }
 
     @Override
-    public List<StaffDocument> getDocuments(DaoFilter filter) {
-
-        try {
-            System.err.println("getDocuments " + filter.getInfo());
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<StaffDocument> cq = cb.createQuery(StaffDocument.class);
-            Root<StaffDocument> r = cq.from(StaffDocument.class);
-
-            Path<String> p = r.get("documentType");
-            Path<String> p2 = r.get("documentSubtype");
-            cq.orderBy(cb.asc(p), cb.asc(p2));
-
-            List<Predicate> predicateList = filter.createPredicates(cb, cq, r);
-            Predicate[] predicates = new Predicate[predicateList.size()];
-            predicateList.toArray(predicates);
-
-            if (predicates.length == 1) {
-                cq.where(predicates[0]);
-            } else if (predicates.length > 1) {
-                cq.where(filter.isAnyEnought() ? cb.or(predicates) : cb.and(predicates));
-            }
-
-            TypedQuery<StaffDocument> tq = em.createQuery(cq);
-
-            return tq.getResultList();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
     public List<Workgroup> getWorkgroups(DaoFilter filter) {
         // CriteriaBuilder builder = em.getCriteriaBuilder();
         // CriteriaQuery<Workgroup> query = builder.createQuery(Workgroup.class);
@@ -178,6 +356,16 @@ public class ExcDaoServiceImpl implements IExcDaoService {
     }
 
     @Override
+    public List<Role> getRoles(DaoFilter daoFilter) {
+        return em.createNamedQuery("Role.findAll", Role.class).getResultList();
+    }
+
+    @Override
+    public List<Function> getFunctions(DaoFilter daoFilter) {
+        return em.createNamedQuery("Function.findAll", Function.class).getResultList();
+    }
+
+    @Override
     public List<Workplace> getWorkplaces(DaoFilter filter) {
 
         if (filter != null && DaoFilter.RELATION.NAMED_QUERY == filter.getRelation()) {
@@ -192,129 +380,31 @@ public class ExcDaoServiceImpl implements IExcDaoService {
 
     }
 
-    /*
-     * 
-     * EntityManager em = emf.createEntityManager();
-     * CriteriaBuilder cb = em.getCriteriaBuilder();
-     * CriteriaQuery<BaseDataType> cq = cb.createQuery(BaseDataType.class);
-     * Root<BaseDataType> r = cq.from(BaseDataType.class);
-     * Subquery<BaseData> subQuery = cq.subquery(BaseData.class);
-     * Root<BaseData> subQueryRoot = subQuery.from(BaseData.class);
-     * Predicate p1 = cb.like(subQueryRoot.<String>get("value"), "%fix%");
-     * Predicate p2 = cb.equal(r.get("baseData"), subQueryRoot);
-     * subQuery.where(cb.and(p1, p2));
-     * cq.where((cb.exists(subQuery)));
-     * TypedQuery<BaseDataType> tq = em.createQuery(cq);
-     * List<BaseDataType> results = tq.getResultList();
-     * for (BaseDataType result : results) {
-     * System.out.println(result.getId() + " " + result.getName());
-     * }
-     */
+    @Override
+    public String getSystemParameter(String sysgroup, String syskey) {
+        List<SSystem> list = em.createNamedQuery("SSystem.findGroupKey", SSystem.class).setParameter("sysgroup", sysgroup)
+                .setParameter("syskey", syskey).getResultList();
+        if (list != null && list.size() > 0)
+            return list.get(0).getSysparam();
+        return "";
+    }
 
-    // public void create(DocumentQueue data) {
-    //
-    // Validate.notNull(data);
-    //
-    // em.persist(data);
-    // }
-    //
-    // /**
-    // * {@inheritDoc}
-    // */
-    // public void update(DocumentQueue data) {
-    //
-    // Validate.notNull(data);
-    //
-    // em.merge(data);
-    // }
-    //
-    // /**
-    // * {@inheritDoc}
-    // */
-    // @Transactional
-    // public void delete(Long id) {
-    //
-    // Validate.notNull(id);
-    //
-    // DocumentQueue data = find(id);
-    // em.remove(data);
-    // }
-    //
-    // /**
-    // * {@inheritDoc}
-    // */
-    // public DocumentQueue find(Long id) {
-    //
-    // Validate.notNull(id);
-    //
-    // return em.find(DocumentQueue.class, id);
-    // }
-    //
-    // /**
-    // * {@inheritDoc}
-    // */
-    // public List<DocumentQueue> list(Collection<ProcessStatus> statuses) {
-    //
-    // Validate.notNull(statuses);
-    //
-    // String q =
-    // "select d from DocumentQueue d where d.status in (:status) order by d.created desc";
-    //
-    // TypedQuery<DocumentQueue> query = em.createQuery(q, DocumentQueue.class);
-    // query.setParameter("status", statuses);
-    // return query.getResultList();
-    // }
-    //
-    // /**
-    // * {@inheritDoc}
-    // */
-    // public List<DocumentQueue> search(String searchText,
-    // Collection<ProcessStatus> statuses) {
-    //
-    // Validate.notNull(statuses);
-    //
-    // TypedQuery<DocumentQueue> query =
-    // em.createQuery("select d from DocumentQueue d " +
-    // "where d.status in (:status) "
-    // + "and (d.userName like :searchText " +
-    // "or d.resourceType like :searchText " +
-    // "or d.documentName like :searchText) "
-    // + "order by d.created desc", DocumentQueue.class);
-    // query.setParameter("status", statuses);
-    // query.setParameter("searchText", "%" + searchText + "%");
-    // return query.getResultList();
-    // }
-    //
-    // /**
-    // * {@inheritDoc}
-    // */
-    // public List<DocumentQueue> processList(Collection<ProcessStatus>
-    // statuses, int limit) {
-    //
-    // Validate.notNull(statuses);
-    //
-    // String q =
-    // "select d from DocumentQueue d JOIN FETCH d.documentResources where d.status in (:status)";
-    //
-    // TypedQuery<DocumentQueue> query = em.createQuery(q, DocumentQueue.class);
-    // query.setParameter("status", statuses);
-    // query.setMaxResults(limit);
-    // return query.getResultList();
-    // }
-    //
-    // /**
-    // * {@inheritDoc}
-    // */
-    // public int deleteDocumentsFrom(Date date) {
-    //
-    // Validate.notNull(date);
-    //
-    // Query q =
-    // em.createQuery("DELETE FROM DocumentQueue d WHERE d.created <= :date");
-    // q.setParameter("date", date);
-    //
-    // return q.executeUpdate();
-    // }
+    @Override
+    public List<SSystem> getSystemParameters(String sysgroup, String syskey) {
+        List<SSystem> list = em.createNamedQuery("SSystem.findGroupKey", SSystem.class).setParameter("sysgroup", sysgroup)
+                .setParameter("syskey", syskey).getResultList();
+        return list;
+    }
+
+    private void saveEntity(Entity entity, Object instance) {
+        if (EntityCommons.class.isInstance(instance)) {
+            if (((EntityCommons) instance).getId() == null) {
+                em.persist(entity);
+                return;
+            }
+        }
+        em.merge(entity);
+    }
 
     public void setEm(EntityManager em) {
         this.em = em;

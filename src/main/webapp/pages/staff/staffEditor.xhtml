@@ -1,0 +1,217 @@
+<ui:composition 
+ 	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+    
+   	<h:outputStylesheet name="exc-style.css" />
+    	
+   	<h:form id="editorform">
+      
+     	<h:inputHidden value="#{staffController.activeStaff.idStaff}" />
+  
+		<p:growl showDetail="true" sticky="true" rendered="#{not facesContext.validationFailed}"/>  
+		
+		
+        <p:panel id="editPanel" styleClass="editorPanel">
+          	
+          	<f:facet name="header">
+          		<div class="headerDiv">
+          		<p:graphicImage styleClass="headerIcon" name="user_add_128.png" height="32px" rendered="#{staffController.activeStaff.idStaff == null}" />
+          		<p:outputLabel styleClass="headerTitle pushedTitle" value='Új munkatárs felvitele' rendered="#{staffController.activeStaff.idStaff == null}"/>
+		        
+		        <p:graphicImage styleClass="headerIcon" name="user_mod_128.png" height="32px" rendered="#{staffController.activeStaff.idStaff != null}" />
+		        <p:outputLabel styleClass="headerTitle pushedTitle" value='Munkatárs szerkesztése' rendered="#{staffController.activeStaff.idStaff != null}"/>
+		        </div>
+		    </f:facet>  
+		    
+		    <table class="editorTable">
+		    	<tr>
+	        		<td><p:outputLabel for="fullName" value="Teljes név:" title="A név kitöltése kötelező."/></td>
+		            <td><p:inputText id="fullName" value="#{staffController.activeStaff.fullName}" required="true" requiredMessage="A munkatárs nevét töltsd ki!" 
+		            	maxlength="200" styleClass="edit-input wide-text"/></td>
+		            
+		            <td rowspan="20">
+						<c:forEach end="5" var="x">
+						  <div class="editorNoteContainer">
+							<textarea cols="30" rows="6" class="editorNote">Ez itt egy szöveges értékelés, vagy valamilyen figyelmeztetés #{x}</textarea>
+							<p:commandButton icon="ui-icon-trash" styleClass="removeIcon"/>							
+						  </div>
+						</c:forEach>
+					</td>
+					
+					
+            	</tr>
+            	<tr>
+		            <td><p:outputLabel for="birthName" value="Születési név:" /></td>
+		            <td><p:inputText id="birthName" value="#{staffController.activeStaff.birthName}" required="false" maxlength="200" styleClass="edit-input wide-text"/></td>
+		           
+            	</tr>
+            	<tr>
+		            <td><p:outputLabel for="birthDate" value="Születési dátum:" /></td>
+		            <td><p:calendar id="birthDate" value="#{staffController.activeStaff.birthDate}" required="true" requiredMessage="A születési időt töltsd ki!"  
+		            			showOn="button" pattern="yyyy.MM.dd" mask="true" styleClass="edit-input date-text" >
+		           		</p:calendar>
+		           </td>
+		    	</tr>
+            	<tr>
+		            <td><p:outputLabel for="birthPlace" value="Születési hely:" /></td>
+		            <td><p:inputText id="birthPlace" value="#{staffController.activeStaff.birthPlace}" required="false" maxlength="100" styleClass="edit-input wide-text"/></td>
+		            
+	            </tr>
+	             <tr>
+		            <td><p:outputLabel for="motherName" value="Anyja neve:" /></td>
+		            <td><p:inputText id="motherName" value="#{staffController.activeStaff.motherName}" required="false" maxlength="100" styleClass="edit-input wide-text"/></td>
+		            
+            	</tr>
+            	<tr>
+		            <td><p:outputLabel for="sidSerial" value="Személyi vagy igazolvány száma:" /></td>
+		            <td><p:inputText id="sidSerial" value="#{staffController.activeStaff.sidSerial}" required="false" maxlength="30" styleClass="edit-input medium-text"/></td>
+		            
+            	</tr>
+            	<tr>
+		            <td><p:outputLabel for="taxSerial" value="Adószáma:" /></td>
+		            <td><p:inputText id="taxSerial" value="#{staffController.activeStaff.taxSerial}" required="false" maxlength="30" styleClass="edit-input medium-text"/></td>
+		            
+            	</tr>
+            	<tr>
+		            <td><p:outputLabel for="tajSerial" value="Társadalom biztosítási száma:" /></td>
+		            <td><p:inputText id="tajSerial" value="#{staffController.activeStaff.tajSerial}" required="false" maxlength="30" styleClass="edit-input medium-text"/></td>
+		            
+            	</tr>
+            	<tr>
+		            <td><p:outputLabel for="residentAddress" value="Állandó lakcíme:" /></td>
+		            <td><p:inputTextarea id="residentAddress" value="#{staffController.activeStaff.residentAddress}" required="false" rows="3" cols="30" maxlength="300" styleClass="edit-input wide-text"/></td>
+		           
+            	</tr>
+            	<tr>
+		            <td><p:outputLabel for="homeAddress" value="Tartozkodási / levelezési címe:" /></td>
+		            <td><p:inputTextarea id="homeAddress" value="#{staffController.activeStaff.homeAddress}" required="false" rows="3" cols="30" maxlength="300" styleClass="edit-input wide-text"/></td>
+		            
+            	</tr>
+            	
+            	<tr>
+	          	 	<td colspan="2"><p:separator  /></td>
+            	</tr>
+            	<tr>
+		            <td><p:outputLabel for="status" value="Állapot:" /></td>
+		            <td>
+		            	<h:selectOneMenu id="status" value="#{staffController.activeStaff.status}" styleClass="edit-input wide-text">
+				            <f:selectItem itemLabel="Aktív" itemValue="Aktív" />
+				            <f:selectItem itemLabel="Passzív" itemValue="Passzív" />
+				            <f:selectItem itemLabel="Kilépett" itemValue="Kilépett" />
+			        	</h:selectOneMenu>
+			        </td>
+			        
+		        </tr>
+            	<tr>
+		            <td><p:outputLabel for="workgroup" value="Csoportja:" /></td>
+		            <td>
+		            	<h:selectOneMenu id="workgroup" value="#{staffController.activeStaff.workgroup}" styleClass="edit-input wide-text">
+			            	<f:selectItems value="#{parameterView.workgroups}" var="workgroup" itemValue="#{workgroup}" itemLabel='#{workgroup.groupName}' />
+			            	<f:attribute name="collectionType" value="java.util.ArrayList" />
+			        	</h:selectOneMenu>
+			        </td>
+			       
+		        </tr>
+				
+				<tr>
+		            <td><p:outputLabel for="jobtitles" value="Munkakörei:" /></td>
+	       			<td>
+	       			  <h:selectManyListbox id="jobtitles" value="#{staffController.asJobtitles}" styleClass="edit-input wide-text">
+					   	<f:selectItems value="#{parameterView.jobtitles}" var="jobtitle" itemValue="#{jobtitle.idJobtitle}" itemLabel="#{jobtitle.jobtitle}"/>
+					   	<f:attribute name="collectionType" value="java.util.ArrayList" />
+					  </h:selectManyListbox>
+					</td>
+					
+				</tr><tr>
+	          	 	<td colspan="2"><p:separator  /></td>
+            	</tr>
+            	<tr>
+		            <td><p:outputLabel for="salaryType" value="Alapbér:" /></td>
+		            <td>
+		            	<h:selectOneMenu id="salaryType" value="#{staffController.activeStaff.salaryType}" styleClass="edit-input medium-text">
+				            <f:selectItem itemLabel="Órabér" itemValue="Órabér" />
+				            <f:selectItem itemLabel="Havibér" itemValue="Havibér" />
+			        	</h:selectOneMenu>
+			        </td>
+			    </tr>
+			    
+			    <tr>
+		            <td><p:outputLabel for="employStart" value="Munkaviszony kezdete:" /></td>
+		            <td><p:calendar id="employStart" value="#{staffController.activeStaff.employStart}" showOn="button" pattern="yyyy.MM.dd" mask="true" styleClass="edit-input date-text"/></td>
+		    	</tr>
+		    	 <tr>
+		            <td><p:outputLabel for="employType" value="Munkaviszony jellege:" /></td>
+		            <td>
+		            	<h:selectOneMenu id="employType" value="#{staffController.activeStaff.employType}" styleClass="edit-input short-text">
+				             <f:selectItem itemLabel="Határozatlan" itemValue="Határozatlan" />
+				             <f:selectItem itemLabel="Határozott" itemValue="Határozott" />
+			        	</h:selectOneMenu>
+			        	<span id="showFinish">
+			        		<h:outputLabel for="employFinish" value=" ideje:"/>
+			        		<p:calendar id="employFinish" value="#{staffController.activeStaff.employFinish}" showOn="button" pattern="yyyy.MM.dd" mask="true" styleClass="edit-input date-text">
+			        			<f:convertDateTime type="date" dateType="short" />
+			        		</p:calendar>
+			        	</span>
+			        </td>
+			    </tr>
+		        
+			    <tr>
+		            <td><p:outputLabel for="workplace" value="Munkavégzés helye:" /></td>
+		            <td>
+		              <h:selectOneMenu id="workplace" value="#{staffController.activeStaff.workplace}" styleClass="edit-input wide-text">
+			            <f:selectItems value="#{parameterView.workplaces}" var="workplace" itemValue="#{workplace}" itemLabel="#{workplace.workplaceName}" />
+			            <f:attribute name="collectionType" value="java.util.ArrayList" />
+			          </h:selectOneMenu>
+			        </td>
+			    </tr>
+			    
+			    <tr>
+		            <td><p:outputLabel for="employTime" value="Munkaideje:" /></td>
+		            <td>
+		            	<h:selectOneMenu id="employTime" value="#{staffController.activeStaff.employTime}" styleClass="edit-input medium-text">
+		            		<f:selectItem itemLabel="Teljes munkaidős" itemValue="Teljes munkaidős" />
+				            <f:selectItem itemLabel="Részmunkaidős" itemValue="Részmunkaidős" />
+		            	</h:selectOneMenu>
+		            	
+			        </td>
+			    </tr>
+			    
+			     <tr>
+		            <td><p:outputLabel for="trialPeriod" value="Próbaidő tartama:" title="A próbaidő nem kötelező, de lefeljebb 90 nap lehet!"/></td>
+		            <td>
+		            	<p:inputMask mask="99" id="trialPeriod" maxlength="2" value="#{staffController.activeStaff.trialPeriod}" styleClass="edit-input short-text">
+		            		<f:validateLongRange maximum="90" />
+		            	</p:inputMask>
+			        </td>
+			    </tr>
+		    	<tr>
+	            	<td colspan="2"><p:separator  /></td>
+            	</tr>
+	            <tr>
+		            <td><p:outputLabel for="privateNote" value="Megjegyzés:"  /></td>
+		            <td>
+		            	<p:inputTextarea id="privateNote" value="#{staffController.activeStaff.privateNote}" style="width: 320px;"
+		            	rows="5" cols="30"  maxlength="3999" autoResize="true" />
+		            </td>
+	   				
+	            </tr>	
+		    </table>
+		    
+	
+	 		<f:facet name="footer">
+	            <p:commandButton value="Adatok mentése" action="#{staffController.saveStaff}" validateClient="true" update="editorform"/>  
+       			
+       			<p:commandButton value="Mégsem" action="#{staffController.closeActiveStaff}" ajax="true" immediate="true" >
+       				<p:resetInput for="editorform" target="editorform"/>
+       			</p:commandButton>	  			
+	 	    </f:facet>
+       	
+       	</p:panel>
+       	
+	</h:form>
+			    
+</ui:composition>    
