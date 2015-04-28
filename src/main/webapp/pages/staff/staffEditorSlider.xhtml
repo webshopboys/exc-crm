@@ -8,14 +8,146 @@
     
    		<h:outputStylesheet name="exc-style.css" />
 
-		<h:form>
+		<p:growl id="uploadmessages" showDetail="true"/>  
 		
-			<p:panelGrid columns="2">
-				<h:outputText value="Extra mezők a munkatárs adatlaphoz"/>
-				<h:outputText value="Más szerkesztésben"/>	 
-			    <h:outputText value="És megtekintésben"/>
-		    </p:panelGrid>
+		<p:panel  rendered="#{staffController.activeStaff.idStaff == null}">
+			<h:outputText value="A munkatárs mentése után itt vihető fel dokumentum."/>
+		</p:panel>
+		
+		<p:accordionPanel multiple="true" styleClass="sliderPanel" id="sliderPanel" activeIndex="-1" rendered="#{staffController.activeStaff.idStaff !=null}">
+        		
+        	<p:tab>
+        		<f:facet name="title" >
+						<p:graphicImage styleClass="headerIcon" name="doc_contract_128.png" height="26px"/>
+						<h:outputText value="Szerződés létrehozása és feltöltése" />	
+				</f:facet>
+				<p:panel>
+					<h:form enctype="multipart/form-data">
+						<h:panelGrid columns="1" width="100%">
+							<h:selectOneMenu value="#{staffController.template}" styleClass="edit-input" style="width:100%" title="A szerződés típusának kiválasztása">
+					            	<f:selectItems value="#{documentumView.contractTemplates}" var="t" itemValue="#{t.id}" itemLabel='#{t.documentType}' />
+					         </h:selectOneMenu>
+					       	<p:commandButton value="Szerződés generálás" action="#{staffController.generateContract}" style="width:99%;" update=""/>  
+				   	    
+				   	    	<h:inputFile value="#{fileUploadController.filePart}" />
+			            	<h:outputText value="Megjegyzés a szerződéshez:" />
+			            	<p:inputTextarea value="#{staffController.contractNote}" rows="2" style="width:96%" />
+			            	<p:commandButton value="Szerződés feltöltése" ajax="false" actionListener="#{fileUploadController.uploadFileContract}" action="#{staffController.resetDocCache}" style="width:99%;" update="uploadmessages" />
+						</h:panelGrid>
+	    			</h:form>
+    			</p:panel>
+			</p:tab>
+		
+    	
+			<p:tab>
+        		<f:facet name="title" >
+					<div>
+						<p:graphicImage styleClass="headerIcon" name="doc_dr_128.png" height="26px"/>
+						<h:outputText value="Orvosi dokumentum feltöltése" />	
+					</div>
+				</f:facet>
+				<p:panel>
+					<h:form enctype="multipart/form-data">
+						<table style="width:100%;">
+							<tr>
+								<td >
+									<h:inputFile value="#{fileUploadController.filePart}" />
+								</td>
+							</tr>
+							<tr>
+								<td >
+									<h:outputText value="Megjegyzés a orvosihoz:" />
+								</td>
+							</tr>
+							<tr>
+								<td >
+									<p:inputTextarea value="#{staffController.doctorNote}" rows="2" style="width:96%" />
+								</td>
+							</tr>
+							
+							
+			            	
+							<tr>
+								<td>
+									<p:outputLabel for="drDocExpired" value="Érvényesség lejár:  " />
+			            			<p:calendar id="drDocExpired" value="#{fileUploadController.drDocExpired}" showOn="button" pattern="yyyy.MM.dd" mask="true" styleClass="edit-input date-text"/>
+								</td>
+							</tr>	
+		            		<tr>
+								<td>
+									<p:commandButton value="Orvosi feltöltése" ajax="false" actionListener="#{fileUploadController.uploadFileDr}" action="#{staffController.resetDocCache}" style="width:99%;" update="uploadmessages" />
+			    				</td>
+			    			</tr>
+			    		</table>
+			    	</h:form>
+			    </p:panel>			
+	    	</p:tab>
+		
+			<p:tab>
+        		<f:facet name="title" >
+		   			<p:graphicImage styleClass="headerIcon" name="doc_attachment_128.png" height="26px"/>
+					<h:outputText value="Tetszőleges egyéb melléklet feltöltése" />
+				</f:facet>
+				<p:panel>
+					<h:form enctype="multipart/form-data">
+						<table style="width:100%;">
+							<tr>
+								<td >
+									<h:inputFile value="#{fileUploadController.filePart}" />
+		            			</td>
+		            		</tr>
+		            		<tr>
+								<td >
+									<h:outputText value="Megjegyzés a melléklethez" />
+								</td>
+							</tr>
+							<tr>
+								<td >
+									<p:inputTextarea value="#{staffController.attachmentNote}" rows="2" style="width:96%" />
+								</td>
+							</tr>	
+		            		<tr>
+								<td >
+									<p:commandButton value="Melléklet feltöltése" ajax="false" actionListener="#{fileUploadController.uploadAttachment}" action="#{staffController.resetDocCache}" style="width:99%;" update="uploadmessages" />
+			    				</td>
+			    			</tr>
+			    		</table>	
+			    	</h:form>
+			    </p:panel>			
+		    </p:tab>
+		  
+		</p:accordionPanel>	  
+		
+		 <h:form enctype="multipart/form-data" id="noteForm" rendered="#{staffController.activeStaff.idStaff !=null}">
+		    	
+	    	<p:panel styleClass="imaged-panel">
+        		<f:facet name="header" >
+		   			<p:graphicImage styleClass="headerIcon" name="doc_note_128.png" height="26px"/>
+					<h:outputText value="Jegyzet felvitele / módosítása" />
+				</f:facet>
+				
+					
+					<table style="width:100%;">
+						<tr>
+							<td >
+								<h:inputHidden value="#{staffController.originalNoteNote}" />
+								<p:inputTextarea value="#{staffController.note.note}" rows="6" style="width:96%" styleClass="editorNote" rendered="#{staffController.note != null}"/>
+	            			</td>
+	            		</tr>	
+	            		<tr>
+							<td >
+								<p:commandButton value="Jegyzet rögzítése" ajax="true" actionListener="#{staffController.saveNote}" 
+									action="#{staffController.resetDocCache}" style="width:99%;" rendered="#{staffController.note != null}" update="noteForm :editorform" />
+		    					<p:commandButton value="Új jegyzet" ajax="true" actionListener="#{staffController.addNote}" immediate="true"
+		    						style="width:99%;" rendered="#{staffController.note == null}" update="noteForm" />
+		    				</td>
+		    			</tr>
+		    		</table>
+		    		
+			
+		   	</p:panel>
+		</h:form>	    
+		 			
 	    
-	    </h:form>
 	    
 </ui:composition>    

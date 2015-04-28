@@ -1,5 +1,6 @@
 package hu.exclusive.crm.controller;
 
+import hu.exclusive.dao.model.CrmUser;
 import hu.exclusive.utils.FacesAccessor;
 
 import java.util.logging.Logger;
@@ -112,6 +113,10 @@ public class LoginController {
 
     private void resetNavigator() {
 
+    }
+
+    public CrmUser getPrincipal() {
+        return (CrmUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     public String cancel() {

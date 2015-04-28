@@ -1,5 +1,7 @@
 package hu.exclusive.dao.model;
 
+import hu.exclusive.utils.PageUtils;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -130,5 +132,16 @@ public class DrDoc extends EntityCommons implements Serializable {
         return "Orvosi dokumentum neve '" + getFileName(documentUrl) + "', létrehozva '" + getDateTime(documentCreated)
                 + "' időpontban, lejár '" + getDateTime(documentExpire) + "' időpontban."
                 + (isEmpty(documentNote) ? "" : "Megjegyzés: '" + documentNote + "'");
+    }
+
+    public String getFileInfo() {
+        return "Orvosi, ["
+                + getDateTime(documentCreated)
+                + "] lejár ["
+                + getDateTime(documentExpire)
+                + "] "
+                + PageUtils.BR_UNESCAPE
+                + (isEmpty(documentNote) ? "" : "'" + (documentNote.length() > 30 ? documentNote.substring(0, 30) : documentNote)
+                        + "...'");
     }
 }

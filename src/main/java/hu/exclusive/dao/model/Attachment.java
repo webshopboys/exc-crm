@@ -1,5 +1,7 @@
 package hu.exclusive.dao.model;
 
+import hu.exclusive.utils.PageUtils;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -107,6 +109,15 @@ public class Attachment extends EntityCommons implements Serializable {
     public String toString() {
         return "Melléklet fájl neve '" + getFileName(documentUrl) + "', feltöltve '" + getDateTime(documentCreated)
                 + "' időpontban. " + (isEmpty(documentNote) ? "" : "Megjegyzés: '" + documentNote + "'");
+    }
+
+    public String getFileInfo() {
+        return "Melléklet fájl, ["
+                + getDateTime(documentCreated)
+                + "] "
+                + PageUtils.BR_UNESCAPE
+                + (isEmpty(documentNote) ? "" : "'" + (documentNote.length() > 30 ? documentNote.substring(0, 30) : documentNote)
+                        + "...'");
     }
 
 }

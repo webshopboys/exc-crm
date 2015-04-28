@@ -1,5 +1,7 @@
 package hu.exclusive.dao.model;
 
+import hu.exclusive.utils.PageUtils;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -144,4 +146,12 @@ public class ContractDoc extends EntityCommons implements Serializable {
                 + (isEmpty(documentNote) ? "" : "Megjegyzés: '" + documentNote + "'");
     }
 
+    public String getFileInfo() {
+        return "Szerződés, ["
+                + getDateTime(documentCreated)
+                + "] "
+                + PageUtils.BR_UNESCAPE
+                + (isEmpty(documentNote) ? "" : "'" + (documentNote.length() > 30 ? documentNote.substring(0, 30) : documentNote)
+                        + "...'");
+    }
 }

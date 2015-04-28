@@ -19,16 +19,16 @@
 	<context:property-placeholder location="classpath:application.properties" />
 		
 	<!-- Data Source Declaration -->
-<!-- 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close"> -->
-<!-- 		<property name="driverClass" value="com.mysql.jdbc.Driver"/> -->
-<!--       	<property name="jdbcUrl" value="jdbc:mysql://${OPENSHIFT_MYSQL_DB_HOST}:${OPENSHIFT_MYSQL_DB_PORT}/${OPENSHIFT_APP_NAME}"/> -->
-<!--       	<property name="user" value="${OPENSHIFT_MYSQL_DB_USERNAME}"/> -->
-<!--       	<property name="password" value="${OPENSHIFT_MYSQL_DB_PASSWORD}"/> -->
-<!-- 	</bean> -->
-	
-	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-	    <property name="jndiName" value="java:comp/env/jdbc/MySQLDS"/>
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="com.mysql.jdbc.Driver"/>
+      	<property name="jdbcUrl" value="jdbc:mysql://${OPENSHIFT_MYSQL_DB_HOST}:${OPENSHIFT_MYSQL_DB_PORT}/${OPENSHIFT_APP_NAME}"/>
+      	<property name="user" value="${OPENSHIFT_MYSQL_DB_USERNAME}"/>
+      	<property name="password" value="${OPENSHIFT_MYSQL_DB_PASSWORD}"/>
 	</bean>
+	
+<!-- 	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean"> -->
+<!-- 	    <property name="jndiName" value="java:comp/env/jdbc/MySQLDS"/> -->
+<!-- 	</bean> -->
 
 	<!-- jpa and hibernate -->
 	<bean id="jpaVendorAdapter"

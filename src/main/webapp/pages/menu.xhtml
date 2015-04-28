@@ -97,11 +97,11 @@
 		            <p:menuitem value="Riasztási esemény típusok" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
 		            <p:menuitem value="Jogok" action="#{navigator.setContent('system/sysRoles','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
 		            <p:menuitem value="Felhasználók" action="#{navigator.setContent('system/sysUser','system/sysUsersSlider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-		            <p:menuitem value="Dokumentumok" action="#{navigator.setContent('system/sysDocuments','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Dokumentumok" action="#{navigator.setContent('system/sysDocuments','system/sysDocsSlider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
 		            <p:menuitem value="Verzió: #{parameterView.systemVersion}" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
 		         </p:submenu>
 		         
-		         <p:submenu label="Felhasználó: #{loginController.userName}" icon="ui-icon-power" id="userMenu" styleClass="#{loginController.userMenuClass}">
+		         <p:submenu label="Felhasználó: #{loginController.principal.userName}" icon="ui-icon-power" id="userMenu" styleClass="#{loginController.userMenuClass}">
 		            <p:menuitem value="Verzió:  #{parameterView.systemVersion}" />
 		            <p:menuitem value="Üzeneteim" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true" styleClass="messagemenu"/>
 		            <p:menuitem value="Adataim" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
@@ -111,6 +111,8 @@
 		            
 		         </p:submenu>
   	
+  				 
+  				 <p:menuitem value="Hibabejelentő" url="http://petnehazi.hu/bugfix/bug_report_page.php" target="_blank" styleClass="extraCell" style="margin-left:20px;"/>
       		</p:menubar>
 	      
 	      

@@ -7,14 +7,18 @@ import hu.exclusive.crm.service.AttachmentService;
 import hu.exclusive.crm.service.ParametersService;
 import hu.exclusive.crm.service.StaffService;
 import hu.exclusive.dao.DaoFilter;
+import hu.exclusive.dao.model.ContractDoc;
 import hu.exclusive.dao.model.Jobtitle;
 import hu.exclusive.dao.model.Staff;
 import hu.exclusive.dao.model.StaffBase;
 import hu.exclusive.dao.model.StaffDetail;
+import hu.exclusive.dao.model.StaffNote;
 import hu.exclusive.utils.FacesAccessor;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +26,8 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
 
 import org.hibernate.service.spi.ServiceException;
 import org.primefaces.context.RequestContext;
@@ -42,16 +48,23 @@ public class StaffController extends Commontroller implements Serializable {
     private LazyDataModel<Staff> docModel;
     private StaffFilter staffFilter;
     private DocFilter docFilter;
-    private Map<Integer, List<DocBean>> staffDocCache = new HashMap<Integer, List<DocBean>>();
+    private final Map<Integer, List<DocBean>> staffDocCache = new HashMap<Integer, List<DocBean>>();
     private StaffDetail activeStaff;
-
+    private StaffNote note;
+    private String contractNote;
+    private String doctorNote;
+    private String attachmentNote;
+    private String originalNoteNote;
     @Autowired
     StaffService service;
+
     @Autowired
     AttachmentService attachments;
 
     @Autowired
     ParametersService parameters;
+
+    private Integer templateId;
 
     @PostConstruct
     public void init() {
@@ -144,13 +157,18 @@ public class StaffController extends Commontroller implements Serializable {
         System.out.println("resetDocfilter....");
         getDocFilter().reset();
         RequestContext.getCurrentInstance().reset("docFilterForm");
-        staffDocCache.clear();
+        resetDocCache();
     }
 
     public void resetFilter() {
         System.out.println("resetfilter....");
         getFilter().reset();
         RequestContext.getCurrentInstance().reset("filterForm");
+    }
+
+    // FIXME vajon gondot okoz, ha a közös cache törlődik?
+    public void resetDocCache() {
+        staffDocCache.clear();
     }
 
     public LazyDataModel<Staff> getStaffModel() {
@@ -203,11 +221,50 @@ public class StaffController extends Commontroller implements Serializable {
         this.activeStaff = activeStaff;
     }
 
+    public List<StaffNote> getStaffNotes(Integer idStaff) {
+        List<StaffNote> list = new ArrayList<StaffNote>();
+        if (idStaff != null) {
+            List<DocBean> allDoc = getStaffDocuments(idStaff);
+            if (allDoc != null) {
+                for (DocBean docBean : allDoc) {
+                    if (docBean.getDocumentKey().startsWith(DocBean.KEY_NOTE)) {
+                        list.add(docBean.getStaffNote());
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+    private DocBean getDoc(Integer staffId, Integer docId) {
+        if (staffId != null && docId != null) {
+            List<DocBean> allDoc = getStaffDocuments(staffId);
+            if (allDoc != null) {
+                for (DocBean docBean : allDoc) {
+                    if (docBean.getId() == docId) {
+                        return docBean;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private ContractDoc getTemplate(Integer docId) {
+        if (docId != null) {
+            for (ContractDoc doc : attachments.getContractTemplates()) {
+                if (doc.getIdContractdoc() == docId)
+                    return doc;
+            }
+        }
+        return null;
+    }
+
     public void saveStaff() {
         System.err.println("SaveStaff " + activeStaff);
 
         service.saveStaff(activeStaff);
-        closeActiveStaff();
+        // closeActiveStaff();
     }
 
     public void closeActiveStaff() {
@@ -228,4 +285,83 @@ public class StaffController extends Commontroller implements Serializable {
         message("Feldolgozási eredmény", "Csak a fejlesztő törölheti");
     }
 
+    public void setTemplate(Integer docId) {
+        System.err.println("set template " + docId);
+        this.templateId = docId;
+    }
+
+    public Integer getTemplate() {
+        return this.templateId;
+    }
+
+    public void generateContract() {
+        System.out.println("generateContract " + getTemplate(templateId));
+    }
+
+    public StaffNote getNote() {
+        System.out.println("getnote " + note);
+        return note;
+    }
+
+    public void setNote(StaffNote note) {
+        this.note = note;
+        setOriginalNoteNote(note == null ? null : note.getNote());
+    }
+
+    public void saveNote(ActionEvent event) {
+        if (note == null || activeStaff == null) {
+            error("Hiányos adatok", "A munkatárs nincs meghatározva", "uploadmessages");
+            throw new AbortProcessingException();
+        }
+        String lastCreator = note.getCreatorUser();
+        Timestamp lastSaved = note.getNoteCreated();
+
+        note.setNoteCreated(new Timestamp(new Date().getTime()));
+        note.setIdStaff(activeStaff.getIdStaff());
+        note.setCreatorUser(getLoggedUser().getUserName());
+
+        if (!isEmpty(lastCreator)) {
+            lastCreator = "<" + lastCreator + " " + getDateTimeString(lastSaved) + "-kor>\n" + originalNoteNote
+                    + "\n___________________________________________\n" + note.getNote();
+            note.setNote(lastCreator.trim());
+        }
+        attachments.saveNote(note);
+        setNote(null);
+    }
+
+    public void addNote() {
+        setNote(new StaffNote());
+    }
+
+    public String getContractNote() {
+        return contractNote;
+    }
+
+    public void setContractNote(String contractNote) {
+        this.contractNote = contractNote;
+    }
+
+    public String getDoctorNote() {
+        return doctorNote;
+    }
+
+    public void setDoctorNote(String doctorNote) {
+        this.doctorNote = doctorNote;
+    }
+
+    public String getAttachmentNote() {
+        return attachmentNote;
+    }
+
+    public void setAttachmentNote(String attachmentNote) {
+        this.attachmentNote = attachmentNote;
+    }
+
+    public String getOriginalNoteNote() {
+        return originalNoteNote;
+    }
+
+    public void setOriginalNoteNote(String originalNoteNote) {
+        this.originalNoteNote = originalNoteNote;
+    }
 }

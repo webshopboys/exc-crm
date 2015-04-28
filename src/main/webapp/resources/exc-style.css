@@ -1,3 +1,6 @@
+.imaged-panel div.ui-panel-titlebar { height: 30px;} 
+.imaged-panel div.ui-panel-titlebar span.ui-panel-title { margin: 0px;} 
+
 .edit-input.wide-text { width: 320px; }
 .edit-input.medium-text { width: 200px; }
 .edit-input.short-text { width: 100px; }
@@ -55,4 +58,6 @@ div.editorNoteContainer {
 } 
 
 div.editorNoteContainer .removeIcon { margin-left: 5px; margin-bottom: 15px; }
-.editorNote { border: 1px; border-radius: 10px; -moz-border-radius: 10px; background-color: #ffffbb; margin-bottom: -5px;}
+.editorNote { border: 1px; border-radius: 10px; -moz-border-radius: 10px; background-color: #ffffbb !important; margin-bottom: -5px;}
+
+.extraCell {background-color: #ffff00!important; color: black !important;}

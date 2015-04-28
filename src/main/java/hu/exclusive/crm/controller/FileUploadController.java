@@ -13,8 +13,12 @@ import java.util.Date;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
+import javax.servlet.http.Part;
 
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.model.UploadedFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,6 +30,37 @@ public class FileUploadController extends Commontroller implements Serializable 
     private static final long serialVersionUID = -1774648789104774066L;
     @Autowired
     AttachmentService service;
+
+    private UploadedFile filedrDoc;
+    private Part filePart;
+    private Integer idDocument;
+    private ContractDoc template;
+    private Integer idStaff;
+    private Date drDocExpired;
+
+    public void uploadContractDoc(FileUploadEvent event) {
+
+        message(event.getFile().getFileName() + " feltöltése...", "");
+
+        try {
+            // byte[] bin = serializeFile(event.getFile().getFileName(), event.getFile().getInputstream());
+            //
+            // ContractDoc doc = new ContractDoc();
+            // doc.setDocumentType("Új szerződés sablon");
+            // doc.setDocumentNote("Kiválasztással feltöltött fájl. Utólag szerkesztendő!\nA munkatárs elérhető mezői: "
+            // + Staff.DOCFIELDS_NAMES.getInfo());
+            // doc.setDocumentUrl(event.getFile().getFileName());
+            // doc.setDocumentBin(bin);
+            // service.saveDocument(doc);
+
+            message("Új szerződés feltöltve.", template.getDocumentType());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            error("Feltöltési hiba", null, e);
+        }
+
+    }
 
     public void uploadTemplates(FileUploadEvent event) {
 
@@ -73,11 +108,6 @@ public class FileUploadController extends Commontroller implements Serializable 
         }
     }
 
-    private UploadedFile filedrDoc;
-    private Integer idDocument;
-
-    private ContractDoc template;
-
     public void selectTemplate(ContractDoc template) {
         setTemplate(template);
     }
@@ -93,6 +123,13 @@ public class FileUploadController extends Commontroller implements Serializable 
         return this.template;
     }
 
+    public void onTemplateRowSelect(SelectEvent event) {
+    }
+
+    public void setFileDrDoc(UploadedFile file) {
+        this.filedrDoc = file;
+    }
+
     public UploadedFile getFileDrDoc() {
         return filedrDoc;
     }
@@ -100,10 +137,6 @@ public class FileUploadController extends Commontroller implements Serializable 
     public void saveTemplate() {
         template.setDocumentCreated(new Date());
         service.saveDocument(template);
-    }
-
-    public void setFileDrDoc(UploadedFile file) {
-        this.filedrDoc = file;
     }
 
     public void uploadDrDoc() {
@@ -119,6 +152,73 @@ public class FileUploadController extends Commontroller implements Serializable 
 
     public void setIdDocument(Integer idDocument) {
         this.idDocument = idDocument;
+    }
+
+    public void setFilePart(Part file) {
+        this.filePart = file;
+    }
+
+    public Part getFilePart() {
+        return filePart;
+    }
+
+    public void uploadFileContract(ActionEvent event) {
+        System.err.println("uploadFileContract " + filePart);
+        if (filePart != null) {
+            message("Sikeres feltöltés", getFileNameFromPart(filePart) + " feltöltve.");
+        } else {
+            error("Hiba", "Nincs kiválasztva a szerződés!");
+            throw new AbortProcessingException();
+        }
+    }
+
+    public void uploadFileDr(ActionEvent event) {
+        System.err.println("uploadFileDr " + filePart);
+        if (filePart != null) {
+            message("Sikeres feltöltés", getFileNameFromPart(filePart) + " feltöltve.");
+        } else {
+            error("Hiba", "Nincs kiválasztva az orvosi!");
+            throw new AbortProcessingException();
+        }
+    }
+
+    public void uploadAttachment(ActionEvent event) {
+        System.err.println("uploadAttachment " + filePart);
+        if (filePart != null) {
+            message("Sikeres feltöltés", getFileNameFromPart(filePart) + " feltöltve.");
+        } else {
+            error("Hiba", "Nincs kiválasztva a melléklet!");
+            throw new AbortProcessingException();
+        }
+    }
+
+    private String getFileNameFromPart(Part part) {
+        if (part != null) {
+            final String partHeader = part.getHeader("content-disposition");
+            for (String content : partHeader.split(";")) {
+                if (content.trim().startsWith("filename")) {
+                    String fileName = content.substring(content.indexOf('=') + 1).trim().replace("\"", "");
+                    return fileName;
+                }
+            }
+        }
+        return "";
+    }
+
+    public Integer getIdStaff() {
+        return idStaff;
+    }
+
+    public void setIdStaff(Integer idStaff) {
+        this.idStaff = idStaff;
+    }
+
+    public Date getDrDocExpired() {
+        return drDocExpired;
+    }
+
+    public void setDrDocExpired(Date drDocExpired) {
+        this.drDocExpired = drDocExpired;
     }
 
     // private void restoreDoc(Attachment doc) throws Exception {

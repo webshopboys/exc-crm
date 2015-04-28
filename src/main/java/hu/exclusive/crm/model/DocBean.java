@@ -74,6 +74,24 @@ public class DocBean implements Comparable<DocBean> {
                 .toString() : "" + attachment;
     }
 
+    public String getShortInfo() {
+        if (drDoc != null)
+            return cut(drDoc.getDocumentNote(), 30);
+        if (contractDoc != null)
+            return cut(contractDoc.getDocumentNote(), 30);
+        if (attachment != null)
+            return cut(attachment.getDocumentNote(), 30);
+        if (staffNote != null)
+            return cut(staffNote.getNote(), 30);
+        return "";
+    }
+
+    private String cut(String fulltext, int length) {
+        if (fulltext != null)
+            return fulltext.trim().length() <= length ? fulltext.trim() : (fulltext.trim().substring(0, length) + "...");
+        return "";
+    }
+
     public Attachment getAttachment() {
         return attachment;
     }
@@ -98,6 +116,11 @@ public class DocBean implements Comparable<DocBean> {
             }
         }
         return 0;
+    }
+
+    public int getId() {
+        return drDoc != null ? drDoc.getIdDrdoc() : contractDoc != null ? contractDoc.getIdContractdoc()
+                : staffNote != null ? staffNote.getIdStaffnote() : attachment != null ? attachment.getIdAttachment() : 0;
     }
 
 }

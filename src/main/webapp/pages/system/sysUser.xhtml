@@ -30,10 +30,10 @@
 	            	<p:outputLabel value="Felhasználó login neve:"/>
 		    	</h:column>
 		    	<h:column>
-		    		<p:inputText value="#{sysController.selectedUser.loginName}" style="width: 100px;" autocomplete="off"/>
+		    		<p:inputText value="#{sysController.selectedUser.loginName}" style="width: 150px;" autocomplete="off"/>
 		    	</h:column>
 		    	<h:column>
-		    		<p:outputLabel value="Felhasználó teljes neve:"/>
+		    		<p:outputLabel value="Teljes neve:"/>
 		    	</h:column>
 		    	<h:column>
 		    		<p:inputText value="#{sysController.selectedUser.userName}" style="width: 200px;" autocomplete="off"/>
@@ -43,15 +43,23 @@
 		    		<p:outputLabel value="Felhasználó jelszava:"/>
 		    	</h:column>
 		    	<h:column>
-		    		<p:password value="#{sysController.selectedUser.crmPass}" style="width: 200px;" autocomplete="off"/>
+		    		<p:password value="#{sysController.selectedUser.crmPass}" style="width: 150px;" autocomplete="off"/>
 		    	</h:column>
+		    	<h:column>
+		    		<p:outputLabel value="E-mail:"/>
+		    	</h:column>
+		    	<h:column>
+		    		<p:password value="#{sysController.selectedUser.userEmail}" style="width: 200px;" autocomplete="off"/>
+		    	</h:column>
+			    
 		    	<h:column>
 		    		<p:outputLabel value="Jelszó újra:"/>
 		    	</h:column>
 		    	<h:column>
-		    		<p:password value="#{sysController.selectedUser.hintPass}" style="width: 200px;" autocomplete="off"/>
+		    		<p:password value="#{sysController.selectedUser.hintPass}" style="width: 150px;" autocomplete="off"/>
 		    	</h:column>
-			    					           
+		    	<h:column/><h:column/>
+		    						           
 	        </h:panelGrid>
 	        
 	        <p:panel header="Szerepek" style="margin-left: 2px; width: 700px;" rendered="#{sysController.selectedUser != null}">
@@ -71,33 +79,40 @@
     
     	 <p:panel header="Új felhasználó" id="newUserPanel">
 	        <h:panelGrid cellspacing="4" columns="4">
-	            	<h:column>
-			    		<p:outputLabel value="Felhasználó login neve:"/>
-			    	</h:column>
-			    	<h:column>
-			    		<p:inputText value="#{sysController.newUser.loginName}" style="width: 100px;" autocomplete="off"/>
-			    	</h:column>
-			    	<h:column>
-			    		<p:outputLabel value="Felhasználó teljes neve:"/>
-			    	</h:column>
-			    	<h:column>
-			    		<p:inputText value="#{sysController.newUser.userName}" style="width: 200px;" autocomplete="off"/>
-			    	</h:column>
-			    
-			    	<h:column>
-			    		<p:outputLabel value="Felhasználó jelszava:"/>
-			    	</h:column>
-			    	<h:column>
-			    		<p:password value="#{sysController.newUser.crmPass}" style="width: 200px;" autocomplete="off"/>
-			    	</h:column>
-			    	<h:column>
-			    		<p:outputLabel value="Jelszó újra:"/>
-			    	</h:column>
-			    	<h:column>
-			    		<p:password value="#{sysController.newUser.hintPass}" style="width: 200px;" autocomplete="off"/>
-			    	</h:column>
-			 
-				           
+            	<h:column>
+		    		<p:outputLabel value="Felhasználó login neve:"/>
+		    	</h:column>
+		    	<h:column>
+		    		<p:inputText value="#{sysController.newUser.loginName}" style="width: 150px;" autocomplete="off"/>
+		    	</h:column>
+		    	<h:column>
+		    		<p:outputLabel value="Teljes neve:"/>
+		    	</h:column>
+		    	<h:column>
+		    		<p:inputText value="#{sysController.newUser.userName}" style="width: 200px;" autocomplete="off"/>
+		    	</h:column>
+		    
+		    	<h:column>
+		    		<p:outputLabel value="Felhasználó jelszava:"/>
+		    	</h:column>
+		    	<h:column>
+		    		<p:password value="#{sysController.newUser.crmPass}" style="width: 150px;" autocomplete="off"/>
+		    	</h:column>
+		    	<h:column>
+		    		<p:outputLabel value="E-mail:"/>
+		    	</h:column>
+		    	<h:column>
+		    		<p:password value="#{sysController.newUser.userEmail}" style="width: 200px;" autocomplete="off"/>
+		    	</h:column>
+				
+		    	<h:column>
+		    		<p:outputLabel value="Jelszó újra:"/>
+		    	</h:column>
+		    	<h:column>
+		    		<p:password value="#{sysController.newUser.hintPass}" style="width: 150px;" autocomplete="off"/>
+		    	</h:column>
+		 		<h:column/><h:column/>
+		    	           
 	        </h:panelGrid>
 	        
 	      	<p:panel header="Szerepek" style="margin-left: 2px; width: 700px;">

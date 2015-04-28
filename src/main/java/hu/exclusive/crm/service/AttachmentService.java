@@ -111,4 +111,14 @@ public class AttachmentService {
     public void saveDocument(ContractDoc template) {
         excDao.saveDocument(template);
     }
+
+    public List<ContractDoc> getContractTemplates() {
+        DaoFilter filter = new DaoFilter();
+        filter.addFilter("idStaff", RELATION.ISNULL, null);
+        return excDao.getContractDocs(filter);
+    }
+
+    public void saveNote(StaffNote note) {
+        excDao.saveDocument(note);
+    }
 }

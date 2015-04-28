@@ -1,5 +1,7 @@
 package hu.exclusive.dao.model;
 
+import hu.exclusive.utils.PageUtils;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -40,6 +42,9 @@ public class StaffNote extends EntityCommons implements Serializable {
     @Column(name = "note_created")
     private Timestamp noteCreated;
 
+    @Column(name = "creator_user")
+    private String creatorUser;
+
     public StaffNote() {
     }
 
@@ -76,14 +81,31 @@ public class StaffNote extends EntityCommons implements Serializable {
         return this.noteCreated;
     }
 
+    public String getNoteTextArea() {
+        return "" + getCreatorUser() + " (" + getDateTime(noteCreated) + ")\n\n" + note;
+    }
+
     public void setNoteCreated(Timestamp noteCreated) {
         this.noteCreated = noteCreated;
     }
 
     @Override
     public String toString() {
-        return "Megjegyzés, értékelés , létrehozva '" + getDateTime(noteCreated) + "' időpontban. Tartalma: ''"
-                + (note != null ? note.length() > 200 ? note.substring(0, 200) : note : "[üres]") + "'";
+        return "Jegyzet, értékelés mentve [" + getDateTime(noteCreated) + "] időpontban '" + creatorUser
+                + "' által. Tartalma: ''" + (note != null ? note.length() > 200 ? note.substring(0, 200) : note : "[üres]") + "'";
+    }
+
+    public String getShortInfo() {
+        return "Jegyzet [" + getDateTime(noteCreated) + "] " + creatorUser + PageUtils.BR_UNESCAPE + "'"
+                + (note != null ? note.length() > 40 ? note.substring(0, 40) + "..." : note : "[üres]") + "'";
+    }
+
+    public String getCreatorUser() {
+        return creatorUser;
+    }
+
+    public void setCreatorUser(String creatorUser) {
+        this.creatorUser = creatorUser;
     }
 
 }
