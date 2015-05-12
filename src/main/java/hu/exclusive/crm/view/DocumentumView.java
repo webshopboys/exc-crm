@@ -67,22 +67,26 @@ public class DocumentumView implements Serializable {
                 DaoFilter filter = new DaoFilter("DrDoc.find", "idDoc", RELATION.NAMED_QUERY, docid);
                 DrDoc doc = service.getDrDoc(filter);
                 if (doc != null)
-                    generator.setContent(doc.getDocumentBin()).setMimeType(AttachmentGenerator.MIME_DOCX)
+
+                    generator.setContent(doc.getDocumentBin())
+                            .setMimeType(AttachmentGenerator.calulateMimeType(ObjectUtils.getFileName(doc.getDocumentUrl())))
                             .setAttachmentPath(ObjectUtils.getFilePath(doc.getDocumentUrl()))
                             .setAttachmentName(ObjectUtils.getFileName(doc.getDocumentUrl()));
                 else
-                    throw new ServiceException("Nem található szerződés (" + docid + ")");
+                    throw new ServiceException("Nem található orvosi (" + docid + ")");
 
             } else if (docType.equals(DocBean.KEY_CONTRACT)) {
 
                 DaoFilter filter = new DaoFilter("ContractDoc.find", "idDoc", RELATION.NAMED_QUERY, docid);
                 ContractDoc doc = service.getContractDoc(filter);
+
                 if (doc != null)
-                    generator.setContent(doc.getDocumentBin()).setMimeType(AttachmentGenerator.MIME_DOCX)
+                    generator.setContent(doc.getDocumentBin())
+                            .setMimeType(AttachmentGenerator.calulateMimeType(ObjectUtils.getFileName(doc.getDocumentUrl())))
                             .setAttachmentPath(ObjectUtils.getFilePath(doc.getDocumentUrl()))
                             .setAttachmentName(ObjectUtils.getFileName(doc.getDocumentUrl()));
                 else
-                    throw new ServiceException("Nem található orvosi (" + docid + ")");
+                    throw new ServiceException("Nem található szerződés (" + docid + ")");
 
             } else if (docType.equals(DocBean.KEY_NOTE)) {
 
@@ -99,7 +103,8 @@ public class DocumentumView implements Serializable {
                 DaoFilter filter = new DaoFilter("Attachment.find", "idDoc", RELATION.NAMED_QUERY, docid);
                 Attachment doc = service.getAttachment(filter);
                 if (doc != null)
-                    generator.setContent(doc.getDocumentBin()).setMimeType(AttachmentGenerator.MIME_DOCX)
+                    generator.setContent(doc.getDocumentBin())
+                            .setMimeType(AttachmentGenerator.calulateMimeType(ObjectUtils.getFileName(doc.getDocumentUrl())))
                             .setAttachmentPath(ObjectUtils.getFilePath(doc.getDocumentUrl()))
                             .setAttachmentName(ObjectUtils.getFileName(doc.getDocumentUrl()));
                 else

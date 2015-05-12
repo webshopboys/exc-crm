@@ -3,6 +3,8 @@ package hu.exclusive.crm.controller;
 import hu.exclusive.crm.model.DocBean;
 import hu.exclusive.crm.model.DocFilter;
 import hu.exclusive.crm.model.StaffFilter;
+import hu.exclusive.crm.report.ContractGenerator;
+import hu.exclusive.crm.service.AttachmentGenerator;
 import hu.exclusive.crm.service.AttachmentService;
 import hu.exclusive.crm.service.ParametersService;
 import hu.exclusive.crm.service.StaffService;
@@ -14,6 +16,7 @@ import hu.exclusive.dao.model.StaffBase;
 import hu.exclusive.dao.model.StaffDetail;
 import hu.exclusive.dao.model.StaffNote;
 import hu.exclusive.utils.FacesAccessor;
+import hu.exclusive.utils.ObjectUtils;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -24,8 +27,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
@@ -34,6 +39,7 @@ import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
+import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -51,9 +57,9 @@ public class StaffController extends Commontroller implements Serializable {
     private final Map<Integer, List<DocBean>> staffDocCache = new HashMap<Integer, List<DocBean>>();
     private StaffDetail activeStaff;
     private StaffNote note;
-    private String contractNote;
-    private String doctorNote;
-    private String attachmentNote;
+
+    private AttachmentGenerator generator;
+
     private String originalNoteNote;
     @Autowired
     StaffService service;
@@ -68,6 +74,9 @@ public class StaffController extends Commontroller implements Serializable {
 
     @PostConstruct
     public void init() {
+
+        generator = new AttachmentGenerator();
+
         if (service == null)
             service = (StaffService) FacesAccessor.getManagedBean("staffService");
 
@@ -106,7 +115,7 @@ public class StaffController extends Commontroller implements Serializable {
         };
 
         System.err.println("==============================================================");
-        System.err.println("                EXC CRM (2015.03.30) ");
+        System.err.println("               " + parameters.getSystemVersion());
         System.err.println("==============================================================");
 
     }
@@ -206,6 +215,7 @@ public class StaffController extends Commontroller implements Serializable {
     }
 
     public StaffDetail getActiveStaff() {
+        // System.out.println("StaffController.getActiveStaff");
         if (activeStaff == null)
             activeStaff = new StaffDetail();
         return activeStaff;
@@ -294,18 +304,55 @@ public class StaffController extends Commontroller implements Serializable {
         return this.templateId;
     }
 
-    public void generateContract() {
-        System.out.println("generateContract " + getTemplate(templateId));
+    public StreamedContent generateContract() {
+        try {
+            ContractDoc contract = getTemplate(templateId);
+            System.out.println("generateContract " + contract);
+            if (contract != null) {
+
+                byte[] content = new ContractGenerator(contract, activeStaff).processByExtension();
+
+                generator
+                        .setContent(content)
+                        .setAttachmentName(
+                                ObjectUtils.cleanFilename(activeStaff.getFullName() + " " + contract.getDocumentType() + " "
+                                        + ObjectUtils.getDateTime(new Date()) + ".docx"))
+                        .setMimeType(AttachmentGenerator.MIME_DOCX);
+            }
+
+            return generator.generateStream();
+        } catch (Exception e) {
+            e.printStackTrace();
+            e = hu.exclusive.dao.ServiceException.takeReason(e);
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Hiba", "A kitöltés nem sikerült: "
+                    + e.getLocalizedMessage());
+            FacesContext.getCurrentInstance().addMessage(null, message);
+        }
+        return null;
     }
 
     public StaffNote getNote() {
-        System.out.println("getnote " + note);
+        System.out.println("getnote ");
+        return note;
+    }
+
+    public StaffNote getNote2() {
+        System.out.println("getnote2 ");
         return note;
     }
 
     public void setNote(StaffNote note) {
+
+        if (note != null && note.getCreatorUser() != null && note.getNote() != null) {
+            String lastCreator = note.getCreatorUser();
+            Timestamp lastSaved = note.getNoteCreated();
+            originalNoteNote = "<" + lastCreator + " " + getDateTimeString(lastSaved) + "-kor>\n" + note.getNote()
+                    + "\n___________________________________________\n";
+            note.setNote(originalNoteNote);
+        } else {
+            originalNoteNote = null;
+        }
         this.note = note;
-        setOriginalNoteNote(note == null ? null : note.getNote());
     }
 
     public void saveNote(ActionEvent event) {
@@ -313,48 +360,17 @@ public class StaffController extends Commontroller implements Serializable {
             error("Hiányos adatok", "A munkatárs nincs meghatározva", "uploadmessages");
             throw new AbortProcessingException();
         }
-        String lastCreator = note.getCreatorUser();
-        Timestamp lastSaved = note.getNoteCreated();
 
         note.setNoteCreated(new Timestamp(new Date().getTime()));
         note.setIdStaff(activeStaff.getIdStaff());
         note.setCreatorUser(getLoggedUser().getUserName());
 
-        if (!isEmpty(lastCreator)) {
-            lastCreator = "<" + lastCreator + " " + getDateTimeString(lastSaved) + "-kor>\n" + originalNoteNote
-                    + "\n___________________________________________\n" + note.getNote();
-            note.setNote(lastCreator.trim());
-        }
         attachments.saveNote(note);
         setNote(null);
     }
 
     public void addNote() {
         setNote(new StaffNote());
-    }
-
-    public String getContractNote() {
-        return contractNote;
-    }
-
-    public void setContractNote(String contractNote) {
-        this.contractNote = contractNote;
-    }
-
-    public String getDoctorNote() {
-        return doctorNote;
-    }
-
-    public void setDoctorNote(String doctorNote) {
-        this.doctorNote = doctorNote;
-    }
-
-    public String getAttachmentNote() {
-        return attachmentNote;
-    }
-
-    public void setAttachmentNote(String attachmentNote) {
-        this.attachmentNote = attachmentNote;
     }
 
     public String getOriginalNoteNote() {

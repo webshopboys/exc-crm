@@ -121,4 +121,12 @@ public class AttachmentService {
     public void saveNote(StaffNote note) {
         excDao.saveDocument(note);
     }
+
+    public void saveAttachment(Attachment attachment) {
+        excDao.saveDocument(attachment);
+    }
+
+    public void saveDrDoc(DrDoc drdoc) {
+        excDao.saveDocument(drdoc);
+    }
 }

@@ -1,5 +1,7 @@
 package hu.exclusive.crm.service;
 
+import hu.exclusive.utils.ObjectUtils;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
@@ -23,16 +25,30 @@ public class AttachmentGenerator {
     public static final String PLAYER_MOV = "quicktime";
     public static final String PLAYER_MP3 = "quicktime";
 
+    private byte[] content;
+
+    private String mimeType;
+    private String attachmentName;
+    private String attachmentPath;
+
     public StreamedContent generateStream() throws Exception {
 
         if (content == null) {
             System.err.println("!!!!AttachmentGenerator.generateStream() is null!!!");
             return new DefaultStreamedContent(new ByteArrayInputStream(new byte[0]));
         } else {
-            System.err.println("!!!!AttachmentGenerator.generateStream() bytes OK !!!");
-            InputStream stream = new ByteArrayInputStream(content);
-            return new DefaultStreamedContent(stream, mimeType, attachmentName);
 
+            InputStream stream = new ByteArrayInputStream(content);
+            // if (ObjectUtils.isZippedStream(stream)) {
+            // System.err.println("!!!!AttachmentGenerator.generateStream() zipped bytes OK !!!");
+            // // stream = new ByteArrayInputStream(ObjectUtils.unzip(content)); // a docx alapbol zip, így egyelőre nem kezelünk
+            // // zippelést
+            // } else {
+            // System.err.println("!!!!AttachmentGenerator.generateStream() bytes OK !!!");
+            // }
+
+            System.err.println("!!!!AttachmentGenerator.generateStream() bytes[" + stream.available() + "] OK !!!");
+            return new DefaultStreamedContent(stream, mimeType, attachmentName);
         }
 
     };
@@ -57,11 +73,27 @@ public class AttachmentGenerator {
         return false;
     }
 
-    private byte[] content;
-
-    private String mimeType;
-    private String attachmentName;
-    private String attachmentPath;
+    public static String calulateMimeType(String filename) {
+        if (!ObjectUtils.isEmpty(filename)) {
+            if (filename.toLowerCase().endsWith(".doc"))
+                return MIME_DOC;
+            if (filename.toLowerCase().endsWith(".docx"))
+                return MIME_DOCX;
+            if (filename.toLowerCase().endsWith(".xls"))
+                return MIME_XLS;
+            if (filename.toLowerCase().endsWith(".xlsx"))
+                return MIME_XLSX;
+            if (filename.toLowerCase().endsWith(".pdf"))
+                return MIME_PDF;
+            if (filename.toLowerCase().endsWith(".jpg"))
+                return MIME_JPG;
+            if (filename.toLowerCase().endsWith(".jpeg"))
+                return MIME_JPG;
+            if (filename.toLowerCase().endsWith(".png"))
+                return MIME_PNG;
+        }
+        return MIME_TEXT;
+    }
 
     public byte[] getContent() {
         return content;
@@ -74,7 +106,6 @@ public class AttachmentGenerator {
 
     public String getMimeType() {
         return mimeType;
-
     }
 
     public AttachmentGenerator setMimeType(String mimeType) {

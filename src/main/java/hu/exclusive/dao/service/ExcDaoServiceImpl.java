@@ -63,11 +63,15 @@ public class ExcDaoServiceImpl implements IExcDaoService {
     @Transactional
     @Override
     public void saveDocument(ContractDoc document) {
-        System.out.println("save " + document);
-        if (document.getId() == null)
-            em.persist(document);
-        else
-            em.merge(document);
+        try {
+            if (document.getId() == null)
+                em.persist(document);
+            else
+                em.merge(document);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Transactional

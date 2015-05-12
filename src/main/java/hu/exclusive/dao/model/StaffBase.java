@@ -20,7 +20,7 @@ import javax.persistence.TemporalType;
  */
 @MappedSuperclass
 @Table(name = "T_STAFF")
-public class StaffBase implements Serializable {
+public class StaffBase extends EntityCommons implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public static final String DEFAULT_STATUS = "Aktív";
@@ -97,6 +97,15 @@ public class StaffBase implements Serializable {
 
     @Column(name = "trial_period")
     private Integer trialPeriod;
+
+    @Column(name = "children")
+    private Integer children;
+
+    @Column(name = "phonenumber")
+    private String phonenumber;
+
+    @Column(name = "email")
+    private String email;
 
     public StaffBase() {
     }
@@ -269,4 +278,32 @@ public class StaffBase implements Serializable {
         this.trialPeriod = trialPeriod;
     }
 
+    public Integer getChildren() {
+        return children;
+    }
+
+    public void setChildren(Integer children) {
+        this.children = children;
+    }
+
+    public String getPhonenumber() {
+        return phonenumber;
+    }
+
+    public void setPhonenumber(String phonenumber) {
+        this.phonenumber = phonenumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public Integer getId() {
+        return idStaff;
+    }
 }

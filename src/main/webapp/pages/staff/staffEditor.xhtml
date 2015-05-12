@@ -7,9 +7,10 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets">
     
    	<h:outputStylesheet name="exc-style.css" />
-    	
+   
+	
    	<h:form id="editorform">
-      
+     
      	<h:inputHidden value="#{staffController.activeStaff.idStaff}" />
   
 		<p:growl showDetail="true" sticky="true" rendered="#{not facesContext.validationFailed}"/>  
@@ -52,53 +53,12 @@
 					
             	</tr>
             	<tr>
-		            <td><p:outputLabel for="birthName" value="Születési név:" /></td>
-		            <td><p:inputText id="birthName" value="#{staffController.activeStaff.birthName}" required="false" maxlength="200" styleClass="edit-input wide-text"/></td>
-		           
-            	</tr>
-            	<tr>
 		            <td><p:outputLabel for="birthDate" value="Születési dátum:" /></td>
 		            <td><p:calendar id="birthDate" value="#{staffController.activeStaff.birthDate}" required="true" requiredMessage="A születési időt töltsd ki!"  
 		            			showOn="button" pattern="yyyy.MM.dd" mask="true" styleClass="edit-input date-text" >
 		           		</p:calendar>
 		           </td>
 		    	</tr>
-            	<tr>
-		            <td><p:outputLabel for="birthPlace" value="Születési hely:" /></td>
-		            <td><p:inputText id="birthPlace" value="#{staffController.activeStaff.birthPlace}" required="false" maxlength="100" styleClass="edit-input wide-text"/></td>
-		            
-	            </tr>
-	             <tr>
-		            <td><p:outputLabel for="motherName" value="Anyja neve:" /></td>
-		            <td><p:inputText id="motherName" value="#{staffController.activeStaff.motherName}" required="false" maxlength="100" styleClass="edit-input wide-text"/></td>
-		            
-            	</tr>
-            	<tr>
-		            <td><p:outputLabel for="sidSerial" value="Személyi vagy igazolvány száma:" /></td>
-		            <td><p:inputText id="sidSerial" value="#{staffController.activeStaff.sidSerial}" required="false" maxlength="30" styleClass="edit-input medium-text"/></td>
-		            
-            	</tr>
-            	<tr>
-		            <td><p:outputLabel for="taxSerial" value="Adószáma:" /></td>
-		            <td><p:inputText id="taxSerial" value="#{staffController.activeStaff.taxSerial}" required="false" maxlength="30" styleClass="edit-input medium-text"/></td>
-		            
-            	</tr>
-            	<tr>
-		            <td><p:outputLabel for="tajSerial" value="Társadalom biztosítási száma:" /></td>
-		            <td><p:inputText id="tajSerial" value="#{staffController.activeStaff.tajSerial}" required="false" maxlength="30" styleClass="edit-input medium-text"/></td>
-		            
-            	</tr>
-            	<tr>
-		            <td><p:outputLabel for="residentAddress" value="Állandó lakcíme:" /></td>
-		            <td><p:inputTextarea id="residentAddress" value="#{staffController.activeStaff.residentAddress}" required="false" rows="3" cols="30" maxlength="300" styleClass="edit-input wide-text"/></td>
-		           
-            	</tr>
-            	<tr>
-		            <td><p:outputLabel for="homeAddress" value="Tartozkodási / levelezési címe:" /></td>
-		            <td><p:inputTextarea id="homeAddress" value="#{staffController.activeStaff.homeAddress}" required="false" rows="3" cols="30" maxlength="300" styleClass="edit-input wide-text"/></td>
-		            
-            	</tr>
-            	
             	<tr>
 	          	 	<td colspan="2"><p:separator  /></td>
             	</tr>
@@ -158,7 +118,7 @@
 				             <f:selectItem itemLabel="Határozott" itemValue="Határozott" />
 			        	</h:selectOneMenu>
 			        	<span id="showFinish">
-			        		<h:outputLabel for="employFinish" value=" ideje:"/>
+			        		<h:outputLabel for="employFinish" value=" határozott vége: "/>
 			        		<p:calendar id="employFinish" value="#{staffController.activeStaff.employFinish}" showOn="button" pattern="yyyy.MM.dd" mask="true" styleClass="edit-input date-text">
 			        			<f:convertDateTime type="date" dateType="short" />
 			        		</p:calendar>
@@ -206,11 +166,77 @@
 		            </td>
 	   				
 	            </tr>	
+	            <tr>
+	            	<td colspan="2"><p:separator  /></td>
+            	</tr>
+	            
+	            <tr>
+		            <td><p:outputLabel for="birthName" value="Születési név:" /></td>
+		            <td><p:inputText id="birthName" value="#{staffController.activeStaff.birthName}" required="false" maxlength="200" styleClass="edit-input wide-text"/></td>
+		           
+            	</tr>
+            	<tr>
+		            <td><p:outputLabel for="birthPlace" value="Születési hely:" /></td>
+		            <td><p:inputText id="birthPlace" value="#{staffController.activeStaff.birthPlace}" required="false" maxlength="100" styleClass="edit-input wide-text"/></td>
+		            
+	            </tr>
+	            <tr>
+		            <td><p:outputLabel for="motherName" value="Anyja neve:" /></td>
+		            <td><p:inputText id="motherName" value="#{staffController.activeStaff.motherName}" required="false" maxlength="100" styleClass="edit-input wide-text"/></td>
+		            
+            	</tr>
+            	<tr>
+		            <td title="Az adózásban és szabadságban felhasználható, nem kötelező kitölteni">
+		            	<p:outputLabel for="children" value="Kiskorú gyermekek száma:"/>
+		            </td>
+		            <td>
+		            	<p:inputMask mask="99" id="children" maxlength="2" value="#{staffController.activeStaff.children}" styleClass="edit-input short-text">
+		            		<f:validateLongRange maximum="10" />
+		            	</p:inputMask>
+			        </td>
+			    </tr>
+            	
+            	<tr>
+		            <td><p:outputLabel for="sidSerial" value="Személyi vagy igazolvány száma:" /></td>
+		            <td><p:inputText id="sidSerial" value="#{staffController.activeStaff.sidSerial}" required="false" maxlength="30" styleClass="edit-input medium-text"/></td>
+		            
+            	</tr>
+            	<tr>
+		            <td><p:outputLabel for="taxSerial" value="Adószáma:" /></td>
+		            <td><p:inputText id="taxSerial" value="#{staffController.activeStaff.taxSerial}" required="false" maxlength="30" styleClass="edit-input medium-text"/></td>
+		            
+            	</tr>
+            	<tr>
+		            <td><p:outputLabel for="tajSerial" value="Társadalom biztosítási száma:" /></td>
+		            <td><p:inputText id="tajSerial" value="#{staffController.activeStaff.tajSerial}" required="false" maxlength="30" styleClass="edit-input medium-text"/></td>
+		            
+            	</tr>
+            	<tr>
+		            <td><p:outputLabel for="residentAddress" value="Állandó lakcíme:" /></td>
+		            <td><p:inputTextarea id="residentAddress" value="#{staffController.activeStaff.residentAddress}" required="false" rows="3" cols="30" maxlength="300" styleClass="edit-input wide-text"/></td>
+		           
+            	</tr>
+            	<tr>
+		            <td><p:outputLabel for="homeAddress" value="Tartozkodási / levelezési címe:" /></td>
+		            <td><p:inputTextarea id="homeAddress" value="#{staffController.activeStaff.homeAddress}" required="false" rows="3" cols="30" maxlength="300" styleClass="edit-input wide-text"/></td>
+		            
+            	</tr>
+            	<tr>
+		            <td><p:outputLabel for="phonenumber" value="Telefonszámai:" /></td>
+		            <td><p:inputText id="phonenumber" value="#{staffController.activeStaff.phonenumber}" required="false" maxlength="45" styleClass="edit-input medium-text"/></td>
+		            
+            	</tr>
+            	<tr>
+		            <td><p:outputLabel for="email" value="Értesítési e-mail:" /></td>
+		            <td><p:inputText id="email" value="#{staffController.activeStaff.email}" required="false" maxlength="30" styleClass="edit-input medium-text"/></td>
+		            
+            	</tr>
+            	
 		    </table>
 		    
 	
 	 		<f:facet name="footer">
-	            <p:commandButton value="Adatok mentése" action="#{staffController.saveStaff}" validateClient="true" update="editorform"/>  
+	            <p:commandButton value="Adatok mentése" action="#{staffController.saveStaff}" validateClient="true" update="editorform :docSliderPanel"/>  
        			
        			<p:commandButton value="Bezárás" action="#{staffController.closeActiveStaff}" ajax="true" immediate="true" >
        				<p:resetInput for="editorform" target="editorform"/>

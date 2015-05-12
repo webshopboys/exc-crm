@@ -1,20 +1,24 @@
 package hu.exclusive.crm.controller;
 
+import hu.exclusive.crm.model.DocBean;
+import hu.exclusive.crm.report.ContractGenerator;
 import hu.exclusive.crm.service.AttachmentService;
+import hu.exclusive.dao.ServiceException;
+import hu.exclusive.dao.model.Attachment;
 import hu.exclusive.dao.model.ContractDoc;
-import hu.exclusive.dao.model.Staff;
+import hu.exclusive.dao.model.DrDoc;
+import hu.exclusive.utils.ObjectUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Date;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
-import javax.faces.event.ActionEvent;
 import javax.servlet.http.Part;
 
 import org.primefaces.event.FileUploadEvent;
@@ -25,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ManagedBean(name = "fileUploadController")
+@ViewScoped
 public class FileUploadController extends Commontroller implements Serializable {
 
     private static final long serialVersionUID = -1774648789104774066L;
@@ -37,6 +42,9 @@ public class FileUploadController extends Commontroller implements Serializable 
     private ContractDoc template;
     private Integer idStaff;
     private Date drDocExpired;
+    private String contractNote;
+    private String doctorNote;
+    private String attachmentNote;
 
     public void uploadContractDoc(FileUploadEvent event) {
 
@@ -66,14 +74,16 @@ public class FileUploadController extends Commontroller implements Serializable 
 
         message(event.getFile().getFileName() + " feltöltése...", "");
         try {
-            byte[] bin = serializeFile(event.getFile().getFileName(), event.getFile().getInputstream());
+            byte[] bin = ObjectUtils.serializeFile(event.getFile().getFileName(), event.getFile().getInputstream());
+
+            byte[] zipped = bin;// ObjectUtils.zip(bin, event.getFile().getFileName());
 
             ContractDoc doc = new ContractDoc();
             doc.setDocumentType("Új szerződés sablon");
             doc.setDocumentNote("Kiválasztással feltöltött fájl. Utólag szerkesztendő!\nA munkatárs elérhető mezői: "
-                    + Staff.DOCFIELDS_NAMES.getInfo());
+                    + ContractGenerator.DOCFIELDS_NAMES.getInfo());
             doc.setDocumentUrl(event.getFile().getFileName());
-            doc.setDocumentBin(bin);
+            doc.setDocumentBin(zipped);
             service.saveDocument(doc);
 
             message("Új szerződés sablon elmentve.", doc.getDocumentNote());
@@ -82,30 +92,6 @@ public class FileUploadController extends Commontroller implements Serializable 
             error("Feltöltési hiba", null, e);
         }
 
-    }
-
-    public byte[] serializeFile(String fileName, InputStream in) throws IOException {
-        try {
-
-            // write the inputStream to a FileOutputStream
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-            int read = 0;
-            byte[] bytes = new byte[1024];
-
-            while ((read = in.read(bytes)) != -1) {
-                out.write(bytes, 0, read);
-            }
-
-            in.close();
-            out.flush();
-            out.close();
-
-            return out.toByteArray();
-
-        } catch (IOException e) {
-            throw e;
-        }
     }
 
     public void selectTemplate(ContractDoc template) {
@@ -162,34 +148,101 @@ public class FileUploadController extends Commontroller implements Serializable 
         return filePart;
     }
 
-    public void uploadFileContract(ActionEvent event) {
-        System.err.println("uploadFileContract " + filePart);
-        if (filePart != null) {
-            message("Sikeres feltöltés", getFileNameFromPart(filePart) + " feltöltve.");
+    public void uploadFileContract(Integer staffId) {
+        System.err.println("uploadFileContract " + filePart + " staffId " + staffId);
+        if (filePart != null && staffId != null) {
+            try {
+
+                ContractDoc doc = new ContractDoc();
+                doc.setIdStaff(staffId);
+                doc.setDocumentCreated(new Timestamp(new Date().getTime()));
+                doc.setDocumentNote(getContractNote());
+                doc.setDocumentUrl(getFileNameFromPart(filePart));
+                doc.setDocumentBin(getBytesFromPart(filePart));
+                doc.setDocumentType("Feltöltött szerződés");
+                service.saveDocument(doc);
+
+                message("Sikeres szerződés feltöltés", getFileNameFromPart(filePart) + " feltöltve.");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                e = ServiceException.takeReason(e);
+                error("Feltöltési hiba", null, e);
+            }
         } else {
-            error("Hiba", "Nincs kiválasztva a szerződés!");
+            error("Hiba", "Nincs kiválasztva a szerződés vagy a munkatárs!");
             throw new AbortProcessingException();
         }
     }
 
-    public void uploadFileDr(ActionEvent event) {
-        System.err.println("uploadFileDr " + filePart);
-        if (filePart != null) {
-            message("Sikeres feltöltés", getFileNameFromPart(filePart) + " feltöltve.");
+    public void uploadFileDr(Integer staffId) {
+        System.err.println("uploadFileDr " + filePart + " staffId " + staffId);
+        if (filePart != null && staffId != null) {
+
+            try {
+
+                DrDoc doc = new DrDoc();
+                doc.setIdStaff(staffId);
+                doc.setDocumentCreated(new Timestamp(new Date().getTime()));
+                doc.setDocumentExpire(getDrDocExpired() == null ? null : new Timestamp(getDrDocExpired().getTime()));
+                doc.setDocumentNote(getDoctorNote());
+                doc.setDocumentType("Feltöltött orvosi");
+                doc.setDocumentUrl(getFileNameFromPart(filePart));
+                doc.setDocumentBin(getBytesFromPart(filePart));
+
+                service.saveDrDoc(doc);
+
+                message("Sikeres orvosi feltöltés", getFileNameFromPart(filePart) + " feltöltve.");
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+                e = ServiceException.takeReason(e);
+                error("Feltöltési hiba", null, e);
+            }
         } else {
-            error("Hiba", "Nincs kiválasztva az orvosi!");
+            error("Hiba", "Nincs kiválasztva az orvosi vagy a munkatárs!");
+            throw new AbortProcessingException("Nincs kiválasztva az orvosi!");
+        }
+    }
+
+    public void uploadAttachment(Integer staffId) {
+        System.err.println("uploadAttachment " + filePart + " staffId " + staffId);
+        if (filePart != null && staffId != null) {
+
+            try {
+
+                Attachment doc = new Attachment();
+                doc.setIdStaff(staffId);
+                doc.setDocumentCreated(new Timestamp(new Date().getTime()));
+                doc.setDocumentNote(getAttachmentNote());
+                doc.setDocumentUrl(getFileNameFromPart(filePart));
+                doc.setDocumentBin(getBytesFromPart(filePart));
+
+                service.saveAttachment(doc);
+
+                message("Új melléklet feltöltve.", doc.getFileInfo());
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                e = ServiceException.takeReason(e);
+                error("Feltöltési hiba", null, e);
+            }
+
+        } else {
+            error("Hiba", "Nincs kiválasztva a melléklet vagy a munkatárs!");
             throw new AbortProcessingException();
         }
     }
 
-    public void uploadAttachment(ActionEvent event) {
-        System.err.println("uploadAttachment " + filePart);
-        if (filePart != null) {
-            message("Sikeres feltöltés", getFileNameFromPart(filePart) + " feltöltve.");
-        } else {
-            error("Hiba", "Nincs kiválasztva a melléklet!");
-            throw new AbortProcessingException();
+    private byte[] getBytesFromPart(Part part) throws IOException {
+        if (part != null) {
+            String fileName = getFileNameFromPart(part);
+            byte[] bin = ObjectUtils.serializeFile(fileName, part.getInputStream());
+            // return ObjectUtils.zip(bin, fileName); // problémás a zp docx újrazippelése
+            return bin;
         }
+        return new byte[0];
     }
 
     private String getFileNameFromPart(Part part) {
@@ -198,7 +251,7 @@ public class FileUploadController extends Commontroller implements Serializable 
             for (String content : partHeader.split(";")) {
                 if (content.trim().startsWith("filename")) {
                     String fileName = content.substring(content.indexOf('=') + 1).trim().replace("\"", "");
-                    return fileName;
+                    return fileName.length() > DocBean.MAX_URL_LENGTH ? fileName.substring(0, DocBean.MAX_URL_LENGTH) : fileName;
                 }
             }
         }
@@ -210,6 +263,7 @@ public class FileUploadController extends Commontroller implements Serializable 
     }
 
     public void setIdStaff(Integer idStaff) {
+        System.out.println("FileUpload setIdStaff: " + idStaff);
         this.idStaff = idStaff;
     }
 
@@ -221,58 +275,34 @@ public class FileUploadController extends Commontroller implements Serializable 
         this.drDocExpired = drDocExpired;
     }
 
-    // private void restoreDoc(Attachment doc) throws Exception {
-    // if (doc.getDocumentBin() != null && doc.getDocumentUrl() != null) {
-    // FileOutputStream ow = null;
-    // try {
-    // String path = doc.getDocumentUrl().substring(0, doc.getDocumentUrl().lastIndexOf("/")); // " dir/dir "
-    // String fileName = doc.getDocumentUrl().substring(doc.getDocumentUrl().lastIndexOf("/")); // " /name"
-    // File dir = new File(path);
-    // dir.mkdir();
-    // dir = new File(path + "/restored");
-    // dir.mkdir();
-    // File file = new File(path + "/restored" + fileName);
-    // file.delete();
-    // file.createNewFile();
-    // ow = new FileOutputStream(file);
-    //
-    // ow.write(doc.getDocumentBin());
-    // ow.flush();
-    // ow.close();
-    // ow = null;
-    //
-    // } finally {
-    // if (ow != null)
-    // ow.close();
-    // }
-    //
-    // }
-    // }
-    //
-    // private void serializeDoc(ISerializableDoc doc) throws Exception {
-    // FileInputStream fileInputStream = null;
-    // try {
-    // File f = new File(doc.getDocumentUrl());
-    //
-    // if (f.exists() && f.isFile()) {
-    // fileInputStream = new FileInputStream(f);
-    // long sizeInBytes = f.length();
-    // // convert file into array of bytes
-    // byte[] fileInBytes = new byte[(int) sizeInBytes];
-    // fileInputStream.read(fileInBytes);
-    //
-    // fileInputStream.close();
-    // fileInputStream = null;
-    //
-    // doc.setDocumentBin(fileInBytes);
-    //
-    // } else {
-    // throw new IllegalAccessException("File not reach");
-    // }
-    // } finally {
-    // if (fileInputStream != null)
-    // fileInputStream.close();
-    // }
-    //
-    // }
+    public String getContractNote() {
+        if (contractNote != null && contractNote.length() > DocBean.MAX_NOTE_LENGTH)
+            return contractNote.substring(0, DocBean.MAX_NOTE_LENGTH);
+        return contractNote;
+    }
+
+    public void setContractNote(String contractNote) {
+        this.contractNote = contractNote;
+    }
+
+    public String getDoctorNote() {
+        if (doctorNote != null && doctorNote.length() > DocBean.MAX_NOTE_LENGTH)
+            return doctorNote.substring(0, DocBean.MAX_NOTE_LENGTH);
+        return doctorNote;
+    }
+
+    public void setDoctorNote(String doctorNote) {
+        this.doctorNote = doctorNote;
+    }
+
+    public String getAttachmentNote() {
+        if (attachmentNote != null && attachmentNote.length() > DocBean.MAX_NOTE_LENGTH)
+            return attachmentNote.substring(0, DocBean.MAX_NOTE_LENGTH);
+        return attachmentNote;
+    }
+
+    public void setAttachmentNote(String attachmentNote) {
+        this.attachmentNote = attachmentNote;
+    }
+
 }

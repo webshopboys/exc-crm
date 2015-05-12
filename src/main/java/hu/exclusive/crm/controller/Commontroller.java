@@ -54,6 +54,8 @@ public class Commontroller implements Serializable {
             if (isEmpty(message))
                 message = e.getLocalizedMessage();
         } else {
+
+            e = ServiceException.takeReason(e);
             if (isEmpty(message)) {
                 message = e.getClass().getSimpleName() + ": " + e.getLocalizedMessage();
             } else {
