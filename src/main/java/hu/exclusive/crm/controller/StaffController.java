@@ -271,10 +271,23 @@ public class StaffController extends Commontroller implements Serializable {
     }
 
     public void saveStaff() {
-        System.err.println("SaveStaff " + activeStaff);
 
-        service.saveStaff(activeStaff);
-        // closeActiveStaff();
+        try {
+            System.err.println("SaveStaff " + activeStaff);
+
+            // if (isEmpty(user.getUserName()) || isEmpty(user.getLoginName())) {
+            // error("Hiányos adatok", "A teljes név és login név is kötelező, és nem lehet már létező!", "userForm");
+            // return;
+            // }
+
+            service.saveStaff(activeStaff);
+
+            message("Feldolgozási eredmény", "Munkatárs sikeresen mentve.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            error("Mentési hiba", null, new hu.exclusive.dao.ServiceException(e));
+        }
     }
 
     public void closeActiveStaff() {

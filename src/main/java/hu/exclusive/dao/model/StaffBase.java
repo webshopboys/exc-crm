@@ -306,4 +306,16 @@ public class StaffBase extends EntityCommons implements Serializable {
     public Integer getId() {
         return idStaff;
     }
+
+    @Override
+    public String toString() {
+        return "StaffBase [idStaff=" + idStaff + ", baseSalary=" + baseSalary + ", birthDate=" + birthDate + ", birthName="
+                + birthName + ", birthPlace=" + birthPlace + ", employFinish=" + employFinish + ", employPeriod=" + employPeriod
+                + ", employStart=" + employStart + ", employTime=" + employTime + ", employType=" + employType + ", fullName="
+                + fullName + ", homeAddress=" + homeAddress + ", motherName=" + motherName + ", privateNote=" + privateNote
+                + ", residentAddress=" + residentAddress + ", salaryType=" + salaryType + ", sidSerial=" + sidSerial
+                + ", status=" + status + ", tajSerial=" + tajSerial + ", taxSerial=" + taxSerial + ", trialPeriod=" + trialPeriod
+                + ", children=" + children + ", phonenumber=" + phonenumber + ", email=" + email + "]";
+    }
+
 }

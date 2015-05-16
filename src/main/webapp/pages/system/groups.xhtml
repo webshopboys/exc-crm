@@ -1,0 +1,114 @@
+<ui:composition 
+ 	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+    
+  	<h:outputStylesheet name="exc-style.css" />
+
+	<h:form id="groupsForm" >
+	
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+      		<p:commandButton value="Igen" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+      		<p:commandButton value="Nem" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+	    </p:confirmDialog>
+	    
+	    <p:growl id="error" showDetail="true" sticky="true" redisplay="false" severity="error"/>
+	    <p:growl id="info" showDetail="true" sticky="false" redisplay="false" severity="info"/>
+		 
+		<p:dataTable var="g" value="#{parameterView.workgroups}" paginator="false">  
+		
+           <f:facet name="header">  
+	           Cég csoportok
+	        </f:facet>  
+	
+	  		<p:column headerText="Cégcsoport" style="width:150px;vertical-align:middle;">
+        		<h:outputText value="#{g.companyName}"/>
+        	</p:column>
+           	<p:column headerText="Csoport neve" style="width:150px;">
+          		<h:outputText value="#{g.groupName}" style="white-space: pre-wrap;" />
+          	</p:column>
+          	<p:column headerText="Címe" style="width:150px;vertical-align:middle;">
+          		<h:outputText value="#{g.address}" style="white-space: pre-wrap;" />
+          	</p:column>
+          	<p:column headerText="Adószáma" style="width:60px;vertical-align:middle;">
+          		<h:outputText value="#{g.taxNumber}" style="white-space: pre-wrap;" />
+			</p:column>
+			<p:column headerText="Cégjegyzékszám" style="width:80px;vertical-align:middle;">
+          		<h:outputText value="#{g.companyNumber}" style="white-space: pre-wrap;" />
+			</p:column>
+			<p:column headerText="Munkaügyi képviselő" style="width:100px;vertical-align:middle;">
+          		<h:outputText value="#{g.representative}" style="white-space: pre-wrap;" />
+			</p:column>           
+           	
+           	<p:column style="width:20px;vertical-align:middle;">
+           		 <p:commandButton icon="ui-icon-pencil" action="#{sysController.setGroup(g)}" ajax="true" update=":groupsForm:groupPanel"/> 
+           	</p:column>	
+           					
+		 </p:dataTable>
+		
+		
+    	 <p:panel header="Csoport részletei" id="groupPanel">
+	        <table style="cellspacing:4px;">
+            	<tr>
+            	  <td>
+		    		<p:outputLabel value="Cégcsoport:"/>
+		    	  </td>
+		    	  <td>
+		    		<p:inputText value="#{sysController.group.companyName}" style="width: 200px;" autocomplete="off"/>
+		    	  </td>
+		    	  <td>
+		    		<p:outputLabel value="Csoport neve:"/>
+		    	  </td>
+		    	  <td>
+		    		<p:inputText value="#{sysController.group.groupName}" style="width: 200px;" autocomplete="off"/>
+		    	  </td>
+		        </tr>
+		        
+		    	<tr>
+		    	  <td colspan="1">
+		    		<p:outputLabel value="Csoport címe:"/>
+		    	  </td>
+		    	  <td colspan="3">
+		    		<p:inputText value="#{sysController.group.address}" style="width: 300px;" autocomplete="off"/>
+		    	  </td>
+		    	</tr>  
+		    	<tr>
+		    	  <td>
+		    		<p:outputLabel value="Adószám:"/>
+		    	  </td>
+		    	  <td>	
+		    		<p:inputText value="#{sysController.group.taxNumber}" style="width: 100px;" autocomplete="off"/>
+		    	  </td>
+		    	  <td>
+		    		<p:outputLabel value="Cégjegyzékszám:"/>
+		    	  </td>
+		    	  <td>
+		    		<p:inputText value="#{sysController.group.companyNumber}" style="width: 100px;" autocomplete="off"/>
+		    	  </td>	
+		    	</tr>
+		    	<tr>
+		    	  <td colspan="1">
+		    		<p:outputLabel value="Munkaügyi képviselő:"/>
+		    	  </td>
+		    	  <td colspan="1">
+		    		<p:inputText value="#{sysController.group.representative}" style="width: 150px;" autocomplete="off"/>
+		    	  </td>
+		    	</tr>  
+		    	
+		    	           
+	        </table>
+	        
+	        
+	      	<p:commandButton actionListener="#{sysController.addGroup()}" immediate="false" value="Csoport létrehozása" update="groupsForm" />
+	    	<p:commandButton actionListener="#{sysController.saveGroup()}" immediate="false" value="Csoport módosítása" update="groupsForm" />
+	    	
+	    	
+	    </p:panel>
+    
+    
+    </h:form>
+	    
+</ui:composition>    

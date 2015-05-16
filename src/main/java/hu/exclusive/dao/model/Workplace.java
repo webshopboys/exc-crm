@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * The persistent class for the T_WORKPLACE database table.
@@ -22,13 +23,13 @@ import javax.persistence.Table;
 @NamedQueries({
         @NamedQuery(name = "Workplace.findAll", query = "SELECT w FROM Workplace w"),
         @NamedQuery(name = "Workplace.findForStaff", query = "SELECT w FROM Workplace w WHERE w.idWorkplace in (SELECT k.id.idWorkplace FROM StaffWorkplaceK k WHERE k.id.idStaff = :idStaff) ORDER BY w.workplaceName") })
-public class Workplace implements Serializable {
+public class Workplace extends EntityCommons implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id_workplace", unique = true, nullable = false)
-    private int idWorkplace;
+    private Integer idWorkplace;
 
     @Column(name = "e_mail", length = 200)
     private String eMail;
@@ -59,27 +60,28 @@ public class Workplace implements Serializable {
 
     @Column(name = "workplace_name", nullable = false, length = 200)
     private String workplaceName;
-    //
-    // @OneToMany(mappedBy="workplace")
-    // private List<Staff> Staffs;
 
-    // @OneToOne
-    // @JoinColumn(name = "id_alarm")
-    // private Alarm Alarm;
+    @Transient
+    private Integer idWorkgroup;
 
     // bi-directional many-to-one association to Workgroup
     @ManyToOne
     @JoinColumn(name = "id_workgroup", nullable = false)
-    private Workgroup Workgroup;
+    private Workgroup workgroup;
 
     public Workplace() {
     }
 
-    public int getIdWorkplace() {
+    @Override
+    public Integer getId() {
+        return getIdWorkplace();
+    }
+
+    public Integer getIdWorkplace() {
         return this.idWorkplace;
     }
 
-    public void setIdWorkplace(int idWorkplace) {
+    public void setIdWorkplace(Integer idWorkplace) {
         this.idWorkplace = idWorkplace;
     }
 
@@ -181,11 +183,19 @@ public class Workplace implements Serializable {
     // }
 
     public Workgroup getWorkgroup() {
-        return this.Workgroup;
+        return this.workgroup;
     }
 
     public void setWorkgroup(Workgroup Workgroup) {
-        this.Workgroup = Workgroup;
+        this.workgroup = Workgroup;
+    }
+
+    public Integer getIdWorkgroup() {
+        return idWorkgroup;
+    }
+
+    public void setIdWorkgroup(Integer idWorkgroup) {
+        this.idWorkgroup = idWorkgroup;
     }
 
     @Override

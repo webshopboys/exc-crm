@@ -74,4 +74,12 @@ public class ParametersService {
             getJobtitles(null);
         return jobtitlePuffer;
     }
+
+    public void saveWorkroup(Workgroup group) {
+        excDao.saveWorkroup(group);
+    }
+
+    public void saveWorkplace(Workplace workplace) {
+        excDao.saveWorkplace(workplace);
+    }
 }

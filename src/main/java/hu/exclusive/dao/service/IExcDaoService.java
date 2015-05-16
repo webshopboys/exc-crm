@@ -64,4 +64,9 @@ public interface IExcDaoService {
     String getSystemParameter(String sysgroup, String syskey);
 
     List<SSystem> getSystemParameters(String sysgroup, String syskey);
+
+    void saveWorkroup(Workgroup group);
+
+    void saveWorkplace(Workplace workplace);
+
 }

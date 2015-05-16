@@ -22,33 +22,53 @@ import javax.persistence.Table;
 @NamedQueries({
         @NamedQuery(name = "Workgroup.findAll", query = "SELECT w FROM Workgroup w"),
         @NamedQuery(name = "Workgroup.findForStaff", query = "SELECT w FROM Workgroup w WHERE w.idWorkgroup in (SELECT k.id.idWorkgroup FROM StaffWorkgroupK k WHERE k.id.idStaff = :idStaff) ORDER BY w.groupName") })
-public class Workgroup implements Serializable {
+public class Workgroup extends EntityCommons implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id_workgroup", unique = true, nullable = false)
-    private int idWorkgroup;
+    private Integer idWorkgroup;
 
     @Column(name = "group_name", nullable = false, length = 100)
     private String groupName;
+
+    @Column(name = "address", nullable = true, length = 200)
+    private String address;
+
+    @Column(name = "tax_number", nullable = true, length = 200)
+    private String taxNumber;
+
+    @Column(name = "company_number", nullable = true, length = 100)
+    private String companyNumber;
+
+    @Column(name = "representative", nullable = true, length = 100)
+    private String representative;
+
+    @Column(name = "company_name", nullable = true, length = 100)
+    private String companyName;
 
     // a group tobb staff, de egy staffnak egy groupja lehet
     // @OneToMany(mappedBy="workgroup")
     // private List<Staff> Staffs;
 
     // egy place csak egy groupba tartozhat
-    @OneToMany(mappedBy = "Workgroup")
+    @OneToMany(mappedBy = "workgroup")
     private List<Workplace> Workplaces;
 
     public Workgroup() {
     }
 
-    public int getIdWorkgroup() {
+    @Override
+    public Integer getId() {
+        return getIdWorkgroup();
+    }
+
+    public Integer getIdWorkgroup() {
         return this.idWorkgroup;
     }
 
-    public void setIdWorkgroup(int idWorkgroup) {
+    public void setIdWorkgroup(Integer idWorkgroup) {
         this.idWorkgroup = idWorkgroup;
     }
 
@@ -60,13 +80,45 @@ public class Workgroup implements Serializable {
         this.groupName = groupName;
     }
 
-    // public List<Staff> getStaffs() {
-    // return this.Staffs;
-    // }
-    //
-    // public void setStaffs(List<Staff> Staffs) {
-    // this.Staffs = Staffs;
-    // }
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getTaxNumber() {
+        return taxNumber;
+    }
+
+    public void setTaxNumber(String taxNumber) {
+        this.taxNumber = taxNumber;
+    }
+
+    public String getCompanyNumber() {
+        return companyNumber;
+    }
+
+    public void setCompanyNumber(String companyNumber) {
+        this.companyNumber = companyNumber;
+    }
+
+    public String getRepresentative() {
+        return representative;
+    }
+
+    public void setRepresentative(String representative) {
+        this.representative = representative;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
 
     public List<Workplace> getWorkplaces() {
         return this.Workplaces;

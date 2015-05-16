@@ -1,7 +1,6 @@
 package hu.exclusive.dao.model;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,7 +23,7 @@ public class StaffAlarmK implements Serializable {
     @Column(name = "id_staffalarm")
     private int idStaffalarm;
 
-    private Timestamp created;
+    // private Timestamp created;
 
     @Column(name = "id_alarm")
     private int idAlarm;
@@ -43,13 +42,13 @@ public class StaffAlarmK implements Serializable {
         this.idStaffalarm = idStaffalarm;
     }
 
-    public Timestamp getCreated() {
-        return this.created;
-    }
-
-    public void setCreated(Timestamp created) {
-        this.created = created;
-    }
+    // public Timestamp getCreated() {
+    // return this.created;
+    // }
+    //
+    // public void setCreated(Timestamp created) {
+    // this.created = created;
+    // }
 
     public int getIdAlarm() {
         return this.idAlarm;

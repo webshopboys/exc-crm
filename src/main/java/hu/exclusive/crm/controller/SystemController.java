@@ -6,6 +6,8 @@ import hu.exclusive.dao.ServiceException;
 import hu.exclusive.dao.model.CrmUser;
 import hu.exclusive.dao.model.Function;
 import hu.exclusive.dao.model.Role;
+import hu.exclusive.dao.model.Workgroup;
+import hu.exclusive.dao.model.Workplace;
 import hu.exclusive.utils.FacesAccessor;
 
 import java.io.Serializable;
@@ -41,6 +43,8 @@ public class SystemController extends Commontroller implements Serializable {
     private CrmUser selectedUser;
     private CrmUser newUser;
     private String originalPass;
+    private Workgroup group;
+    private Workplace workplace;
 
     @PostConstruct
     public void init() {
@@ -365,6 +369,8 @@ public class SystemController extends Commontroller implements Serializable {
         functionName = null;
         roleComment = null;
         roleName = null;
+        group = null;
+        workplace = null;
     }
 
     public String getRoleComment() {
@@ -391,4 +397,118 @@ public class SystemController extends Commontroller implements Serializable {
         this.originalPass = originalPass;
     }
 
+    public Workgroup getGroup() {
+        if (group == null)
+            group = new Workgroup();
+        return group;
+    }
+
+    public void setGroup(Workgroup group) {
+        this.group = group;
+    }
+
+    public void addGroup() {
+        try {
+
+            if (!isEmpty(getGroup().getCompanyName()) && !isEmpty(getGroup().getGroupName())) {
+
+                getGroup().setIdWorkgroup(null);
+                service.saveWorkroup(getGroup());
+                message("Feldolgozási eredmény", "Sikeresen létrehozva.");
+
+                reset();
+            } else {
+                error("Hiányos adatok", "A cégcsoport és munkacsoport nevének kitöltése kötelező, és nem lehet már létező!");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            error("Létrehozási hiba", null, new ServiceException(e));
+        }
+    }
+
+    public void saveGroup() {
+        try {
+            System.err.println("saveGroup " + getGroup());
+            if (!isEmpty(getGroup().getCompanyName()) && !isEmpty(getGroup().getGroupName())
+                    && getGroup().getIdWorkgroup() != null) {
+
+                service.saveWorkroup(getGroup());
+
+                message("Feldolgozási eredmény", "Sikeresen módosítva.");
+
+                reset();
+            } else {
+                error("Hiányos adatok",
+                        "A cégcsoport és munkacsoport nevének kitöltése kötelező! A módosítandó csoport talán nincs kiválasztva?");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            error("Módosítási hiba", null, new ServiceException(e));
+        }
+    }
+
+    public Workplace getWorkplace() {
+        if (workplace == null)
+            workplace = new Workplace();
+        return workplace;
+    }
+
+    public void setWorkplace(Workplace workplace) {
+        this.workplace = workplace;
+    }
+
+    public void addWorkplace() {
+        try {
+
+            if (!isEmpty(getWorkplace().getWorkplaceName()) && getWorkplace().getIdWorkgroup() != null
+                    && !isEmpty(getWorkplace().getOpenFriday()) && !isEmpty(getWorkplace().getOpenMonday())
+                    // && !isEmpty(getWorkplace().getOpenSaturday()) && !isEmpty(getWorkplace().getOpenSunday())
+                    && !isEmpty(getWorkplace().getOpenThursday()) && !isEmpty(getWorkplace().getOpenTuesday())
+                    && !isEmpty(getWorkplace().getOpenWednesday())) {
+
+                getWorkplace().setIdWorkplace(null);
+                service.saveWorkplace(getWorkplace());
+
+                message("Feldolgozási eredmény", "Sikeresen létrehozva.");
+
+                reset();
+            } else {
+                error("Hiányos adatok",
+                        "A munkahely nevének és a munkanapok nyitvatartási idejének kitöltése kötelező! A munkahely csoportjának kiválasztása kötelező!");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            error("Létrehozási hiba", null, new ServiceException(e));
+        }
+    }
+
+    public void saveWorkplace() {
+        try {
+
+            System.err.println("saveWorkplace " + getWorkplace());
+            if (!isEmpty(getWorkplace().getWorkplaceName()) && getWorkplace().getWorkgroup() != null
+                    && getWorkplace().getIdWorkplace() != null && !isEmpty(getWorkplace().getOpenFriday())
+                    && !isEmpty(getWorkplace().getOpenMonday())
+                    // && !isEmpty(getWorkplace().getOpenSaturday()) && !isEmpty(getWorkplace().getOpenSunday())
+                    && !isEmpty(getWorkplace().getOpenThursday()) && !isEmpty(getWorkplace().getOpenTuesday())
+                    && !isEmpty(getWorkplace().getOpenWednesday())) {
+
+                message("Feldolgozási eredmény", "Sikeresen módosítva.");
+
+                service.saveWorkplace(getWorkplace());
+
+                reset();
+            } else {
+                error("Hiányos adatok",
+                        "A munkahely nevének és a munkanapok nyitvatartási idejének kitöltése kötelező! A munkahely csoportjának kiválasztása kötelező! A módosítandó munkahely talán nincs kiválasztva?");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            error("Módosítási hiba", null, new ServiceException(e));
+        }
+    }
 }

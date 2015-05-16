@@ -53,6 +53,24 @@ public class ExcDaoServiceImpl implements IExcDaoService {
 
     @Transactional
     @Override
+    public void saveWorkplace(Workplace workplace) {
+        if (workplace.getId() == null)
+            em.persist(workplace);
+        else
+            em.merge(workplace);
+    }
+
+    @Transactional
+    @Override
+    public void saveWorkroup(Workgroup workgroup) {
+        if (workgroup.getId() == null)
+            em.persist(workgroup);
+        else
+            em.merge(workgroup);
+    }
+
+    @Transactional
+    @Override
     public void saveDocument(Attachment document) {
         if (document.getId() == null)
             em.persist(document);

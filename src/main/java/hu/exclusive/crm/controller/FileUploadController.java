@@ -122,6 +122,7 @@ public class FileUploadController extends Commontroller implements Serializable 
 
     public void saveTemplate() {
         template.setDocumentCreated(new Date());
+        System.err.println("saveTemplate " + template);
         service.saveDocument(template);
     }
 
