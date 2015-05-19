@@ -69,4 +69,12 @@ public interface IExcDaoService {
 
     void saveWorkplace(Workplace workplace);
 
+	void deleteDoc(ContractDoc document);
+
+	void deleteDoc(DrDoc document);
+
+	void deleteAttachment(Attachment document);
+
+	void deleteStaffNote(StaffNote note);
+
 }

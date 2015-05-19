@@ -4,7 +4,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets">
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
     
    	<h:outputStylesheet name="exc-style.css" />
 
@@ -37,7 +38,7 @@
           	</p:column>
           	<p:column headerText="Létrehozva" style="width:80px;vertical-align:middle;">
           		<h:outputText value="#{d.documentCreated}" >
-					<f:convertDateTime pattern="yyyy.MM.dd" />
+					<f:convertDateTime pattern="yyyy.MM.dd HH:mm" />
 				</h:outputText>
           	</p:column>
           	<p:column headerText="Érvényes" style="width:80px;vertical-align:middle;">
@@ -47,7 +48,7 @@
 			</p:column>
 			
            	<p:column width="50px" style="vertical-align:middle;">
-           		 <p:commandButton icon="ui-icon-pencil" action="#{fileUploadController.selectTemplate(d)}" ajax="true" update=":templateForm:editPanel"/> 
+           		 <p:commandButton icon="ui-icon-pencil" action="#{fileUploadController.selectTemplate(d)}" ajax="true" update=":templateForm:editPanel "/> 
            		 <p:commandLink ajax="false" immediate="true" >
                    	<h:graphicImage name="doc_contract_128.png" height="32" style="margin-bottom: -10px;" title="#{d.toString()}"/>
 		            <p:fileDownload value='#{documentumView.getContractStream(d.idContractdoc)}' />
@@ -58,7 +59,7 @@
 		
 		 <p:panel id="editPanel">
 		   	<f:facet name="header">Sablon részletei </f:facet>  
-		   <p:panelGrid>
+		   <p:panelGrid rendered="#{fileUploadController.template.idContractdoc != null }">
 		   		<p:row>
 		   			<p:column><p:outputLabel value="Sablon típusa"/></p:column>
 			   		<p:column><p:outputLabel value="Leírás"/></p:column>
@@ -73,6 +74,7 @@
 		   		</p:row>
 		   		<p:row>
 		   			<p:column colspan="3" style="text-align:right;">
+		   				 <p:commandButton value="Sablon törlése" action="#{fileUploadController.removeTemplate}" ajax="true" validateClient="false" update="templateForm" rendered="#{sec:areAnyGranted('DEV-DEL')}"/>  	
 		   				 <p:commandButton value="Adatok mentése" action="#{fileUploadController.saveTemplate}" ajax="true" validateClient="false" update="templateForm"/>  	
 		   			</p:column>
 		   		</p:row>	
@@ -86,6 +88,14 @@
 			
 	    <p:fileUpload fileUploadListener="#{fileUploadController.uploadTemplates}" label="Dokumentumok kiválasztása" uploadLabel="Dokumentumok feltöltése" cancelLabel="Mégsem" 
 	    sizeLimit="52428800" multiple="true" invalidSizeMessage="A megengedett fájlméret 50MB" update="templateForm"/>
+	    
+	    
+	    <p:panel>
+		   	<f:facet name="header">Sablon használható mezői</f:facet>  
+		   	
+		   	<h:outputText value="#{documentumView.templateFields}" />
+		   	
+		</p:panel>   	
 	    
 	</h:form>
 	    

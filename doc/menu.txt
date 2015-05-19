@@ -1,0 +1,46 @@
+2.   Telephely nyilvántartás: ez a jelenlegi gprs nyilvántartás, a 07-10-02-02-01 től a    07-10-02-02-07 menüpontig minden kell, ezt kérjük átemelni
+
+5.1.6.   Telephelyek listázása (02-02-02)
+5.1.7.   Telephely felvitele  (02-02-01)
+A telephelyhez minden adatot fel tudunk vinni, cím, telefonszám, e-mail cím, fel lehet tölteni fájlokat is
+5.1.8.   Telephely módosítása (02-02-02-01)
+5.1.9.   Küldemény iktató (02-02-03)
+5.1.10.       Eszköznyílvántartás listázás (02-02-04)
+5.1.11.       Új eszköz felvitele (02-02-04-01)
+5.1.12.       Eszköz módosítása (02-02-04-02)
+5.1.13.       Eszköz felhasználóhoz rendelése (02-02-04-03)
+5.1.14.       Szervezeti felépítés (02-02-10)
+A szervezetí gráf  csak egy megjelenő és nyitogatható fa topológia.
+
+
+
+5.6.4.   Munkaidő szabályok (07-10-02-02-01)
+5.6.5.   Munkaidő esemény típusok (07-10-02-02-02)
+5.6.6.   Riasztó kezelők (07-10-02-02-03)
+Be lehet állítani a riasztóközpont nevét és számát (ezt Kardos Ildikó tudja megmondani miért volt rá szükség), a terület nevét amelyhez az iroda tartozik (3 cégcsoport van nálunk), és az emailcímet (ide küldhetőek ki az ellenőrzések stb)
+5.6.7.   Érkezések és távozások (07-10-02-02-04)
+5.6.8.   Bejáratok kezelése (07-10-02-02-05)
+5.6.9.   Felhasználó hozzárendelése riasztóközponthoz (07-10-02-02-06)
+5.6.10.       Munkahelyek (07-10-02-02-07)
+
+
+
+	02-02-M Telephely menü
+		02-02-02 Telephelyek megtekintése
+		02-02-02 Telephely karbantartása
+		08-05-04-01 Munkahelyek megtekintése
+		08-05-04-01 Munkahelyek karbantartása
+		08-05-04 Csoportok megtekintése
+		08-05-04 Csoportok karbantartása
+
+
+
+ <p:submenu label="Telephely" icon="ui-icon-home" rendered="#{sec:areAnyGranted('02-02-M')}">
+		            <p:menuitem value="Telephelyek" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Csoportok" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Munkahelyek" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Érkezések és távozások" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Riasztó felhasználók" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Bejáratok kezelése" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		            <p:menuitem value="Riasztási szabályok" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+		         </p:submenu>

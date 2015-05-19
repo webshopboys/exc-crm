@@ -129,4 +129,9 @@ public class AttachmentService {
     public void saveDrDoc(DrDoc drdoc) {
         excDao.saveDocument(drdoc);
     }
+
+	public void deleteContract(ContractDoc doc) {
+		excDao.deleteDoc(doc);
+	}
+
 }

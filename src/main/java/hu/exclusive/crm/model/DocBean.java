@@ -16,7 +16,7 @@ public class DocBean implements Comparable<DocBean> {
 
     public static final int MAX_URL_LENGTH = 300;
     public static final int MAX_NOTE_LENGTH = 3999;
-    public static final int MAX_CONTRACTTYPE_LENGTH = 45;
+    public static final int MAX_CONTRACTTYPE_LENGTH = 100;
 
     private DrDoc drDoc;
     private StaffNote staffNote;

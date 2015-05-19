@@ -323,7 +323,9 @@ public class StaffController extends Commontroller implements Serializable {
             System.out.println("generateContract " + contract);
             if (contract != null) {
 
-                byte[] content = new ContractGenerator(contract, activeStaff).processByExtension();
+                ContractGenerator gen = new ContractGenerator(contract, activeStaff);
+                byte[] content = gen.processByExtension();
+                System.out.println("Generator steps: " + gen.report);
 
                 generator
                         .setContent(content)

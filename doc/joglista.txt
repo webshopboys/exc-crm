@@ -1,0 +1,53 @@
+https://innomanagement.hu/artcash/
+karoly.p
+87654321
+
+https://innomanagement.hu/ebc/
+petne1340
+program2015
+
+	02-01-M Munkaügy menü
+		02-01-01 Munkatársak listázása
+		02-01-01-01 Munkatárs alapadatok szerkesztése
+		02-01-01-04 Szerzõdés kezelése
+		02-01-01-07 Munkatárs állapotának módosítása
+		02-01-03 Munkatárs lista exportálása
+		02-01-01-07 Munkatárs állapotának módosítása
+		08-05-01 Munkatárs jogának beállítása
+
+	02-02-M Munkahelyek menü
+		08-05-04 Csoportok megtekintése
+		08-05-04-K Csoport karbantartása
+		02-02-02 Munkahelyek megtekintése
+		02-02-02-K Munkahely karbantartása
+		07-10-02-02-04 Érkezések és távozások
+		07-10-02-02-06 Riasztó felhasználók
+		07-10-02-02-05 Bejáratok kezelése
+		07-10-02-02-01 Riasztási szabályok
+		
+	03-M Raktár menü
+
+	06-M Naptár menü
+
+	07-10-M Beosztás menü
+
+	08-05-M Cafetéria menü
+	
+	EBC-M Ellenõrzések menü
+
+	09-M Gépjármû menü
+
+	08-01-M Rendszer menü
+		08-01 Rendszer beállítások megtekintése
+		08-05-02 Munkakörök karbantartása
+		08-01-04 Jogok karbantartása
+		
+	
+
+
+	SZALL-M Szállítói menü
+	
+	HIANY-M Hiányok menü
+
+	HAZIP-M Házipénztár menü
+	

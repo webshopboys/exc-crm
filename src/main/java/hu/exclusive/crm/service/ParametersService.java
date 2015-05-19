@@ -1,6 +1,7 @@
 package hu.exclusive.crm.service;
 
 import hu.exclusive.dao.DaoFilter;
+import hu.exclusive.dao.DaoFilter.RELATION;
 import hu.exclusive.dao.model.CrmUser;
 import hu.exclusive.dao.model.Function;
 import hu.exclusive.dao.model.Jobtitle;
@@ -23,6 +24,12 @@ public class ParametersService {
     public List<Jobtitle> getJobtitles(DaoFilter filter) {
         this.jobtitlePuffer = excDao.getJobtitles(filter);
         return this.jobtitlePuffer;
+    }
+
+    public Workgroup getWorkgroup(Integer wgid) {
+        DaoFilter filter = new DaoFilter("Workgroup.findById", "idWorkgroup", RELATION.NAMED_QUERY, wgid);
+        List<Workgroup> group = excDao.getWorkgroups(filter);
+        return group.isEmpty() ? new Workgroup() : group.get(0);
     }
 
     public List<Workgroup> getWorkgroups(DaoFilter filter) {

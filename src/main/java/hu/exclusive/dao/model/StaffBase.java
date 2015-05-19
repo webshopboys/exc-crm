@@ -107,6 +107,9 @@ public class StaffBase extends EntityCommons implements Serializable {
     @Column(name = "email")
     private String email;
 
+	@Column(name = "accountNumber")
+	private String accountNumber;
+
     public StaffBase() {
     }
 
@@ -317,5 +320,13 @@ public class StaffBase extends EntityCommons implements Serializable {
                 + ", status=" + status + ", tajSerial=" + tajSerial + ", taxSerial=" + taxSerial + ", trialPeriod=" + trialPeriod
                 + ", children=" + children + ", phonenumber=" + phonenumber + ", email=" + email + "]";
     }
+
+	public String getAccountNumber() {
+		return accountNumber;
+	}
+
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
+	}
 
 }

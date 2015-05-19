@@ -26,7 +26,7 @@ public class ClassicWordTemplateRenderer {
     private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\$\\{([^\\}]*)\\}");
     private final Logger logger = Logger.getLogger(ClassicWordTemplateRenderer.class);
 
-    public byte[] execute(File templateFile, SomeDAOClass someDAO) throws IOException {
+    public byte[] execute(File templateFile, ReportParameterProvider someDAO) throws IOException {
         // Temporarily created file input stream will be closed inside POIFSFileSystem
         POIFSFileSystem fileSystem = new POIFSFileSystem(new FileInputStream(templateFile));
         HWPFDocument template = new HWPFDocument(fileSystem);
@@ -57,7 +57,7 @@ public class ClassicWordTemplateRenderer {
         return outputStream.toByteArray();
     }
 
-    private Map<String, String> mapPlaceholdersToValues(List<String> placeholders, SomeDAOClass someDAO) {
+    private Map<String, String> mapPlaceholdersToValues(List<String> placeholders, ReportParameterProvider someDAO) {
         Map<String, String> result = new HashMap<String, String>();
         for (String placeholder : placeholders) {
             // Trim the leading ${ and the trailing } characters

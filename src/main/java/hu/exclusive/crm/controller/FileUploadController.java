@@ -1,7 +1,6 @@
 package hu.exclusive.crm.controller;
 
 import hu.exclusive.crm.model.DocBean;
-import hu.exclusive.crm.report.ContractGenerator;
 import hu.exclusive.crm.service.AttachmentService;
 import hu.exclusive.dao.ServiceException;
 import hu.exclusive.dao.model.Attachment;
@@ -46,30 +45,6 @@ public class FileUploadController extends Commontroller implements Serializable 
     private String doctorNote;
     private String attachmentNote;
 
-    public void uploadContractDoc(FileUploadEvent event) {
-
-        message(event.getFile().getFileName() + " feltöltése...", "");
-
-        try {
-            // byte[] bin = serializeFile(event.getFile().getFileName(), event.getFile().getInputstream());
-            //
-            // ContractDoc doc = new ContractDoc();
-            // doc.setDocumentType("Új szerződés sablon");
-            // doc.setDocumentNote("Kiválasztással feltöltött fájl. Utólag szerkesztendő!\nA munkatárs elérhető mezői: "
-            // + Staff.DOCFIELDS_NAMES.getInfo());
-            // doc.setDocumentUrl(event.getFile().getFileName());
-            // doc.setDocumentBin(bin);
-            // service.saveDocument(doc);
-
-            message("Új szerződés feltöltve.", template.getDocumentType());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            error("Feltöltési hiba", null, e);
-        }
-
-    }
-
     public void uploadTemplates(FileUploadEvent event) {
 
         message(event.getFile().getFileName() + " feltöltése...", "");
@@ -78,10 +53,14 @@ public class FileUploadController extends Commontroller implements Serializable 
 
             byte[] zipped = bin;// ObjectUtils.zip(bin, event.getFile().getFileName());
 
+            String fileName = event.getFile().getFileName();
+            String docTypeName = "Sablon: " + fileName;
+            if (docTypeName.length() > DocBean.MAX_CONTRACTTYPE_LENGTH)
+                docTypeName = docTypeName.substring(0, DocBean.MAX_CONTRACTTYPE_LENGTH);
+
             ContractDoc doc = new ContractDoc();
-            doc.setDocumentType("Új szerződés sablon");
-            doc.setDocumentNote("Kiválasztással feltöltött fájl. Utólag szerkesztendő!\nA munkatárs elérhető mezői: "
-                    + ContractGenerator.DOCFIELDS_NAMES.getInfo());
+            doc.setDocumentType(docTypeName);
+            doc.setDocumentNote("Kiválasztással feltöltött fájl: " + fileName + " A le  írását utólag ki kell tölteni!");
             doc.setDocumentUrl(event.getFile().getFileName());
             doc.setDocumentBin(zipped);
             service.saveDocument(doc);
@@ -124,12 +103,20 @@ public class FileUploadController extends Commontroller implements Serializable 
         template.setDocumentCreated(new Date());
         System.err.println("saveTemplate " + template);
         service.saveDocument(template);
+        template = null;
     }
 
     public void uploadDrDoc() {
         if (filedrDoc != null) {
             FacesMessage message = new FacesMessage("Succesful", filedrDoc.getFileName() + " is uploaded.");
             FacesContext.getCurrentInstance().addMessage(null, message);
+        }
+    }
+
+    public void removeTemplate() {
+        if (template != null && template.getIdContractdoc() != null) {
+            service.deleteContract(template);
+            template = null;
         }
     }
 

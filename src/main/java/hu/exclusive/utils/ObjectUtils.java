@@ -39,7 +39,8 @@ public class ObjectUtils {
     public static byte[] unzip(byte[] bin) throws FileNotFoundException, IOException {
         Map<String, byte[]> tuple = unzip2(bin);
         String key = tuple.keySet().iterator().next();
-        return tuple.getOrDefault(key, new byte[0]);
+        byte[] data = tuple.get(key);
+		return data == null ? new byte[0] : data;
     }
 
     public static Map<String, byte[]> unzip2(byte[] bin) throws FileNotFoundException, IOException {

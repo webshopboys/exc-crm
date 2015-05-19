@@ -5,7 +5,6 @@ import hu.exclusive.dao.model.Attachment;
 import hu.exclusive.dao.model.ContractDoc;
 import hu.exclusive.dao.model.CrmUser;
 import hu.exclusive.dao.model.DrDoc;
-import hu.exclusive.dao.model.EntityCommons;
 import hu.exclusive.dao.model.Function;
 import hu.exclusive.dao.model.Jobtitle;
 import hu.exclusive.dao.model.Role;
@@ -27,7 +26,6 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.hibernate.metamodel.domain.Entity;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +37,35 @@ public class ExcDaoServiceImpl implements IExcDaoService {
 
     public ExcDaoServiceImpl() {
         System.err.println("ExcDaoServiceImpl implements IExcDaoService created. " + hashCode());
+
+    }
+
+    @Transactional
+    @Override
+    public void deleteDoc(ContractDoc document) {
+        document = em.merge(document);
+        em.remove(document);
+    }
+
+    @Transactional
+    @Override
+    public void deleteAttachment(Attachment document) {
+        document = em.merge(document);
+        em.remove(document);
+    }
+
+    @Transactional
+    @Override
+    public void deleteDoc(DrDoc document) {
+        document = em.merge(document);
+        em.remove(document);
+    }
+
+    @Transactional
+    @Override
+    public void deleteStaffNote(StaffNote document) {
+        document = em.merge(document);
+        em.remove(document);
     }
 
     @Transactional
@@ -81,15 +108,10 @@ public class ExcDaoServiceImpl implements IExcDaoService {
     @Transactional
     @Override
     public void saveDocument(ContractDoc document) {
-        try {
-            if (document.getId() == null)
-                em.persist(document);
-            else
-                em.merge(document);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        if (document.getId() == null)
+            em.persist(document);
+        else
+            em.merge(document);
     }
 
     @Transactional
@@ -359,7 +381,8 @@ public class ExcDaoServiceImpl implements IExcDaoService {
     @Override
     public List<Workgroup> getWorkgroups(DaoFilter filter) {
         // CriteriaBuilder builder = em.getCriteriaBuilder();
-        // CriteriaQuery<Workgroup> query = builder.createQuery(Workgroup.class);
+        // CriteriaQuery<Workgroup> query =
+        // builder.createQuery(Workgroup.class);
         // Root<Workgroup> root = query.from(Workgroup.class);
         // query.select(root);
         //
@@ -416,16 +439,6 @@ public class ExcDaoServiceImpl implements IExcDaoService {
         List<SSystem> list = em.createNamedQuery("SSystem.findGroupKey", SSystem.class).setParameter("sysgroup", sysgroup)
                 .setParameter("syskey", syskey).getResultList();
         return list;
-    }
-
-    private void saveEntity(Entity entity, Object instance) {
-        if (EntityCommons.class.isInstance(instance)) {
-            if (((EntityCommons) instance).getId() == null) {
-                em.persist(entity);
-                return;
-            }
-        }
-        em.merge(entity);
     }
 
     public void setEm(EntityManager em) {
