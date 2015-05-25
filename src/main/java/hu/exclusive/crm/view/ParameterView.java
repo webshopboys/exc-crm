@@ -91,6 +91,11 @@ public class ParameterView implements Serializable {
         return service.getWorkplaces(null);
     }
 
+    public List<Workplace> getWorkplacesForGroup(Integer groupId) {
+        DaoFilter filter = new DaoFilter("Workplace.findForGroup", "idWorkgroup", RELATION.NAMED_QUERY, groupId);
+        return service.getWorkplaces(filter);
+    }
+
     /**
      * Kikeresi es visszadja a munkatars aktualis csoportjat es munkahelyet osszefuzve.
      * 
@@ -108,9 +113,15 @@ public class ParameterView implements Serializable {
         String group = groups.isEmpty() ? "" : groups.get(0).getGroupName();
 
         filter.setEntity("Workplace.findForStaff");
+
+        StringBuilder sb = new StringBuilder(group).append(" - ");
         List<Workplace> places = service.getWorkplaces(filter);
-        String place = places.isEmpty() ? "" : places.get(0).getWorkplaceName();
-        return group + " - " + place;
+        if (places != null) {
+            for (Workplace wp : places) {
+                sb.append(wp.getWorkplaceName()).append(PageUtils.BR_UNESCAPE);
+            }
+        }
+        return sb.toString();
     }
 
     /**

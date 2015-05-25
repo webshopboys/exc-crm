@@ -73,17 +73,37 @@
 			        </td>
 			        
 		        </tr>
-            	<tr>
-		            <td><p:outputLabel for="workgroup" value="Csoportja:" /></td>
+            	
+				   
+			    <tr>
+		            <td><p:outputLabel for="workgroup" value="Munkáltató csoport:" /></td>
 		            <td>
-		            	<h:selectOneMenu id="workgroup" value="#{staffController.activeStaff.workgroup}" styleClass="edit-input wide-text">
-			            	<f:selectItems value="#{parameterView.workgroups}" var="workgroup" itemValue="#{workgroup}" itemLabel='#{workgroup.groupName}' />
-			            	<f:attribute name="collectionType" value="java.util.ArrayList" />
-			        	</h:selectOneMenu>
+		              <h:selectOneMenu id="workgroup" value="#{staffController.activeStaff.workgroup}" styleClass="edit-input wide-text" >
+			            <f:selectItems value="#{parameterView.workgroups}" var="workgroup" itemValue="#{workgroup}" itemLabel="#{workgroup.groupName}" />
+			            <f:attribute name="collectionType" value="java.util.ArrayList" />
+			            <p:ajax partialSubmit="true" update="workplaces" listener="#{staffController.handleGroupChange2}" />
+			          </h:selectOneMenu>
 			        </td>
-			       
-		        </tr>
-				
+			    </tr>
+			    
+			    <tr>
+		            <td><p:outputLabel for="workplaces" value="Munkavégzés helye:" /></td>
+		            <td>
+<!-- 	       			  <h:selectManyListbox id="workplaces" value="#{staffController.asWorkspaces}" styleClass="edit-input wide-text"> -->
+<!-- 					   	<f:selectItems value="#{parameterView.workplaces}" var="workplace" itemValue="#{workplace.idWorkplace}" itemLabel="#{workplace.workplaceName}"/> -->
+<!-- 					   	<f:attribute name="collectionType" value="java.util.ArrayList" /> -->
+<!-- 					  </h:selectManyListbox> -->
+					  
+					  <h:selectOneMenu id="workplaces" value="#{staffController.asWorkspaces}" styleClass="edit-input wide-text">
+				           <f:selectItems value="#{parameterView.workplaces}" var="workplace" itemValue="#{workplace.idWorkplace}" itemLabel="#{workplace.workplaceName}"/>
+				           	<f:attribute name="collectionType" value="java.util.ArrayList" />
+			        	</h:selectOneMenu>
+					</td>
+					
+				</tr>
+			   
+			    
+			    
 				<tr>
 		            <td><p:outputLabel for="jobtitles" value="Munkakörei:" /></td>
 	       			<td>
@@ -93,7 +113,8 @@
 					  </h:selectManyListbox>
 					</td>
 					
-				</tr><tr>
+				</tr>
+				<tr>
 	          	 	<td colspan="2"><p:separator  /></td>
             	</tr>
             	<tr>
@@ -101,6 +122,7 @@
 		            <td>
 		            	<h:selectOneMenu id="salaryType" value="#{staffController.activeStaff.salaryType}" styleClass="edit-input medium-text">
 				            <f:selectItem itemLabel="Órabér" itemValue="Órabér" />
+				            <f:selectItem itemLabel="Napibér" itemValue="Napibér" />
 				            <f:selectItem itemLabel="Havibér" itemValue="Havibér" />
 			        	</h:selectOneMenu>
 			        </td>
@@ -120,22 +142,11 @@
 			        	<span id="showFinish">
 			        		<h:outputLabel for="employFinish" value=" határozott vége: "/>
 			        		<p:calendar id="employFinish" value="#{staffController.activeStaff.employFinish}" showOn="button" pattern="yyyy.MM.dd" mask="true" styleClass="edit-input date-text">
-			        			<f:convertDateTime type="date" dateType="short" />
 			        		</p:calendar>
 			        	</span>
 			        </td>
 			    </tr>
-		        
-			    <tr>
-		            <td><p:outputLabel for="workplace" value="Munkavégzés helye:" /></td>
-		            <td>
-		              <h:selectOneMenu id="workplace" value="#{staffController.activeStaff.workplace}" styleClass="edit-input wide-text">
-			            <f:selectItems value="#{parameterView.workplaces}" var="workplace" itemValue="#{workplace}" itemLabel="#{workplace.workplaceName}" />
-			            <f:attribute name="collectionType" value="java.util.ArrayList" />
-			          </h:selectOneMenu>
-			        </td>
-			    </tr>
-			    
+		     
 			    <tr>
 		            <td><p:outputLabel for="employTime" value="Munkaideje:" /></td>
 		            <td>
@@ -148,9 +159,9 @@
 			    </tr>
 			    
 			     <tr>
-		            <td><p:outputLabel for="trialPeriod" value="Próbaidő tartama:" title="A próbaidő nem kötelező, de lefeljebb 90 nap lehet!"/></td>
+		            <td><p:outputLabel for="trialPeriod" value="Próbaidő tartama (nap):" title="A próbaidő nem kötelező, de lefeljebb 90 nap lehet!"/></td>
 		            <td>
-		            	<p:inputMask mask="99" id="trialPeriod" maxlength="2" value="#{staffController.activeStaff.trialPeriod}" styleClass="edit-input short-text">
+		            	<p:inputMask mask="9?9" id="trialPeriod" maxlength="2" value="#{staffController.activeStaff.trialPeriod}" styleClass="edit-input short-text">
 		            		<f:validateLongRange maximum="90" />
 		            	</p:inputMask>
 			        </td>
@@ -190,7 +201,7 @@
 		            	<p:outputLabel for="children" value="Kiskorú gyermekek száma:"/>
 		            </td>
 		            <td>
-		            	<p:inputMask mask="99" id="children" maxlength="2" value="#{staffController.activeStaff.children}" styleClass="edit-input short-text">
+		            	<p:inputMask mask="9?9" id="children" maxlength="2" value="#{staffController.activeStaff.children}" styleClass="edit-input short-text">
 		            		<f:validateLongRange maximum="10" />
 		            	</p:inputMask>
 			        </td>
@@ -231,7 +242,11 @@
 		            <td><p:inputText id="email" value="#{staffController.activeStaff.email}" required="false" maxlength="30" styleClass="edit-input medium-text"/></td>
 		            
             	</tr>
-            	
+            	<tr>
+		            <td><p:outputLabel for="accountnum" value="Számlaszám:" /></td>
+		            <td><p:inputText id="accountnum" value="#{staffController.activeStaff.accountNumber}" required="false" maxlength="30" styleClass="edit-input medium-text"/></td>
+		            
+            	</tr>
 		    </table>
 		    
 	

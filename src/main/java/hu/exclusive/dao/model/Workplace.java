@@ -21,7 +21,9 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "T_WORKPLACE")
 @NamedQueries({
-        @NamedQuery(name = "Workplace.findAll", query = "SELECT w FROM Workplace w"),
+        @NamedQuery(name = "Workplace.findAll", query = "SELECT w FROM Workplace w ORDER BY w.workplaceName"),
+        @NamedQuery(name = "Workplace.findById", query = "SELECT w FROM Workplace w WHERE w.idWorkplace = :idWorkplace"),
+        @NamedQuery(name = "Workplace.findForGroup", query = "SELECT w FROM Workplace w WHERE w.workgroup.idWorkgroup = :idWorkgroup ORDER BY w.workplaceName"),
         @NamedQuery(name = "Workplace.findForStaff", query = "SELECT w FROM Workplace w WHERE w.idWorkplace in (SELECT k.id.idWorkplace FROM StaffWorkplaceK k WHERE k.id.idStaff = :idStaff) ORDER BY w.workplaceName") })
 public class Workplace extends EntityCommons implements Serializable {
     private static final long serialVersionUID = 1L;

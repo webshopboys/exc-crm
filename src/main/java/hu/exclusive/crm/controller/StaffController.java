@@ -15,6 +15,7 @@ import hu.exclusive.dao.model.Staff;
 import hu.exclusive.dao.model.StaffBase;
 import hu.exclusive.dao.model.StaffDetail;
 import hu.exclusive.dao.model.StaffNote;
+import hu.exclusive.dao.model.Workplace;
 import hu.exclusive.utils.FacesAccessor;
 import hu.exclusive.utils.ObjectUtils;
 
@@ -33,6 +34,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 
 import org.hibernate.service.spi.ServiceException;
 import org.primefaces.context.RequestContext;
@@ -57,6 +59,7 @@ public class StaffController extends Commontroller implements Serializable {
     private final Map<Integer, List<DocBean>> staffDocCache = new HashMap<Integer, List<DocBean>>();
     private StaffDetail activeStaff;
     private StaffNote note;
+    private Integer selectedGroupId;
 
     private AttachmentGenerator generator;
 
@@ -210,8 +213,23 @@ public class StaffController extends Commontroller implements Serializable {
                 list.add(parameters.getJobtitle(titleId));
             }
         }
-        System.err.println("setAsJobtitles int[] " + list);
         getActiveStaff().setJobtitles(list);
+    }
+
+    public Integer getAsWorkspaces() {
+        System.out.println("getAsWorkspaces for " + getSelectedGroupId());
+        if (getActiveStaff().getWorkplaces() != null && getActiveStaff().getWorkplaces().size() > 0) {
+            return getActiveStaff().getWorkplaces().get(0).getId();
+        }
+        return null;
+    }
+
+    public void setAsWorkspaces(Integer idwp) {
+        List<Workplace> list = new ArrayList<Workplace>();
+        if (idwp != null && idwp > 0) {
+            list.add(parameters.getWorkplace(idwp));
+        }
+        getActiveStaff().setWorkplaces(list);
     }
 
     public StaffDetail getActiveStaff() {
@@ -394,5 +412,23 @@ public class StaffController extends Commontroller implements Serializable {
 
     public void setOriginalNoteNote(String originalNoteNote) {
         this.originalNoteNote = originalNoteNote;
+    }
+
+    public void handleGroupChange(ValueChangeEvent event) {
+        setSelectedGroupId((Integer) event.getNewValue());
+        System.out.println("New group: " + getSelectedGroupId());
+    }
+
+    public void handleGroupChange2(javax.faces.event.AjaxBehaviorEvent event) {
+        // setSelectedGroupId((Integer) event.getNewValue());
+        System.out.println("New group2: " + event);
+    }
+
+    public Integer getSelectedGroupId() {
+        return selectedGroupId;
+    }
+
+    public void setSelectedGroupId(Integer selectedGroupId) {
+        this.selectedGroupId = selectedGroupId;
     }
 }

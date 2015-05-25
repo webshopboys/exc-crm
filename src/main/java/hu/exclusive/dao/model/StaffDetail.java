@@ -32,10 +32,9 @@ public class StaffDetail extends StaffBase implements Serializable {
     @JoinTable(name = "K_STAFF_WORKGROUP", joinColumns = @JoinColumn(name = "id_staff", nullable = false), inverseJoinColumns = @JoinColumn(name = "id_workgroup", nullable = true))
     private Workgroup workgroup;
 
-    // bi-directional many-to-many association to Workplace
-    @OneToOne(fetch = FetchType.EAGER, optional = true)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "K_STAFF_WORKPLACE", joinColumns = @JoinColumn(name = "id_staff", nullable = false), inverseJoinColumns = @JoinColumn(name = "id_workplace", nullable = true))
-    private Workplace workplace;
+    private List<Workplace> workplaces;
 
     // bi-directional many-to-one association to StaffAlarm
     @OneToOne(fetch = FetchType.EAGER, optional = true)
@@ -58,14 +57,15 @@ public class StaffDetail extends StaffBase implements Serializable {
         StringBuilder sb = new StringBuilder();
         if (jobtitles != null) {
             for (Jobtitle jobtitle : jobtitles) {
-                sb.append(jobtitle.getJobtitle()).append(";\n");
+                if (sb.length() > 0)
+                    sb.append("\n");
+                sb.append(jobtitle.getJobtitle()).append(";");
             }
         }
         return sb.toString();
     }
 
     public void setJobtitles(List<Jobtitle> jobtitles) {
-        System.err.println("staff setJobtitles " + jobtitles);
         this.jobtitles = jobtitles;
     }
 
@@ -74,21 +74,32 @@ public class StaffDetail extends StaffBase implements Serializable {
     }
 
     public void setWorkgroup(Workgroup workgroup) {
-        System.err.println("staff setWorkgroup " + workgroup);
         this.workgroup = workgroup;
     }
 
-    public Workplace getWorkplace() {
-        return this.workplace;
+    public List<Workplace> getWorkplaces() {
+        return this.workplaces;
     }
 
-    public void setWorkplace(Workplace workplace) {
-        this.workplace = workplace;
+    public void setWorkplaces(List<Workplace> workplace) {
+        this.workplaces = workplace;
+    }
+
+    public String getWorkplacesAsString() {
+        StringBuilder sb = new StringBuilder();
+        if (workplaces != null) {
+            for (Workplace wp : workplaces) {
+                if (sb.length() > 0)
+                    sb.append("\n");
+                sb.append(wp.getWorkplaceName()).append(";");
+            }
+        }
+        return sb.toString();
     }
 
     @Override
     public String toString() {
-        return "StaffDetail [jobtitles=" + jobtitles + ", workgroup=" + workgroup + ", workplace=" + workplace + ", alarm="
+        return "StaffDetail [jobtitles=" + jobtitles + ", workgroup=" + workgroup + ", workplace=" + workplaces + ", alarm="
                 + alarm + super.toString() + "]";
     }
 

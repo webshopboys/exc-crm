@@ -36,6 +36,12 @@ public class ParametersService {
         return excDao.getWorkgroups(filter);
     }
 
+    public Workplace getWorkplace(int wpId) {
+        DaoFilter filter = new DaoFilter("Workplace.findById", "idWorkplace", RELATION.NAMED_QUERY, wpId);
+        List<Workplace> group = excDao.getWorkplaces(filter);
+        return group.isEmpty() ? new Workplace() : group.get(0);
+    }
+
     public List<Workplace> getWorkplaces(DaoFilter filter) {
         return excDao.getWorkplaces(filter);
     }
@@ -89,4 +95,5 @@ public class ParametersService {
     public void saveWorkplace(Workplace workplace) {
         excDao.saveWorkplace(workplace);
     }
+
 }

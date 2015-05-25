@@ -1,7 +1,6 @@
 package hu.exclusive.crm.view;
 
 import hu.exclusive.crm.model.DocBean;
-import hu.exclusive.crm.report.ContractGenerator.DOCFIELDS_NAMES;
 import hu.exclusive.crm.service.AttachmentGenerator;
 import hu.exclusive.crm.service.AttachmentService;
 import hu.exclusive.dao.DaoFilter;
@@ -124,7 +123,7 @@ public class DocumentumView implements Serializable {
         return generator.generateStream();
     }
 
-	public String getTemplateFields() {
-		return DOCFIELDS_NAMES.getInfo();
-	}
+    public String getTemplateFields() {
+        return hu.exclusive.crm.report.ReportParameterProvider.DOCFIELDS_NAMES.getInfo();
+    }
 }

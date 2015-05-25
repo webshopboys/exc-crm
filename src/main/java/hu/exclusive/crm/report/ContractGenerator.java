@@ -1,5 +1,6 @@
 package hu.exclusive.crm.report;
 
+import hu.exclusive.crm.report.ReportParameterProvider.DOCFIELDS_NAMES;
 import hu.exclusive.dao.model.ContractDoc;
 import hu.exclusive.dao.model.StaffDetail;
 import hu.exclusive.utils.ObjectUtils;
@@ -282,87 +283,6 @@ public class ContractGenerator {
         return result;
     }
 
-    public static enum DOCFIELDS_NAMES {
-        TELJESNEV, SZULETESINEV, SZULETESIDATUM, ALLANDOCIM, SZULETESIHELY, ANYJANEVE, SZIGSZAM, TAJSZAM, ADOSZAM, BANKSZAMLASZAM,
-
-        MUNKALTATONEV, MUNKALTATOCIM, MUNKALTATOADOSZAM, MUNKALTATOCEGSZAM, MUNKALTATOKEPVISELO, KEZDHONAP, KEZDEV, KEZDNAP, TELEPHELYEK,
-
-        PROBANAPOK, BRUTTOSZAM, BRUTTOSZOVEG, HATAROZOTTIGEV, HATAROZOTTIGHONAP, HATAROZOTTIGNAP, MUNKAIDEJE, MUNKAKOROK, MAINAP;
-
-        public String getLabel() {
-            switch (this) {
-            case TELJESNEV:
-                return "Teljes név";
-            case SZULETESINEV:
-                return "Születése név";
-            case SZULETESIDATUM:
-                return "Születései dátum";
-            case SZULETESIHELY:
-                return "Születési hely";
-            case ANYJANEVE:
-                return "Anyja neve";
-            case SZIGSZAM:
-                return "Okirat száma";
-            case TAJSZAM:
-                return "TAJ szám";
-            case ADOSZAM:
-                return "Adószám";
-            case ALLANDOCIM:
-                return "Állandó cím";
-            case BANKSZAMLASZAM:
-                return "Banszámlára";
-            case MUNKALTATONEV:
-                return "Munkáltató cég neve";
-            case MUNKALTATOCIM:
-                return "Munkáltató címe";
-            case MUNKALTATOADOSZAM:
-                return "Munkáltató adószáma";
-            case MUNKALTATOCEGSZAM:
-                return "Munkáltató cégszáma";
-            case MUNKALTATOKEPVISELO:
-                return "Munkáltató képviselője";
-            case KEZDEV:
-                return "Kezdés éve";
-            case KEZDHONAP:
-                return "Kezdés hónapja";
-            case KEZDNAP:
-                return "Kezdés napja";
-            case TELEPHELYEK:
-                return "Telephelyek";
-            case PROBANAPOK:
-                return "Próbanapok száma";
-            case BRUTTOSZAM:
-                return "Bruttó bér";
-            case BRUTTOSZOVEG:
-                return "Bruttó bér szövegesen";
-            case HATAROZOTTIGEV:
-                return "Határozott munkaviszony végének éve";
-            case HATAROZOTTIGHONAP:
-                return "Határozott munkaviszony végének hónapja";
-            case HATAROZOTTIGNAP:
-                return "Határozott munkaviszony végének napja";
-            case MUNKAIDEJE:
-                return "Munkaideje teljes vagy részmunkaidő";
-            case MUNKAKOROK:
-                return "Munkakörei";
-            case MAINAP:
-                return "Aktuális dátum";
-            default:
-                return "-";
-            }
-        }
-
-        public static String getInfo() {
-            StringBuilder sb = new StringBuilder();
-            for (DOCFIELDS_NAMES field : DOCFIELDS_NAMES.values()) {
-                String s = "${" + field.name() + "} (" + field.getLabel() + "); ";
-                sb.append(s);
-            }
-
-            return sb.toString();
-        }
-    };
-
     private String getStaffField(DOCFIELDS_NAMES field) {
         if (staff != null)
             switch (field) {
@@ -384,6 +304,8 @@ public class ContractGenerator {
                 return staff.getTaxSerial();
             case ALLANDOCIM:
                 return staff.getResidentAddress();
+            case TARTOZKODASIHELY:
+                return staff.getHomeAddress();
             case BANKSZAMLASZAM:
                 return staff.getAccountNumber();
             case MUNKALTATONEV:
@@ -410,6 +332,14 @@ public class ContractGenerator {
                 return pp.getSalaryNum(staff);
             case BRUTTOSZOVEG:
                 return pp.getSalaryText(staff);
+            case BERTIPUS:
+                return pp.getSalaryType(staff);
+            case ORABER:
+                return pp.getHourPay(staff);
+            case NAPIBER:
+                return pp.getDailyPay(staff);
+            case HAVIBER:
+                return pp.getMonthlyPay(staff);
             case HATAROZOTTIGEV:
                 return pp.getEndYear(staff);
             case HATAROZOTTIGHONAP:
@@ -422,6 +352,12 @@ public class ContractGenerator {
                 return pp.getJobtitles(staff);
             case MAINAP:
                 return ObjectUtils.getDateTime(new Date());
+            case DATUMEV:
+                return pp.YEAR.format(new Date());
+            case DATUMHONAP:
+                return pp.MONTHNAMES.format(new Date());
+            case DATUMNAP:
+                return pp.DAY.format(new Date());
 
             default:
                 return "";
