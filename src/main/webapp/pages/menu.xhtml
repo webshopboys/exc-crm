@@ -30,10 +30,8 @@
 		         <p:submenu label="Munkahelyek" icon="ui-icon-home" rendered="#{sec:areAnyGranted('02-02-M')}">
 		            <p:menuitem value="Csoportok" action="#{navigator.setContent('system/groups','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true" rendered="#{sec:areAnyGranted('08-05-04')}"/>
 		            <p:menuitem value="Munkahelyek" action="#{navigator.setContent('system/places','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true" rendered="#{sec:areAnyGranted('02-02-02')}"/>
-		            <p:menuitem value="Érkezések és távozások" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true" rendered="#{sec:areAnyGranted('07-10-02-02-04')}"/>
-		            <p:menuitem value="Riasztó felhasználók" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true" rendered="#{sec:areAnyGranted('07-10-02-02-06')}"/>
 		            <p:menuitem value="Bejáratok kezelése" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true" rendered="#{sec:areAnyGranted('07-10-02-02-05')}"/>
-		            <p:menuitem value="Riasztási szabályok" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true" rendered="#{sec:areAnyGranted('07-10-02-02-01')}"/>
+		            <p:menuitem value="Érkezések és távozások" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true" rendered="#{sec:areAnyGranted('07-10-02-02-04')}"/>
 		         </p:submenu>
   	    
 			 	<p:submenu label="Beosztás" icon="ui-icon-calculator" rendered="#{sec:areAnyGranted('07-10-M')}">
@@ -44,7 +42,10 @@
 		            <p:menuitem value="Szabadság tervező" action="#{navigator.setContent('underConstruction','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
 		         </p:submenu>
   				
-  				<p:submenu label="Cafetéria" icon="ui-icon-heart" rendered="#{sec:areAnyGranted('08-05-M')}">		        
+  				 <p:submenu label="Cafetéria" icon="ui-icon-heart" rendered="#{sec:areAnyGranted('08-05-M')}">		
+  				    <p:menuitem value="Keresés" action="#{navigator.setContent('cafeteria/cafeList','cafeteria/cafeListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+  				    <p:menuitem value="Éves szabályok" action="#{navigator.setContent('cafeteria/cafeParams','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+  				    
 		         </p:submenu>
 		         
 		         <p:submenu label="Hiányok" icon="ui-icon-notice" rendered="#{sec:areAnyGranted('HIANY-M')}">

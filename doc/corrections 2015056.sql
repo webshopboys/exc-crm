@@ -16,5 +16,9 @@ ADD COLUMN `company_name` VARCHAR(100) NULL AFTER `representative`;
 
 -- RUN 20150520
 
+alter table `T_CRMUSER` 
+   add column `user_system` varchar(50) DEFAULT 'EBC' NOT NULL COMMENT 'A használt rendszer. EBC vagy ART.' ;
+
+-- RUN 20150612   
 
 

@@ -16,7 +16,7 @@ import javax.persistence.Table;
  * 
  */
 @Entity
-@Table(name = "T_JOBTITLE")
+@Table(name = "P_JOBTITLE")
 @NamedQueries({
         @NamedQuery(name = "Jobtitle.findAll", query = "SELECT j FROM Jobtitle j ORDER BY j.jobtitle"),
         @NamedQuery(name = "Jobtitle.findForStaff", query = "SELECT j FROM Jobtitle j  WHERE j.idJobtitle in (SELECT k.idJobtitle FROM StaffJobtitleK k WHERE k.idStaff = :idStaff) ORDER BY j.jobtitle") })

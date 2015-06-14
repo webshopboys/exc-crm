@@ -5,9 +5,9 @@
 	<artifactId>exc</artifactId>
 	<packaging>war</packaging>
 	<version>1.0</version>
-	
-	<name>exc</name>
 	<groupId>hu.exclusive</groupId>
+	<name>ebc</name>
+	
 	
 	<repositories>
 		<repository>

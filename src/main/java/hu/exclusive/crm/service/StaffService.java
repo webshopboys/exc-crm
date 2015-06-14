@@ -2,6 +2,7 @@ package hu.exclusive.crm.service;
 
 import hu.exclusive.dao.DaoFilter;
 import hu.exclusive.dao.model.Staff;
+import hu.exclusive.dao.model.StaffCafeteria;
 import hu.exclusive.dao.model.StaffDetail;
 
 import java.util.List;
@@ -25,6 +26,10 @@ public class StaffService {
 
     public void saveStaff(StaffDetail staff) {
         excDao.saveStaff(staff);
+    }
+
+    public List<StaffCafeteria> getCafeteriaList(DaoFilter filter) {
+        return excDao.getCafeteriaList(filter);
     }
 
 }

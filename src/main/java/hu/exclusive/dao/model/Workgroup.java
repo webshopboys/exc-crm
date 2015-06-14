@@ -18,7 +18,7 @@ import javax.persistence.Table;
  * 
  */
 @Entity
-@Table(name = "T_WORKGROUP")
+@Table(name = "P_WORKGROUP")
 @NamedQueries({
         @NamedQuery(name = "Workgroup.findAll", query = "SELECT w FROM Workgroup w"),
         @NamedQuery(name = "Workgroup.findById", query = "SELECT w FROM Workgroup w WHERE w.idWorkgroup = :idWorkgroup"),

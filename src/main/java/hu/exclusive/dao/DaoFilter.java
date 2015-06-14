@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -160,6 +161,11 @@ public class DaoFilter {
 
     public Object getValues() {
         return _values;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Object getValue(String parameterName) {
+        return (_values != null && (_values instanceof Map)) ? ((Map<String, Object>) _values).get(parameterName) : null;
     }
 
     public RELATION getRelation() {

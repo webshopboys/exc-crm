@@ -7,9 +7,12 @@ import hu.exclusive.dao.model.CrmUser;
 import hu.exclusive.dao.model.DrDoc;
 import hu.exclusive.dao.model.Function;
 import hu.exclusive.dao.model.Jobtitle;
+import hu.exclusive.dao.model.PCafeteriaCategory;
+import hu.exclusive.dao.model.PCafeteriaLimit;
+import hu.exclusive.dao.model.PSystem;
 import hu.exclusive.dao.model.Role;
-import hu.exclusive.dao.model.SSystem;
 import hu.exclusive.dao.model.Staff;
+import hu.exclusive.dao.model.StaffCafeteria;
 import hu.exclusive.dao.model.StaffDetail;
 import hu.exclusive.dao.model.StaffNote;
 import hu.exclusive.dao.model.Workgroup;
@@ -38,6 +41,57 @@ public class ExcDaoServiceImpl implements IExcDaoService {
     public ExcDaoServiceImpl() {
         System.err.println("ExcDaoServiceImpl implements IExcDaoService created. " + hashCode());
 
+    }
+
+    @Override
+    public List<StaffCafeteria> getCafeteriaList(DaoFilter filter) {
+
+        if (DaoFilter.RELATION.NAMED_QUERY == filter.getRelation()) {
+
+            return getNamedEntities(StaffCafeteria.class, filter);
+
+        } else {
+
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<StaffCafeteria> cq = cb.createQuery(StaffCafeteria.class);
+
+            Root<StaffCafeteria> r = cq.from(StaffCafeteria.class);
+
+            Path<String> p = r.get("fullName");
+            cq.orderBy(cb.asc(p));
+
+            List<Predicate> predicateList = filter.createPredicates(cb, cq, r);
+            Predicate[] predicates = new Predicate[predicateList.size()];
+            predicateList.toArray(predicates);
+
+            if (predicates.length == 1) {
+                cq.where(predicates[0]);
+            } else if (predicates.length > 1) {
+                cq.where(filter.isAnyEnought() ? cb.or(predicates) : cb.and(predicates));
+            }
+
+            TypedQuery<StaffCafeteria> tq = em.createQuery(cq);
+
+            List<StaffCafeteria> results = tq.setFirstResult(filter.getStartIndex()).setMaxResults(filter.getPageSize())
+                    .getResultList();
+
+            Long count = getCountByCriteria(cq, cb, filter);
+
+            filter.setTotalCount(count == null ? 0 : count);
+
+            return results;
+        }
+
+    }
+
+    @Override
+    public List<PCafeteriaCategory> getCafeteriaCategories(DaoFilter filter) {
+        return em.createNamedQuery("PCafeteriaCategory.findAll", PCafeteriaCategory.class).getResultList();
+    }
+
+    @Override
+    public List<PCafeteriaLimit> getCafeteriaLimits(DaoFilter filter) {
+        return em.createNamedQuery("PCafeteriaLimit.findAll", PCafeteriaLimit.class).getResultList();
     }
 
     @Transactional
@@ -427,7 +481,7 @@ public class ExcDaoServiceImpl implements IExcDaoService {
 
     @Override
     public String getSystemParameter(String sysgroup, String syskey) {
-        List<SSystem> list = em.createNamedQuery("SSystem.findGroupKey", SSystem.class).setParameter("sysgroup", sysgroup)
+        List<PSystem> list = em.createNamedQuery("PSystem.findGroupKey", PSystem.class).setParameter("sysgroup", sysgroup)
                 .setParameter("syskey", syskey).getResultList();
         if (list != null && list.size() > 0)
             return list.get(0).getSysparam();
@@ -435,8 +489,8 @@ public class ExcDaoServiceImpl implements IExcDaoService {
     }
 
     @Override
-    public List<SSystem> getSystemParameters(String sysgroup, String syskey) {
-        List<SSystem> list = em.createNamedQuery("SSystem.findGroupKey", SSystem.class).setParameter("sysgroup", sysgroup)
+    public List<PSystem> getSystemParameters(String sysgroup, String syskey) {
+        List<PSystem> list = em.createNamedQuery("PSystem.findGroupKey", PSystem.class).setParameter("sysgroup", sysgroup)
                 .setParameter("syskey", syskey).getResultList();
         return list;
     }

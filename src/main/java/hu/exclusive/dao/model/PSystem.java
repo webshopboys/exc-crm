@@ -14,9 +14,9 @@ import javax.persistence.Table;
  * 
  */
 @Entity
-@Table(name = "S_SYSTEM")
-@NamedQuery(name = "SSystem.findGroupKey", query = "SELECT s FROM SSystem s WHERE s.sysgroup = :sysgroup AND s.syskey = :syskey ORDER BY s.sysorder")
-public class SSystem implements Serializable {
+@Table(name = "P_SYSTEM")
+@NamedQuery(name = "PSystem.findGroupKey", query = "SELECT s FROM PSystem s WHERE s.sysgroup = :sysgroup AND s.syskey = :syskey ORDER BY s.sysorder")
+public class PSystem implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -31,7 +31,7 @@ public class SSystem implements Serializable {
 
     private String sysparam;
 
-    public SSystem() {
+    public PSystem() {
     }
 
     public int getSysid() {

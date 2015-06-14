@@ -58,6 +58,9 @@ public class CrmUser extends EntityCommons implements Serializable, UserDetails 
     @Column(name = "user_email")
     private String userEmail;
 
+    @Column(name = "user_system")
+    private String userSystem = "EBC";
+
     @Transient
     List<GrantedAuthority> authorities;
 
@@ -187,6 +190,14 @@ public class CrmUser extends EntityCommons implements Serializable, UserDetails 
     @Override
     public boolean isEnabled() {
         return "AKTÍV".equals(this.userStatus);
+    }
+
+    public String getUserSystem() {
+        return userSystem;
+    }
+
+    public void setUserSystem(String userSystem) {
+        this.userSystem = userSystem;
     }
 
 }

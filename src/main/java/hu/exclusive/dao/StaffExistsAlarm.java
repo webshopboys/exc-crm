@@ -18,7 +18,6 @@ import javax.persistence.criteria.Subquery;
  */
 public class StaffExistsAlarm implements IExitsPredicator {
 
-    @SuppressWarnings("unchecked")
     @Override
     public void preperaPredicate(java.util.List<Predicate> filters, DaoFilter item, CriteriaBuilder builder,
             CriteriaQuery<?> query, Root<?> baseRoot) {

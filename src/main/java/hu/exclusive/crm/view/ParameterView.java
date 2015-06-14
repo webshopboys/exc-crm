@@ -5,6 +5,7 @@ import hu.exclusive.dao.DaoFilter;
 import hu.exclusive.dao.DaoFilter.RELATION;
 import hu.exclusive.dao.model.Function;
 import hu.exclusive.dao.model.Jobtitle;
+import hu.exclusive.dao.model.PCafeteriaCategory;
 import hu.exclusive.dao.model.Role;
 import hu.exclusive.dao.model.Workgroup;
 import hu.exclusive.dao.model.Workplace;
@@ -58,6 +59,8 @@ public class ParameterView implements Serializable {
 
         lazyEventModel = new LazyScheduleModel() {
 
+            private static final long serialVersionUID = 3593721913278982422L;
+
             @Override
             public void loadEvents(Date start, Date end) {
                 Date random = getRandomDate(start);
@@ -67,6 +70,10 @@ public class ParameterView implements Serializable {
                 addEvent(new DefaultScheduleEvent("Lazy Event 2", random, random));
             }
         };
+    }
+
+    public List<PCafeteriaCategory> getCafeteriaCategories() {
+        return service.getCafeteriaCategories(null);
     }
 
     public List<Role> getRoles() {

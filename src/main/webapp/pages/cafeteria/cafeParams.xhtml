@@ -1,0 +1,58 @@
+<ui:composition 
+ 	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+   		
+	<h:form id="cafeForm">
+
+	    <p:growl id="messages" showDetail="true" />
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
+		    <p:graphicImage name="ajaxloadingbar.gif" />
+		</p:dialog>
+
+       	<p:dataTable	resizableColumns="true"
+			           	style="height: 100% !important; width: 100% !important;"
+			           	value="#{cafeController.categories}"
+			           	var="c"
+			           	rowKey="#{c.idCafeteriaCat}">
+
+         	<f:facet name="header">
+	            Cafetéria juttatás kategóriák listája
+	        </f:facet>
+	    
+            <p:columnGroup type="header">
+	            <p:row>
+	                <p:column  width="20%" colspan="1" headerText="Juttatás megnevezése"/>
+	                <p:column width="9%" colspan="1" headerText="Éves összeg"/>
+	                <p:column width="9%" colspan="1" headerText="Havi összeg"/>
+	                <p:column width="" colspan="1" headerText="Leírása"/>
+	                <p:column width="2%" colspan="1" headerText="Érvényes"/>
+	                
+	            </p:row>
+	        </p:columnGroup>
+	             	
+ 			<p:column>
+				<h:inputText value="#{c.categoryName}" style="width: 100%;" />
+			</p:column>
+			<p:column>
+				<h:inputText value="#{c.yearlyLimit}"  style="width: 100%;"/>
+			</p:column>
+			<p:column>
+				<h:inputText value="#{c.monthlyLimit}"  style="width: 100%;"/>
+			</p:column>
+			<p:column>
+				<h:inputTextarea value="#{c.categoryInfo}" style="width: 100%;"/>
+			</p:column>
+			<p:column>
+				<p:selectBooleanCheckbox value="#{c.enabled}"/>
+			</p:column>
+			
+		</p:dataTable>
+
+
+	 </h:form>
+		
+</ui:composition>   		

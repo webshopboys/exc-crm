@@ -16,7 +16,7 @@ import javax.persistence.Transient;
  * 
  */
 @Entity
-@Table(name = "T_FUNCTION")
+@Table(name = "P_FUNCTION")
 @NamedQuery(name = "Function.findAll", query = "SELECT f FROM Function f ORDER BY f.functionCode, f.functionName")
 public class Function extends EntityCommons implements Serializable {
     private static final long serialVersionUID = 1L;

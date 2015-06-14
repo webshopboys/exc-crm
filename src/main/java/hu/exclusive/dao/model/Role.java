@@ -21,7 +21,7 @@ import javax.persistence.Transient;
  * 
  */
 @Entity
-@Table(name = "T_ROLE")
+@Table(name = "P_ROLE")
 @NamedQuery(name = "Role.findAll", query = "SELECT r FROM Role r ORDER BY r.roleName")
 public class Role implements Serializable, Cloneable {
     private static final long serialVersionUID = 1L;

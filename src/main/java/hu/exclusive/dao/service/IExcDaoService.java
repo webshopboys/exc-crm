@@ -7,9 +7,12 @@ import hu.exclusive.dao.model.CrmUser;
 import hu.exclusive.dao.model.DrDoc;
 import hu.exclusive.dao.model.Function;
 import hu.exclusive.dao.model.Jobtitle;
+import hu.exclusive.dao.model.PCafeteriaCategory;
+import hu.exclusive.dao.model.PCafeteriaLimit;
+import hu.exclusive.dao.model.PSystem;
 import hu.exclusive.dao.model.Role;
-import hu.exclusive.dao.model.SSystem;
 import hu.exclusive.dao.model.Staff;
+import hu.exclusive.dao.model.StaffCafeteria;
 import hu.exclusive.dao.model.StaffDetail;
 import hu.exclusive.dao.model.StaffNote;
 import hu.exclusive.dao.model.Workgroup;
@@ -63,18 +66,24 @@ public interface IExcDaoService {
 
     String getSystemParameter(String sysgroup, String syskey);
 
-    List<SSystem> getSystemParameters(String sysgroup, String syskey);
+    List<PSystem> getSystemParameters(String sysgroup, String syskey);
 
     void saveWorkroup(Workgroup group);
 
     void saveWorkplace(Workplace workplace);
 
-	void deleteDoc(ContractDoc document);
+    void deleteDoc(ContractDoc document);
 
-	void deleteDoc(DrDoc document);
+    void deleteDoc(DrDoc document);
 
-	void deleteAttachment(Attachment document);
+    void deleteAttachment(Attachment document);
 
-	void deleteStaffNote(StaffNote note);
+    void deleteStaffNote(StaffNote note);
+
+    List<StaffCafeteria> getCafeteriaList(DaoFilter filter);
+
+    List<PCafeteriaCategory> getCafeteriaCategories(DaoFilter filter);
+
+    List<PCafeteriaLimit> getCafeteriaLimits(DaoFilter filter);
 
 }

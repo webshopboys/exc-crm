@@ -19,7 +19,7 @@ import javax.persistence.Transient;
  * 
  */
 @Entity
-@Table(name = "T_WORKPLACE")
+@Table(name = "P_WORKPLACE")
 @NamedQueries({
         @NamedQuery(name = "Workplace.findAll", query = "SELECT w FROM Workplace w ORDER BY w.workplaceName"),
         @NamedQuery(name = "Workplace.findById", query = "SELECT w FROM Workplace w WHERE w.idWorkplace = :idWorkplace"),

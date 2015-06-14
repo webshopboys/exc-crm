@@ -64,6 +64,9 @@ public class StaffBase extends EntityCommons implements Serializable {
     @Column(name = "employ_type")
     private String employType;
 
+    @Column(name = "weekly_hours")
+    private Integer weeklyHours;
+
     @Column(name = "full_name")
     private String fullName;
 
@@ -191,6 +194,14 @@ public class StaffBase extends EntityCommons implements Serializable {
 
     public void setEmployType(String employType) {
         this.employType = employType;
+    }
+
+    public Integer getWeeklyHours() {
+        return weeklyHours;
+    }
+
+    public void setWeeklyHours(Integer weeklyHours) {
+        this.weeklyHours = weeklyHours;
     }
 
     public String getFullName() {

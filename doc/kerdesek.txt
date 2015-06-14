@@ -1,0 +1,27 @@
+Kérdések:
+
+A szerződés mintákban a munkahely a "telepelyein" szóval szerepel. Lehetséges, hogy a munkatársnak több munkahelye is legyen egyszerre? A mun katárs adatlapján ezek egyszerre kiválaszthatók? Mi történik, ha olyan munkahelyre osztják be, ami nincs hozzárendelve az adatlapon?
+Miképpen lehet beosztani vendégmunkást egy másik csoportból?
+
+A cafetéria mintában megjelent egy "terület" oszlop. Ez egy új mező a csoportokhoz? Jelenleg a csoport tartozik egy céghez, és a munkehelyek pedig egy csoporthoz. Elég annyi, ha a csoportnak egyszerűen lesz egy szabad mezős régiója?
+
+A 07-10-02-01 GPRS munkaidő nyílvántartó menüben fel lehet vinni kézzel is munkatárs érkezést, távozást. Ez kell, mert jön a GPRS importból a tényleges tevékenység, látszólag nem szabadna korrigálni?
+
+A 07-10-01-01-01 Munkaidő beosztás menüben lehet a munkatársakhoz egyessével korrigálni a nyitvatartási sablon időszakait, illetve szabadnapokat felvinni. Ez a lista látszólag üres, és igen nehézkesnek tűnik kitölteni is. Ez egy szükséges funkció?
+
+Ha lehetséges, akkor hol lehetséges a heti nyitvatartási sablon alapértelmezést kibővíteni egy hónapra vagy évre az ünnepnapokkal, hosszabbított nyitvatartásokkal, stb? Vagy ezt egyszerűen a Beosztás kezelésben beklikkelgetitek egyedileg?
+
+Minden munkatársnak van egy egyéni risztókódja? Ezt ti osztjátok ki és kapcsoljátok a D24 bejáratokhoz?
+
+
+
+A munkaidő beosztásban a munkanapra dobva egy munkahelyet, a munkahely nyitvatartási ideje óraszám kerül bele, vagy a munkatárs napi munkaóra száma?
+Hol lehet megadni, hogy a munkatársnak mennyi a napi munkaideje?
+Hogyan kezelődik, ha egy munkahely egy napon váltásban van nyitva, több munkatárs egymást követi benne?
+Minden munkatársnak van egy saját bejárat kódja? 
+Ha több munhahelyen is dolgozik, akkor a programban lesz mindig másik bejáratkód hozzárendelve?
+Akár napon belül is lehet több "gazdája" egy bejáratnak?
+
+A munkaiőd beosztás havonta készül el? Mindig megelőzi a cafetéria táblázatot? (a munkaórákra szükség van a cafetériához)
+A cafetéria honnan tudja az éve elején, hogy menet közben kik kerülnek be a jogosultak közzé azokból, akik év elején még nem jogosultak? 
+

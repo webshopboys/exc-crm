@@ -5,6 +5,8 @@ import hu.exclusive.dao.DaoFilter.RELATION;
 import hu.exclusive.dao.model.CrmUser;
 import hu.exclusive.dao.model.Function;
 import hu.exclusive.dao.model.Jobtitle;
+import hu.exclusive.dao.model.PCafeteriaCategory;
+import hu.exclusive.dao.model.PCafeteriaLimit;
 import hu.exclusive.dao.model.Role;
 import hu.exclusive.dao.model.Workgroup;
 import hu.exclusive.dao.model.Workplace;
@@ -94,6 +96,14 @@ public class ParametersService {
 
     public void saveWorkplace(Workplace workplace) {
         excDao.saveWorkplace(workplace);
+    }
+
+    public List<PCafeteriaCategory> getCafeteriaCategories(DaoFilter filter) {
+        return excDao.getCafeteriaCategories(filter);
+    }
+
+    public List<PCafeteriaLimit> getCafeteriaLimits(DaoFilter filter) {
+        return excDao.getCafeteriaLimits(filter);
     }
 
 }

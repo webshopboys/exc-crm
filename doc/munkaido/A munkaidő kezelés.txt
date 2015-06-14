@@ -1,0 +1,147 @@
+A munkaidő kezeléshez tartozik:
+
+- szabadság: ez jön a staff adataiból, de leginkább fix alap értékekkel jön létre amikor kell. 
+  
+Egyedileg utó korrigálható. Ismert felhasználása a Beosztás készítés és kalkulus. 
+Valószínűleg a szintén most beállítható minimum-maximum értékekben leírt összefüggések alapján kell bizonyos nepon belül szabadnapnak lenni.
+Valószínűleg ez mindenkinél napi 12 óra és havi valamennyi, "egyenlőtlen elosztásban". Az sem biztos, hogy kalkulál ilyennel, de én szeretném ha az új kalkulálna.
+
+- S_LIMIT_DAILY_DEFAULT
+A kötelező szabadságok és a napi minimum-maximum összefüggéseihez a paraméterek. 
+
+- napsablon: ez azt tudja, hogy leírja a "Banknaptárt". Ismert felhasználása a Beosztás készítés, az ebben magadott alapján jön az Ünnepnap, a Szabi alapján a Szabadság, és a napilimit alapján az időszerű figyelmeztetések, ha van ilyen funkció!  
+
+- beosztás: minden nap, minden munkahelyre, minden munkatárshoz a munkaidő intervallum meghatározása, a műszakkal. Az a kokcás képernyő. nem egy nagy pukk valójában, megnézi mi az alapértelmezett a fentiek alapján, és kitölti az aktívakkal (most nem tölti, kézzel kell). Lehet munkahelyet hozzárendelni (oda lesz beosztva) annak óraszámát (kitölteni) vagy alapértékkel kitölteni. Ez átírható. (és nagyon fincsa lenne, ha valami sávozódássAL, ami a napilimitben megadottak). Ha túlmegy a ????? (elvesztettem miben van) limiten akkor kijelzi.
+
+- nyitvatartás: ez alapból átjön a Munkahelyek nyitvatartásából? Lehet, de mintha lenne saját felülete. Lényege, hogy minden munkahelyhez megadható, hogy mikor legyen nyitva. Itt nem lenne jó megoldani, a szabinál is, hogy az alapértelmezett fizikailag ne is létezzen? Minek alapadatot tartalmazó rekord? 
+
+A beosztás figyeli a klikkelésre, hogy az adott munkahely nyitvatartásához képest a beírt (és már létező dátum és a többi alapján már ismert esetleges váltotárs a munkahelyhez) és a már megtalált kitöltött váltotárson felül mennyi kell, mennyivel ment túl, a munkatárs valahol (de hol?) megadott napi munka vállalásából és a bevitt órákból szintén kevesebb- több hiajelzéseket csinál. És a végén leheyt, hogy a mu kahely nincs teletöltve, vagy a munka túlment, vagy még ennyi hibádzik, stb.
+Példáúl nem tudja  amostani rendszer kezelni azt, ha egy nap több munkatárs dolgozta tele a munkahelyet.
+
+- munkaidő: ez pontosan az, ahol a munkatárs napi óráit és tervezett szabadságát megedhatjuk. Kiválthatja a szabadság táblát is?
+
+- tevékenység: ez nem más, mint a nyitások és zárások időpont sorozata. Ebből simán kijön a GPRS alapú, egész pontosan ezt kell kinyerni abból, ami bejáratoktól érkezik. Tudjuk a bejáratot. Tudjuk kihez tartozik, így tudjuk a munkatársat. Tudjuk az állapot változás mikor történt. Lehet nincs párja, pl ha 2 egymást követő belépés van, akkor elmaradt egy kilépés. Ez kijelzi.
+
+- szabály: ezek java kódok, amiket a munkatárs, a munkahely, meg ami kell alapján fel lehet fűzni. Ezeken végiglépkedve lehet minden kocka klikkere a kockára-munkahelyre-munkatárs munkaidőre kiejelezni a problémát. Tud mást is? Össze kell szedni minden lehetséges hibaüzenetet.
+
+Kb ennyi a munkaidő izé ddolga. 
+
+WORKING_TIME
+HOLIDAY
+
+
+07-10-01-01-02 Beosztás sablonok
+- Elnevezett sablon a mi minden heti napra meghatározza a nyitvatartási időt illetve a szabadnapokat (itt nincs időszak).
+- A nap lehetséges fajtái: Munkanap, Szabadnap, Betegszabadság, Ünnepnap, Szabadság, Fizetett ünnep
+- A munkaidőkben viszont több van: Egyéb, Oktatás/Továbbképzés, Félnapos szabadság, Orvosi vizsgálat, Fizetetlen szabadság
+- Ezekhez szín is tartozik, és nem találtam meg az adminját. De kellene az értékkészlethez admin menü.
+
+
+07-10-01-01-01 Munkaidő beosztás
+- Hetekre mutatva lehetséges a sablontól eltérő napokra az adott munkatárshoz megadni a munkanap sablont. 
+- Nem találom ahol a sablon napokat felül lehet bírálni pl. ünnepnapokkal, hosszabbított nyitvatartással stb.
+- Az teljesen használhatatlan, hogy mindenkihez egyedileg korrigálják a heteket. Talán ezért üres teljesen.
+
+
+07-10-02-01 GPRS munkaidő nyílvántartó
+- Tetszőleges intervallumra lehet lekérdezni a kiválasztott munkatárs tevékenységeit. Lefele listázza a napokat, ahol dolgozott, ott subtáblába mutatja az érkezés-távozás, bejárat listákat, munkaidő és szünetet összesít a napra.
+- Lehetséges rögzíteni is tevékenységet.
+- Itt láthatóan van olyan, hogy a hét különböző napjain más-más munkahelyen dolgozik a kolléga.
+
+
+07-10-02-02-01 GPRS szabályok
+- Ez minden, vagy kiválasztott bejárat eseményeit, particióját istázza, de a nyugtázás dátum üres benne. Olyan mintha a kapott GPRS import nyers listája lenne.
+
+
+07-10-02-02-02 GPRS esemény típusok
+- törzsadat kezelés, Érkezés, Távozás értékkészlettel. Jelentése Tevékenység típusok.
+
+
+07-10-02-02-03 GPRS riasztó felhasználók
+- A bejáratok D24 alapú összerendelése. fent van egy bejárat megnevezés D24 szerint, és ehhez lehet listázni és felvinni egy risztókódot (ami bejáratkód valószínűleg) és hozzárendelni egy munkatársat. 
+
+
+07-10-02-02-04 GPRS - Érkezések és távozások
+- Ez is D24-es szerkezetű lista. tetszóleges intervallumra és munkatársra szűrve listázza az esemény dátumát, valamilyen kódoka és az esemény megnevezését, ami itt a státusz lehet: Zárás elmaradt, Nyitás elmaradt, Teszt riport, Nyitás tiltott időben, Nyitás tiltott időben, A: Video átvitel actív, Elmaradt teszt jelzés, A:Kényszerített nyitás, A:Felhasználói Nyitás/Zárás
+
+
+07-10-02-02-05 GPRS - bejáratok kezelése
+- Itt lehet a riasztóközpontot és particiót hozzárendelni a bejárathoz, azaz megnevesíteni.
+
+
+07-10-02-02-06 GPRS bejárat felhasználóhoz rendelése
+- Kiválasztott munkatárshoz egyessével lehet hozzápipálgatni a bejárat kódokat, nem a nevét, a kódját. Láthatóan üres. Funkcionalitásában egyezik a "07-10-02-02-03 GPRS riasztó felhasználók" menüvel.
+- Nem látom, hogy kezelné azt az összefüggést, ami a bejárathoz kötött munkahely alapján a csoportra szűrne, a csoport munkatársait listázná. Mindenhol minden megjelenik, átláthatatlan.
+- Az összefüggés jön a munkahelyhez rendelt bejárat, abból a csoport, abból a munkatársaak halmaza. Tehát lehet intelligensé tenni.
+
+
+07-10-02-02-07 GPRS Munkahelyek
+- Ez a munkahelyek llistája és karbantartása.
+- Hiányzó adatok: bejárat, email, telefonszám, műszak.
+
+
+07-10-04-02 Beosztások listája 
+- Munkatársakra egyedileg kiválasztva.
+- Hónapra kiválaszthatóan listázza, a kockákban a munkaórák, vagy üres, vagy egyedi kód van.
+- Minden kockára tooltip a tevékenységekkel (eseményekkel) bontva, munkaidőre és szünetre összesítve.
+
+- Munkatársakra és hónapra heti bontásban is tudja. 
+- ekkor a cellában a bejárat szerepel (ami helyett a munkahely kéne szerintem) és az összesítések. Tooltipben pedig a tevékenységlista.
+- Megjelenhetnek pirosan: Érkezés hiányzik, Távozás hiányzik stb. hibajelzések is.
+
+07-10-04-03 Beosztás készítés
+- Kiválasztott nap típushoz és munkahelyhez köthető munkatársak kockázása.
+- Balról a naptípus, ami bővebb mint a "07-10-01-01-02 Beosztás sablonok" menüben kezelehető. Tehát ehhez bővebb admin kell majd.
+- Jobbról a csoport munkahelyei. Érdekes, hogy bár tartozik a munkatárshoz munkahely, itt simán lehet máshova beosztani.
+- Középen a listázás módja: Dolgozóként, Munkahelyenként. Az intervallum Haiv, Heti. A Dátum hónapra vagy hétszámra.
+- Lehet megjeleníteni munkahelyre, munkaidőre, munkalap ütköztetésre.
+
+- Munkalap ütköztetés: itt piros, bogaras cellák jelennek meg heti és havi esetben is. 
+- "Be van osztva, de nincs felvitt munkalap.", "Túl hosszú műszak!" tooltippek a nap cellákon.
+- Pirosan kiemelt nevek, és "Hibák: 31 üres nap", "Hibák: Túllépi a munkaórakeretét!" stb tolltip a munkatárson.
+- Ugyanez munkahelyre listázva a cellában a munkatárs szignója van. Rajta név és a terv munkaidőszaka.
+- Itt szinte minden munkahelyre piros a név, mert pl "Hibák: 3 üres nap" szerű eltérések vannak.
+
+- Munkahelyre listázva nincs ütköztetés kiválasztás, nincs egyáltalán megjelenés választási szekció!
+- És jobbról a munkatársak vannak a csoportból. Vagyis úgy tűnik a csoport az alapegység, a munkahelyek között lehet variálni.
+- És miképpen lehet beosztani vendégmunkást a másik csoportból?
+
+- Dolgozóként listázva a "Megjelenítve" a cella tartalomra vonatkozik. "Munkaidő" esetén az előírt óraszám van benne, és a tooltip a tól-ig-ot mutatja a munkahely nevével. 
+
+- Elvárt 	Ledolg. 	Le nem. dolg. 	Fizetett ünnep 	Áthozott 	Összesen cellák kalkulálódnak és lehet rájuk figyelmeztetési szabály is. Ezek "Munkahely" nézetben is ugyanúgy viselkednek.
+- "Munkahely" nézetben a munkahely szignója van a cellákban és a tooltip a tól-ig-ot mutatja a munkahely nevével.
+- Lehet, hogy a munkatárs idősávja, lehet, hogy  anyitvatartás a tooltip, ez nem derül ki egyértelműen.
+
+- Dolgozós listában jobbról a csoport munkahelyeiből lehet választani.
+
+- A nap típus lista és a cellák is a "07-10-01-01-02 Beosztás sablonok" alapján színesek.
+
+- A cellákon dupla klikel a munkatárs napi beosztása módosítható. Itt úgy tűnik, hogy a munkatárs munkaidő sávja van, tehát az jelenik meg a tooltipekben is. Itt lehet a beosztást törölni is. Ez ugyanaz lehet, mintha üres nappal felülírjuk a bal oldali naptípusból?
+- Ez itt a szabadságot is megadhatja. Ilyenformán a "07-10-01-01-01 Munkaidő beosztás" beli funkciót is megvalósítja a modális editorban. Most nincs benne a naptípus lista, de lehetne.
+
+- Érdekes, de nekem zavaró, hogy szabis cellán klikkelve rinyál ha nincs munkahely kiválasztva. Pedig nem bizts, hogy cellát cserélni akarjuk munkanappal.
+
+
+07-10-04-04 Beosztás beállítások
+- Az alapértelmezett minimumok, maximumok. Ezek alapján történik a cellás ellenőrzés alighanem. 
+- Napi heti mindenféle limit.
+
+
+07-10-04-05 Éves szabadság
+- Évekre választva listázza az össze munkatársat és megadható neki éves szabadság, és mellette a kivett és maradék értékeket mutatja meg.
+
+
+
+07-10-04-07 Beosztás és nyitva tartás közötti eltérés
+- Listázható hónapra és csoportra.
+- A munkahelyben megadott nyitvatartás alapján kalkulált óraszám (és akkor hol is lehet az ünnepnapokat megadni?)
+- A munkatársak beosztott munkaideje alapján kalkulált havi óraszám.
+- És a különbségük minden munkahelyre listázva. Mellette "Napi bontás" gomb.
+
+- Napi bontás színezett sorokkal listázható napokra.
+- Munkaidő beosztás alapján kalkulált napi óraszám.
+- Nyitva tartás alapján kalkulált napi óraszám.
+- Melette az eltérés. Ahol ez nem zéró, az naracssárga sor.
+- Minden soron tooltip a munkatárssal és a munkaidejével (tól-ig)
+
+

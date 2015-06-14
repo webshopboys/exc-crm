@@ -1,0 +1,32 @@
+Minden cafe sor az excelben egy évre vonatkozó munkatárs, összeg, jogcím (típus) stb összefüggés.
+A jogcím értékészletes, évente változhat. Lehetnek kitöltetlen sorok is.
+
+Lehessen szűrni a munkatárs listát. Ebben a név, adószám, csoport adat van, és egy Megtekintés gomb.
+Szűrés:
+- munkatárs neve
+- csoport vagy mindegyik csoport
+- év
+- hónap
+- pipálhatóan a jogcímek, amikhez tartozó munkatársak kellenek
+- az egy évnél fiatalabb munkaviszony kimarad a listából!
+- visszamenőleges dátumokra csak létező cafeteria rekordok listázódnak.
+- aktuális évre vagy később pedig minden munkatárs, aki régebben mint 1 év dolgozik.
+
+A lista exportálható excelbe. Szintén a lista alatt Import is van, ami végignézi, hogy az excel alapján felismeri e a munkatársakat, az évet, és ha minden okés, akkor munkatársanként törli az év rekordokat és létrehozza az excelből. Nem merge-l, nem update-el, töröl és létrehoz. 
+
+A megtekintésben minden excelben meglévő oszlop megnézhető, módosítható, felvihető. Évre, hónapra bontva.
+
+Minden év, hónap, munkatárs -hoz tetszőleges jogcím és összeg.
+A kiterítésben a fő munkatárs adatok alatt évekre több altáblázat.
+Éves keret - hónap - lehetséges jogícmek oszlopok, fejlécben a jogcím, cellákban az összeg.
+Minden tábla összecsukható.
+Az éves keretet kalkulálja de szabadon átírható.
+Havonta aktualizálják.
+
+A munkaidő beosztásból jön, hogy mennyi órát dolgozott. Ez lehet az egyik alapja az éves keretének, de havonta kiértékelhető. Ha az adott hó 5. napjáig egy adott státuszban van (státusz itt az állapota, a napi órái is egyben) akkor az a hónap is a státuszának megfelelő. Ha később változik, akkor az a megelőzővel egyezik.
+
+Szintén a munkaidőből jönnek nem automatizálható összefüggések.
+
+Legbutább esetben kirakjuk egy sheet-re a munkaidőket is.
+
+EZ MÁR MINDENKÉPPEN OLYAN, AMI NEM AZ ALAP FEJLESZTÉS RÉSZE!
