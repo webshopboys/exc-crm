@@ -1,0 +1,57 @@
+Loggolás egyesítése
+
+Pillanatnyilag a leggyorsabb és okosabb megoldás a logback. Ugyanaz fejleszti, aki a log4j-t, de ez nagyságrendekkel kissebb igényű.
+
+A Spring a apache common loggolást használja. Ez ész nélkül íródik mendenfele.
+Alapból a java.util.logging.Logger loggolás van a kódokban.
+
+Mindkettő átvezethető egy közös logback handlerbe.
+
+A közösítéshez kell még az slf4j is, ami a közös interfész, és ezt támogatja a logback. Lehetne slf4j magában is, de az sokkal erőforrás igényesebb.
+
+		<dependency>
+		    <groupId>org.slf4j</groupId>
+		     <artifactId>jul-to-slf4j</artifactId>
+		    <version>1.7.10</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>1.7.10</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+
+Az slf4j api nem kell, ha Hibernate cire van, mert abban benne van.
+
+A jul-to-slf4j az alap loggert vezeti át.
+A jcl-over-slf4j a apache.commons loggert vezeti át.
+
+Alapból a log4j átmegy, de a java logger nem jelenik meg a logback logban.
+
+Ahhoz, hogy működjön ki kell "sütni" a java loggert. Ezt lehet valami app listenerben:
+
+LogManager.getLogManager().reset();
+SLF4JBridgeHandler.install();
+Logger.getLogger("global").setLevel(Level.FINEST);
+
+De egyszerűbb a resources mappábe egy logging.propertiest rakni ezzel a tartalommal:
+handlers = org.slf4j.bridge.SLF4JBridgeHandler
+
+Mindkét esetben kell a logback.xml-ben egy ilyen az elejére:
+
+  <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+    <resetJUL>true</resetJUL>
+  </contextListener>
+
+ Ezekkel már működik, nincs egyedi Logger se log4j, se teleírt Spring debug log, de mindegyik loggerrel a java oldalról írható a közös log.
+ 
+  
