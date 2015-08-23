@@ -10,50 +10,81 @@
   		
 	<h:form id="filterForm" onkeypress="if (event.keyCode == 13) { document.getElementById('filterForm:mainSubmit').click(); return false; }">
 	
-		<p:panel header="Cafetéria lista szűrése">
 		
+		<p:accordionPanel multiple="true" styleClass="sliderPanel" id="sliderPanel" >
+	    <p:tab title="Cafetéria lista szűrése" titleStyleClass="filterTab" >
+	        
             <h:panelGrid columns="2" styleClass="sliderGrid">
             
+            
                 <h:outputText value="Munkatárs neve:"/>
-				<h:inputText value="#{cafeController.filter.fullName}" style="width:100%;"/>
+				<h:inputText value="#{cafeController.filter.fullName}" styleClass="nowrap fullsize"/>
 				
 				<h:outputText value="Csoport:"/>
-				<p:selectCheckboxMenu value="#{cafeController.filter.workgroups}" >
-					<f:selectItem itemLabel="Minden csoport" itemValue="0" />
-					<f:selectItems value="#{parameterView.workgroups}" var="g" itemLabel="#{g.groupName}" itemValue="#{g.idWorkgroup}" />
-				</p:selectCheckboxMenu>
-				
+				 <p:selectManyMenu value="#{cafeController.filter.workgroups}" showCheckbox="true" styleClass="fullsizes">
+            		<f:selectItem itemLabel="Minden csoport" itemValue="-1" />
+					<f:selectItems value="#{parameterView.workgroups}" var="g" itemLabel="#{g.groupName}" itemValue="#{g.idWorkgroup}" styleClass="nowrap"/>
+       			 </p:selectManyMenu>
 				
 				
 				<h:outputText value="Év:"/>
-				<h:selectOneMenu value="#{cafeController.filter.yearKey}">
+				<h:selectOneMenu value="#{cafeController.filter.yearKey}" >
+					<f:selectItem itemLabel="- Nem számít -" itemValue="-1" />
 					<c:forEach begin="2000" end="2100" step="1" varStatus="s">
-						<f:selectItem itemLabel='#{s.index}' itemValue="#{s.index}" />
+						<f:selectItem itemLabel='#{s.index}' itemValue="#{s.index}" styleClass="nowrap"/>
 					</c:forEach>
 				</h:selectOneMenu>
 				
 				
 				<h:outputText value="Hónap:"/>
-				<h:inputText value="#{cafeController.filter.monthKey}" style="width:100px;"/>
+				<h:selectOneMenu value="#{cafeController.filter.monthKey}" >
+					<f:selectItem itemLabel="- Nem számít -" itemValue="-1" />
+					<f:selectItem itemLabel='Január' itemValue="1" styleClass="nowrap"/>
+					<f:selectItem itemLabel='Február' itemValue="2" styleClass="nowrap"/>
+					<f:selectItem itemLabel='Március' itemValue="3" styleClass="nowrap"/>
+					<f:selectItem itemLabel='Április' itemValue="4" styleClass="nowrap"/>
+					<f:selectItem itemLabel='Május' itemValue="5" styleClass="nowrap"/>
+					<f:selectItem itemLabel='Június' itemValue="6" styleClass="nowrap"/>
+					<f:selectItem itemLabel='Július' itemValue="7" styleClass="nowrap"/>
+					<f:selectItem itemLabel='Augusztus' itemValue="8" styleClass="nowrap"/>
+					<f:selectItem itemLabel='Szeptember' itemValue="9" styleClass="nowrap"/>
+					<f:selectItem itemLabel='Október' itemValue="10" styleClass="nowrap"/>
+					<f:selectItem itemLabel='November' itemValue="11" styleClass="nowrap"/>
+					<f:selectItem itemLabel='December' itemValue="12" styleClass="nowrap"/>
+				</h:selectOneMenu>
+				
 				
 				<h:outputText value="Cafetéria kategória:"/>
-				<p:selectManyCheckbox value="#{cafeController.filter.categories}" columns="1">
-					<f:selectItem itemLabel="Minden kategória" itemValue="0" />
-					<f:selectItems value="#{parameterView.cafeteriaCategories}" var="cat" itemLabel="#{cat.categoryName}" itemValue="#{cat.idCafeteriaCat}" />
-				</p:selectManyCheckbox>
+				<p:selectManyMenu value="#{cafeController.filter.categories}" showCheckbox="true" styleClass="fullsizes" >
+					<f:selectItem itemLabel="Minden kategória" itemValue="-1" />
+					<f:selectItems value="#{parameterView.cafeteriaCategories}" var="cat" itemLabel="#{cat.categoryName}" itemValue="#{cat.idCafeteriaCat}" styleClass="nowrap"/>
+				</p:selectManyMenu>
+				
+				<p:separator /> <p:separator />
+				
+				<p:selectBooleanCheckbox value="#{cafeController.filter.interactionRequired}" style="align: right;"/>
+				<h:outputText value="Beavatkozásra várnak"/>
+				
 				      
             </h:panelGrid>
 	       
     
 	    	<p:separator />
  
- 			<p:commandButton actionListener="#{cafeController.resetFilter}" immediate="true" value="Alapállapot" process="@this" update="filterForm" style="width: 95%;"/>
-			    
+ 			
+ 			<p:commandButton actionListener="#{cafeController.resetFilter}" immediate="true" value="Alapállapot" process="@this" update="filterForm"/>
+			<span>
+		    	<h:outputText value="Bármelyik feltétel elég:"/>
+		  	 	<h:selectBooleanCheckbox value="#{cafeController.filter.anyEnought}" />
+		  	</span>
+		  	 	    
 	    	<p:separator />
  
-    		<p:commandButton value="Szűrés" update=":mainContentPanel" style="float:right;" id="mainSubmit"/>
+ 			<!-- nem hiv meg semmit, hanem a formot submitolja, az a bean-t frissiti es az update fogja a {cafeController.staffModel}-t ujratolteni -->
+    		<p:commandButton value="Szűrés" update=":mainContentPanel" styleClass="fullsize" id="mainSubmit"/>
     	
-    	</p:panel>
+    	</p:tab>
+    	</p:accordionPanel>
     	
 	</h:form> 
 	    

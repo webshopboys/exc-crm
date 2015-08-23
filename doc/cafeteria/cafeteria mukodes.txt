@@ -30,3 +30,30 @@ Szintén a munkaidőből jönnek nem automatizálható összefüggések.
 Legbutább esetben kirakjuk egy sheet-re a munkaidőket is.
 
 EZ MÁR MINDENKÉPPEN OLYAN, AMI NEM AZ ALAP FEJLESZTÉS RÉSZE!
+
+FIXME
+Adószám!
+Kitöltetlen és 1 évnél frissebbek kizárása a listából.
+Minden dátumosnál létező joinok csak. Múltba is jövőbe is.
+Ha nincs szűrés, akkor a decemberig cafetériázhatókat mutatja. Kitöltve vagy sem, ezt egy 12 részes ikonsorral jelezzók a listában (zöld ami ki van töltve, fehér ami nincs, és piros ami problémás).
+Külön filter: "Beavatkozásra várnak" ezzel az összegben eltérőket és a kitöletleneket listázza le adott év végéig.
+
+Import:
+Végigmegy az excel A3:An oszlopán és név egyezéseket keres. Ebből x egyezés és y ismeretlen név lesz. Az ismeretleneket vágólapra lehet menteni, illetve akár eg mozdulattal létre is lehet őket hozni (ez elég veszélyes).
+Az egyezőkkel rákérdezett végrehajtás történhet.
+A G oszlopig staff adat. B,C,F,G olyan amivel frissíthető is a staff rekord. Ha eltérés van a mentett staff és az excel beli között, akkor arról is valami vágólapos log keletkezhet. Ezek az adatok nem számítanak a cafe szempontjából igazán.
+H-tól kezdve jönnek a kategóriák. Ezek neve eltér a kategória nevétől, így kell hozzá valami mapping. Az első januáriban vagy van szám, vagy nincs, a többinél a hónap is a névben van. Ehhez az indítás előtt, a nevek feltérképezésével együtt valami okos mappingos ablak kéne. Ez nem lesz, hanem kötelezően cseréljék le a CRM kategória nevekre és mögé mehet, hogy hanyadik hónap.
+A Terület F oszlop vegye fel a CRM csoport nevet.
+
+- megnézi a nevet, adószámot, belépést, területet. Ha a név egyértelmű, akkor az "Felismert".
+- ha a név nem egyértelmű, nincs, több is van, akkor az "Nem azonosítható"
+- ha a törzsadata a db-ben van és més mint az excelben, akkor "Eltérő törzsadatok"
+- utóbbi kettő vágólapra menthető, vagy valamilyen exporttal letölthető textbe.
+- a felismertekre feldolgozás indító gomb
+- amihez van adat, azzal kicseréli az adatbázist
+- az új törzsadatokat beszúrja, az eltérőeket nem.
+- az éves keret most excelből D jön, később számolhatja
+- uj tábla: K_STAFF_LIMIT amiben pl. az éves keret is elfér. (staffid, year, cafeterialimit) de van is ilyen: t_cafeteria_info csak kell hozzá egy staff_id is.
+
+Export:
+A db-ből összeszedett tablazat. Az összegzéseket (macro) nem biztos, hogy fel tudja oldani. A többi adott.

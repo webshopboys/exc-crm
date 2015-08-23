@@ -8,6 +8,14 @@
 
 	  <display-name>EXC Prime</display-name>
 	   
+	  <description>EXC Prime Test App</description>
+	  <resource-ref>
+	      <description>DB Connection</description>
+	      <res-ref-name>jdbc/MySQLDS</res-ref-name>
+	      <res-type>javax.sql.DataSource</res-type>
+	      <res-auth>Container</res-auth>
+	  </resource-ref>
+	   
 	  <context-param>  
         <param-name>primefaces.THEME</param-name>  
         <param-value>afterdark</param-value>  
@@ -42,7 +50,7 @@
     
     <context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>/WEB-INF/application-root-context.xml</param-value>
+		<param-value>WEB-INF/application-root-context.xml</param-value>
 	</context-param>
 	  
 	<context-param>
@@ -160,6 +168,7 @@
 	    <welcome-file>login.xhtml</welcome-file>
 	</welcome-file-list> 
    
+  
          
 </web-app>
 

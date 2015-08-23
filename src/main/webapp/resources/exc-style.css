@@ -1,3 +1,10 @@
+/* .ui-datatable tbody td {
+    border-bottom-style: double;
+    border-left-style: hidden;
+    border-right-style: hidden;
+    border-top: 1px solid #000000 !important;
+}*/
+
 .imaged-panel div.ui-panel-titlebar { height: 30px;} 
 .imaged-panel div.ui-panel-titlebar span.ui-panel-title { margin: 0px;} 
 
@@ -26,7 +33,14 @@
 
 .sliderPanel .ui-accordion-content { padding: 0px !important; }
 
-.sliderGrid { vertical-align: top; }
+.sliderGrid { vertical-align: top; width: 100%;}
+.sliderGrid td:first-child {width: 20%;  _white-space:nowrap;}
+
+.fullsizes { width: 98% !important;  height: auto !important;}
+.fullsizes .ui-selectlistbox-listcontainer { height: auto !important;}
+.fullsize { width: 98% !important;}
+.fullsize .ui-selectlistbox-listcontainer_ { width: 98% !important;}
+.nowrap {white-space:nowrap;}
 
 .filterSelectorList { width: 95% !important;} 
 .filterSelectorList .ui-selectlistbox-listcontainer {height: 120px !important; }

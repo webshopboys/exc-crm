@@ -16,30 +16,27 @@
 
        	<p:dataTable
        	   	id="docTable" 
-           	var="r"
-           	value="#{cafeController.staffModel}"
-           	lazy="true"
-           	sortMode="multiple"
-           	paginator="true"
-           	paginatorAlwaysVisible="true"
-           	resizableColumns="true"
-           	rows="20"
+           	var="r" value="#{cafeController.staffModel}" rowKey="#{r.idStaff}"
+           	lazy="true" sortMode="multiple" paginator="true" paginatorAlwaysVisible="true" resizableColumns="true"
+           	rows="20" rowsPerPageTemplate="10,20,30,50"
+           	
            	paginatorTemplate="{PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {CurrentPageReport}"
-           	rowsPerPageTemplate="10,20,30,50"
            	currentPageReportTemplate="Látható: ({startRecord} - {endRecord} / {totalRecords}),  Oldal: ({currentPage}/{totalPages})"
            	style="height: 100% !important; width: 100% !important;"
-           	rowKey="#{r.idStaff}"
-         >
+        >
             
             
          	<f:facet name="header">
-	            Ügyfelek cafetéria listája
+	            Munkatársak cafetéria listája
 	        </f:facet>
 	    
             <p:columnGroup type="header">
 	            <p:row>
 	                <p:column  width="15%" colspan="1" headerText="Teljes név"/>
-	                <p:column width="25%" colspan="1" headerText="Csoport-Munkahely"/>
+	                <p:column  width="5%" colspan="1" headerText="Adószám"/>
+	                <p:column  width="5%" colspan="1" headerText="Belépés"/>
+	                <p:column  width="5%" colspan="1" headerText="Éves keret"/>
+	                <p:column width="20%" colspan="1" headerText="Cég/Terület"/>
 	                <p:column width="10%" colspan="1" headerText=""/>
 	            </p:row>
 	        </p:columnGroup>
@@ -47,17 +44,44 @@
  			<p:column>
 				<h:outputText value="#{r.fullName}"  />
 			</p:column>
+			<p:column>
+				<h:outputText value="#{r.taxSerial}"  />
+			</p:column>
+			<p:column>
+				<h:outputText value="#{r.employStart}" >
+					<f:convertDateTime pattern="yyyy.MM.dd" />
+				</h:outputText>	
+			</p:column>
+			<p:column>
+				<h:outputText value="#{r.getYearlyLimit(cafeController.filter.yearKey)}"  />
+			</p:column>
 			<p:column >
-				<p:outputLabel value="#{parameterView.getStaffWorkGroupPlace(r.idStaff)}"/>
+				<h:outputText value="#{r.workgroup.groupName}"/>
 			</p:column>
 			
-			<p:column >
-                Gomb
+			<p:column>
+                <p:commandButton value="Megtekintés" actionListener="#{cafeController.setStaff(r)}"  
+                action="#{navigator.setContent('cafeteria/cafeEditor','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
 			</p:column>
 			
 		</p:dataTable>
-
-
+		
+		
 	 </h:form>
 		
+		<p:commandButton value="Export" actionListener="#{cafeController.exportExcel()}"  immediate="true"/>
+        <p:panel>
+			<h:form enctype="multipart/form-data">
+				<table style="width:100%;">
+					<tr>
+						<td >
+							<h:inputFile value="#{fileUploadController.filePart}" />
+						</td>
+						<td>
+							<p:commandButton value="Import" ajax="false" actionListener="#{cafeController.importExcel()}" />
+	    				</td>
+	    			</tr>
+	    		</table>
+	    	</h:form>
+	    </p:panel>	
 </ui:composition>   		

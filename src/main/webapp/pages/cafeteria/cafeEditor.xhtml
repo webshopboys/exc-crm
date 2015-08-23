@@ -1,0 +1,71 @@
+<ui:composition 
+ 	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+    
+   	<h:outputStylesheet name="exc-style.css" />
+   
+	
+   	<h:form id="editorform" rendered="#{cafeController.staff != null}">
+     
+     	<h:inputHidden value="#{cafeController.staff.idStaff}" />
+  
+		<p:growl showDetail="true" sticky="true" rendered="#{not facesContext.validationFailed}"/>  
+				
+        <p:panel id="editPanel" styleClass="editorPanel imaged-panel">
+          	
+          	<f:facet name="header">
+          		<p:graphicImage styleClass="headerIcon" name="cafeteria.png" height="32px" />
+		        <p:outputLabel styleClass="headerTitle pushedTitle" value='Munkatárs cafetéria terv szerkesztése' />
+		     </f:facet>  
+		    
+		    <table class="editorTable">
+		    	<tr>
+	        		<td><p:outputLabel for="fullName" value="Teljes név:"/></td>
+		            <td><h:outputText id="fullName" value="#{cafeController.staff.fullName}" /></td>
+		        </tr>
+		        <tr>
+	        		<td><p:outputLabel for="tax" value="Adószám:"/></td>
+		            <td><h:outputText id="tax" value="#{cafeController.staff.taxSerial}" /></td>
+		        </tr>
+            	<tr>
+		            <td><p:outputLabel for="employStart" value="Belépés:" /></td>
+		            <td>
+		            	<h:outputText id="employStart" value="#{cafeController.staff.employStart}" >
+							<f:convertDateTime pattern="yyyy.MM.dd" />
+						</h:outputText>	
+					</td>
+		    	</tr>
+		    	<tr>
+	        		<td><p:outputLabel for="yearLimit" value="Éves keret:"/></td>
+		            <td><h:outputText id="yearLimit" value="#{cafeController.staff.yearlyInfo.yearLimit}" /></td>
+		        </tr>
+            	<tr>
+	        		<td><p:outputLabel for="workgroup" value="Cég/Terület:"/></td>
+		            <td><h:outputText id="workgroup" value="#{cafeController.staff.workgroup.groupName}" /></td>
+		        </tr>
+		    	
+            	<tr>
+	          	 	<td colspan="2"><p:separator  /></td>
+            	</tr>
+            	
+            	
+		    </table>
+		    
+	
+	 		<f:facet name="footer">
+	            <p:commandButton value="Adatok mentése" action="#{cafeController.saveCafeteria()}" validateClient="true" update="editorform"/>  
+       			
+       			<p:commandButton value="Bezárás" action="#{cafeController.closeCafeteria()}" ajax="true" immediate="true" >
+       				<p:resetInput for="editorform" target="editorform"/>
+       			</p:commandButton>	  			
+	 	    </f:facet>
+       	
+       	</p:panel>
+       	
+	</h:form>
+			    
+</ui:composition>    

@@ -20,84 +20,95 @@ import javax.persistence.Table;
 @Table(name = "T_CAFETERIA_INFO")
 @NamedQuery(name = "CafeteriaInfo.findAll", query = "SELECT c FROM CafeteriaInfo c")
 public class CafeteriaInfo implements Serializable {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id_caf_info")
-    private Integer idCafInfo;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id_caf_info")
+	private Integer idCafInfo;
 
-    private String info1;
+	@Column(name = "id_staff")
+	private Integer idStaff;
 
-    private String info2;
+	private String info1;
 
-    private Timestamp updated;
+	private String info2;
 
-    private String updater;
+	private Timestamp updated;
 
-    @Column(name = "year_key")
-    private int yearKey;
+	private String updater;
 
-    @Column(name = "year_limit")
-    private BigDecimal yearLimit;
+	@Column(name = "year_key")
+	private int yearKey;
 
-    public CafeteriaInfo() {
-    }
+	@Column(name = "year_limit")
+	private BigDecimal yearLimit;
 
-    public Integer getIdCafInfo() {
-        return this.idCafInfo;
-    }
+	public CafeteriaInfo() {
+	}
 
-    public void setIdCafInfo(Integer idCafInfo) {
-        this.idCafInfo = idCafInfo;
-    }
+	public Integer getIdCafInfo() {
+		return this.idCafInfo;
+	}
 
-    public String getInfo1() {
-        return this.info1;
-    }
+	public void setIdCafInfo(Integer idCafInfo) {
+		this.idCafInfo = idCafInfo;
+	}
 
-    public void setInfo1(String info1) {
-        this.info1 = info1;
-    }
+	public String getInfo1() {
+		return this.info1;
+	}
 
-    public String getInfo2() {
-        return this.info2;
-    }
+	public void setInfo1(String info1) {
+		this.info1 = info1;
+	}
 
-    public void setInfo2(String info2) {
-        this.info2 = info2;
-    }
+	public String getInfo2() {
+		return this.info2;
+	}
 
-    public Timestamp getUpdated() {
-        return this.updated;
-    }
+	public void setInfo2(String info2) {
+		this.info2 = info2;
+	}
 
-    public void setUpdated(Timestamp updated) {
-        this.updated = updated;
-    }
+	public Timestamp getUpdated() {
+		return this.updated;
+	}
 
-    public String getUpdater() {
-        return this.updater;
-    }
+	public void setUpdated(Timestamp updated) {
+		this.updated = updated;
+	}
 
-    public void setUpdater(String updater) {
-        this.updater = updater;
-    }
+	public String getUpdater() {
+		return this.updater;
+	}
 
-    public int getYearKey() {
-        return this.yearKey;
-    }
+	public void setUpdater(String updater) {
+		this.updater = updater;
+	}
 
-    public void setYearKey(int yearKey) {
-        this.yearKey = yearKey;
-    }
+	public int getYearKey() {
+		return this.yearKey;
+	}
 
-    public BigDecimal getYearLimit() {
-        return this.yearLimit;
-    }
+	public void setYearKey(int yearKey) {
+		this.yearKey = yearKey;
+	}
 
-    public void setYearLimit(BigDecimal yearLimit) {
-        this.yearLimit = yearLimit;
-    }
+	public BigDecimal getYearLimit() {
+		return this.yearLimit;
+	}
+
+	public void setYearLimit(BigDecimal yearLimit) {
+		this.yearLimit = yearLimit;
+	}
+
+	public Integer getIdStaff() {
+		return idStaff;
+	}
+
+	public void setIdStaff(Integer idStaff) {
+		this.idStaff = idStaff;
+	}
 
 }

@@ -10,10 +10,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 /**
@@ -24,97 +23,97 @@ import javax.persistence.Table;
 @Table(name = "T_CAFETERIA")
 @NamedQuery(name = "Cafeteria.findAll", query = "SELECT c FROM Cafeteria c")
 public class Cafeteria implements Serializable {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id_cafeteria")
-    private Integer idCafeteria;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id_cafeteria")
+	private Integer idCafeteria;
 
-    private BigDecimal amount;
+	private BigDecimal amount;
 
-    @OneToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinTable(name = "P_CAFETERIA_CAT", joinColumns = @JoinColumn(name = "id_cafeteria_cat", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "id_cafeteria_cat", insertable = false, updatable = false))
-    private PCafeteriaCategory cafeCategory;
+	@OneToOne(fetch = FetchType.EAGER, optional = true)
+	@PrimaryKeyJoinColumn
+	private PCafeteriaCategory cafeCategory;
 
-    @Column(name = "id_staff")
-    private Integer idStaff;
+	@Column(name = "id_staff")
+	private Integer idStaff;
 
-    @Column(name = "month_key")
-    private int monthKey;
+	@Column(name = "month_key")
+	private int monthKey;
 
-    private Timestamp updated;
+	private Timestamp updated;
 
-    private String updater;
+	private String updater;
 
-    @Column(name = "year_key")
-    private int yearKey;
+	@Column(name = "year_key")
+	private int yearKey;
 
-    public Cafeteria() {
-    }
+	public Cafeteria() {
+	}
 
-    public Integer getIdCafeteria() {
-        return this.idCafeteria;
-    }
+	public Integer getIdCafeteria() {
+		return this.idCafeteria;
+	}
 
-    public void setIdCafeteria(Integer idCafeteria) {
-        this.idCafeteria = idCafeteria;
-    }
+	public void setIdCafeteria(Integer idCafeteria) {
+		this.idCafeteria = idCafeteria;
+	}
 
-    public PCafeteriaCategory setCafeCategory() {
-        return cafeCategory;
-    }
+	public PCafeteriaCategory setCafeCategory() {
+		return cafeCategory;
+	}
 
-    public void setCafeCategory(PCafeteriaCategory cafeteria) {
-        this.cafeCategory = cafeteria;
-    }
+	public void setCafeCategory(PCafeteriaCategory cafeteria) {
+		this.cafeCategory = cafeteria;
+	}
 
-    public BigDecimal getAmount() {
-        return this.amount;
-    }
+	public BigDecimal getAmount() {
+		return this.amount;
+	}
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
+	public void setAmount(BigDecimal amount) {
+		this.amount = amount;
+	}
 
-    public Integer getIdStaff() {
-        return this.idStaff;
-    }
+	public Integer getIdStaff() {
+		return this.idStaff;
+	}
 
-    public void setIdStaff(Integer idStaff) {
-        this.idStaff = idStaff;
-    }
+	public void setIdStaff(Integer idStaff) {
+		this.idStaff = idStaff;
+	}
 
-    public int getMonthKey() {
-        return this.monthKey;
-    }
+	public int getMonthKey() {
+		return this.monthKey;
+	}
 
-    public void setMonthKey(int monthKey) {
-        this.monthKey = monthKey;
-    }
+	public void setMonthKey(int monthKey) {
+		this.monthKey = monthKey;
+	}
 
-    public Timestamp getUpdated() {
-        return this.updated;
-    }
+	public Timestamp getUpdated() {
+		return this.updated;
+	}
 
-    public void setUpdated(Timestamp updated) {
-        this.updated = updated;
-    }
+	public void setUpdated(Timestamp updated) {
+		this.updated = updated;
+	}
 
-    public String getUpdater() {
-        return this.updater;
-    }
+	public String getUpdater() {
+		return this.updater;
+	}
 
-    public void setUpdater(String updater) {
-        this.updater = updater;
-    }
+	public void setUpdater(String updater) {
+		this.updater = updater;
+	}
 
-    public int getYearKey() {
-        return this.yearKey;
-    }
+	public int getYearKey() {
+		return this.yearKey;
+	}
 
-    public void setYearKey(int yearKey) {
-        this.yearKey = yearKey;
-    }
+	public void setYearKey(int yearKey) {
+		this.yearKey = yearKey;
+	}
 
 }

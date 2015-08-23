@@ -1,10 +1,5 @@
 package hu.exclusive.crm.service;
 
-import hu.exclusive.dao.model.CrmUser;
-
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,31 +7,33 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import hu.exclusive.dao.model.CrmUser;
+
 @Service
 @Transactional(readOnly = true)
-@ManagedBean
-@SessionScoped
+// @ManagedBean
+// @SessionScoped
 public class UserService implements UserDetailsService {
 
-    @Autowired
-    hu.exclusive.dao.service.IExcDaoService excDao;
+	@Autowired
+	transient hu.exclusive.dao.service.IExcDaoService excDao;
 
-    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
 
-        try {
+		try {
 
-            CrmUser domainUser = excDao.getUser(login);
+			CrmUser domainUser = excDao.getUser(login);
 
-            if (domainUser == null)
-                throw new UsernameNotFoundException(login);
+			if (domainUser == null)
+				throw new UsernameNotFoundException(login);
 
-            return domainUser;
+			return domainUser;
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        throw new UsernameNotFoundException(login);
-    }
+		throw new UsernameNotFoundException(login);
+	}
 
 }

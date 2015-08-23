@@ -47,6 +47,7 @@ CREATE TABLE `P_CAFETERIA_CAT`(
  
  ALTER TABLE `T_CAFETERIA_INFO` ADD INDEX `IX_CAFINFO_YEAR` (`year_key`); 
  
+
  ALTER TABLE `P_CAFETERIA_CAT` 
    ADD COLUMN `yearly_limit` INT NULL COMMENT 'Ha van éves maximuma' AFTER `category_info`,
    CHANGE `max_limit` `monthly_limit` INT NULL  COMMENT 'Ha van havi maximuma'; 

@@ -1,10 +1,7 @@
 package hu.exclusive.crm.controller;
 
-import hu.exclusive.dao.ServiceException;
-import hu.exclusive.dao.model.CrmUser;
-import hu.exclusive.dao.model.EntityCommons;
-import hu.exclusive.utils.ObjectUtils;
-
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,96 +9,124 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 
 import org.primefaces.context.RequestContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
-public class Commontroller implements Serializable {
+import hu.exclusive.dao.ServiceException;
+import hu.exclusive.dao.model.CrmUser;
+import hu.exclusive.dao.model.EntityCommons;
+import hu.exclusive.utils.ObjectUtils;
 
-    private static final long serialVersionUID = -814806420683471266L;
-    protected final Logger log = Logger.getLogger(this.getClass().getName());
-    public static final SimpleDateFormat DATETIME = new SimpleDateFormat("yyyy.MM.dd HH:mm");
+public abstract class Commontroller implements Serializable {
 
-    protected void message(String title, String message) {
-        message(title, message, (String) null);
-    }
+	private static final long serialVersionUID = -814806420683471266L;
+	transient protected Logger log = Logger.getLogger(this.getClass().getName());
+	public static final SimpleDateFormat DATETIME = new SimpleDateFormat("yyyy.MM.dd HH:mm");
 
-    protected void message(String title, String message, String updateElements) {
-        System.out.println("GROW: " + title + ": " + message);
-        FacesMessage message3 = new FacesMessage(FacesMessage.SEVERITY_INFO, title, message);
-        FacesContext.getCurrentInstance().addMessage(null, message3);
-        if (updateElements != null)
-            RequestContext.getCurrentInstance().update(updateElements);
-    }
+	@PostConstruct
+	public void autowireBean() {
+		// System.out.println("commoninit " + getClass().getName());
+		ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+		ServletContext servletContext = (ServletContext) externalContext.getContext();
+		WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext).getAutowireCapableBeanFactory()
+				.autowireBean(this);
+		if (log == null)
+			log = Logger.getLogger(this.getClass().getName());
+		init();
+	}
 
-    protected void error(String title, String message) {
-        error(title, message, (String) null);
-    }
+	protected abstract void init();
 
-    protected void error(String title, String message, String updateElements) {
-        System.err.println("GROW: " + title + ": " + message);
-        FacesMessage message3 = new FacesMessage(FacesMessage.SEVERITY_ERROR, title, message);
-        FacesContext.getCurrentInstance().addMessage(null, message3);
-        if (updateElements != null)
-            RequestContext.getCurrentInstance().update(updateElements);
-    }
+	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+		ois.defaultReadObject();
+		autowireBean();
+	}
 
-    protected void error(String title, String message, Exception e) {
+	protected void message(String title, String message) {
+		message(title, message, (String) null);
+	}
 
-        if (e instanceof ServiceException) {
-            if (isEmpty(message))
-                message = e.getLocalizedMessage();
-        } else {
+	protected void message(String title, String message, String updateElements) {
+		log.fine("GROW: " + title + ": " + message);
+		FacesMessage message3 = new FacesMessage(FacesMessage.SEVERITY_INFO, title, message);
+		FacesContext.getCurrentInstance().addMessage(null, message3);
+		if (updateElements != null)
+			RequestContext.getCurrentInstance().update(updateElements);
+	}
 
-            e = ServiceException.takeReason(e);
-            if (isEmpty(message)) {
-                message = e.getClass().getSimpleName() + ": " + e.getLocalizedMessage();
-            } else {
-                message += " " + e.getClass().getSimpleName() + ": " + e.getLocalizedMessage();
-            }
+	protected void error(String title, String message) {
+		error(title, message, (String) null);
+	}
 
-            if (isEmpty(title)) {
-                title = e.getClass().getSimpleName() + " hiba történt";
-            }
-        }
-        FacesMessage message3 = new FacesMessage(FacesMessage.SEVERITY_ERROR, title, message);
-        FacesContext.getCurrentInstance().addMessage("error", message3);
-    }
+	protected void error(String title, String message, String updateElements) {
+		log.warning("GROW: " + title + ": " + message);
+		FacesMessage message3 = new FacesMessage(FacesMessage.SEVERITY_ERROR, title, message);
+		FacesContext.getCurrentInstance().addMessage(null, message3);
+		if (updateElements != null)
+			RequestContext.getCurrentInstance().update(updateElements);
+	}
 
-    protected void showErrorHint(Exception e) {
-        log.log(Level.WARNING, "", e);
-        error(null, null, e);
-    }
+	protected void error(String title, String message, Exception e) {
 
-    protected boolean isEmpty(Object o) {
-        if (o != null) {
-            return String.valueOf(o).trim().length() == 0;
-        }
-        return true;
-    }
+		if (e instanceof ServiceException) {
+			if (isEmpty(message))
+				message = e.getLocalizedMessage();
+		} else {
 
-    public void cancelDialog() {
-        System.out.println("Cancel dialog (no refresh)");
-        RequestContext.getCurrentInstance().closeDialog(null);
-    }
+			e = ServiceException.takeReason(e);
+			if (isEmpty(message)) {
+				message = e.getClass().getSimpleName() + ": " + e.getLocalizedMessage();
+			} else {
+				message += " " + e.getClass().getSimpleName() + ": " + e.getLocalizedMessage();
+			}
 
-    public <T> T getFromList(List<? extends T> list, int id) {
-        return ObjectUtils.getFromList(list, id);
-    }
+			if (isEmpty(title)) {
+				title = e.getClass().getSimpleName() + " hiba történt";
+			}
+		}
+		FacesMessage message3 = new FacesMessage(FacesMessage.SEVERITY_ERROR, title, message);
+		FacesContext.getCurrentInstance().addMessage("error", message3);
+	}
 
-    public int[] toIdArray(List<? extends EntityCommons> list) {
-        return ObjectUtils.toIdArray(list);
-    }
+	protected void showErrorHint(Exception e) {
+		log.log(Level.WARNING, "", e);
+		error(null, null, e);
+	}
 
-    public CrmUser getLoggedUser() {
-        return (CrmUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    }
+	protected boolean isEmpty(Object o) {
+		if (o != null) {
+			return String.valueOf(o).trim().length() == 0;
+		}
+		return true;
+	}
 
-    public String getDateTimeString(Date date) {
-        if (date != null)
-            return DATETIME.format(date);
-        return "";
-    }
+	public void cancelDialog() {
+		System.out.println("Cancel dialog (no refresh)");
+		RequestContext.getCurrentInstance().closeDialog(null);
+	}
+
+	public <T> T getFromList(List<? extends T> list, int id) {
+		return ObjectUtils.getFromList(list, id);
+	}
+
+	public int[] toIdArray(List<? extends EntityCommons> list) {
+		return ObjectUtils.toIdArray(list);
+	}
+
+	public CrmUser getLoggedUser() {
+		return (CrmUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	}
+
+	public String getDateTimeString(Date date) {
+		if (date != null)
+			return DATETIME.format(date);
+		return "";
+	}
 }
