@@ -1,0 +1,41 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<h:head>
+		<title>Enter Product mapping</title>
+	</h:head>
+	
+	<h:body>
+		 
+		<p:growl id="messages" showDetail="true" />
+		 
+	
+        <p:panel rendered="#{cafeController.unknownStaffs.size()>0}">
+			
+			<p><h:outputLabel value="Problémás munkatárs nevek:" style="color:red;" /></p>
+			
+			<ui:repeat var="us" value="#{cafeController.unknownStaffs}">
+				<h:outputText value="#{us}" /><br/>
+				
+			</ui:repeat>
+			
+	    </p:panel>	
+		
+		 <p:panel>
+		 	<h:form enctype="multipart/form-data">
+		 	
+		    	<h:inputFile value="#{cafeController.filePart}" />
+            	<p:commandButton value="Feltöltés" ajax="false" actionListener="#{cafeController.checkExcel()}" />
+			</h:form>
+			
+		 
+		 
+		 </p:panel>
+		 
+	</h:body>
+
+</ui:composition>

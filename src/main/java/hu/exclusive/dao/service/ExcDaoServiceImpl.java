@@ -337,6 +337,12 @@ public class ExcDaoServiceImpl implements IExcDaoService {
 	}
 
 	@Override
+	public List<Staff> getStaffByName(String personName) {
+		return em.createNamedQuery("Staff.getStaffByName", Staff.class)
+				.setParameter("personName", "%" + personName.toUpperCase() + "%").getResultList();
+	}
+
+	@Override
 	public List<Staff> getStaffList(DaoFilter filter) {
 
 		// System.err.println("start staff listing " + new Date());

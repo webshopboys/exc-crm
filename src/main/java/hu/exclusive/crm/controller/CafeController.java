@@ -1,12 +1,21 @@
 package hu.exclusive.crm.controller;
 
+import java.io.ByteArrayInputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.event.AbortProcessingException;
+import javax.servlet.http.Part;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.hibernate.service.spi.ServiceException;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
@@ -20,6 +29,7 @@ import hu.exclusive.crm.service.StaffService;
 import hu.exclusive.dao.DaoFilter;
 import hu.exclusive.dao.model.PCafeteriaCategory;
 import hu.exclusive.dao.model.PCafeteriaLimit;
+import hu.exclusive.dao.model.Staff;
 import hu.exclusive.dao.model.StaffCafeteria;
 import hu.exclusive.utils.FacesAccessor;
 
@@ -40,6 +50,7 @@ public class CafeController extends Commontroller implements Serializable {
 	transient ParametersService parameters;
 
 	private StaffCafeteria staff;
+	private List<String> unknownStaffs = new ArrayList<>();
 
 	public void init() {
 
@@ -146,7 +157,77 @@ public class CafeController extends Commontroller implements Serializable {
 
 	}
 
+	public void showImportDialog() {
+
+		Map<String, Object> options = new HashMap<String, Object>();
+		// options.put("height", 400);
+		// options.put("width", 700);
+
+		options.put("modal", true);
+		options.put("closeOnEscape", true);
+		options.put("draggable", false);
+		options.put("resizable", true);
+		options.put("dynamic", true);
+
+		options.put("contentHeight", 700);
+		options.put("contentWidth", 900);
+
+		RequestContext.getCurrentInstance().openDialog("cafeteria/cafeImportDialog", options, null);
+
+	}
+
+	public List<String> getUnknownStaffs() {
+		return unknownStaffs;
+	}
+
+	public void checkExcel() {
+
+		if (fileLoaded()) {
+
+			try {
+
+				unknownStaffs.clear();
+
+				byte[] poibytes = getUploadedFileBytes();
+				java.io.ByteArrayInputStream in = new ByteArrayInputStream(poibytes);
+
+				Workbook wb = WorkbookFactory.create(in);
+				org.apache.poi.ss.usermodel.Sheet sheet = wb.getSheetAt(0);
+				for (int i = 2; i < sheet.getLastRowNum(); i++) {
+					String s = sheet.getRow(i) != null && sheet.getRow(i).getLastCellNum() > 0
+							? sheet.getRow(i).getCell(0).getStringCellValue().trim() : null;
+
+					if (StringUtils.isNotEmpty(s) && !"Összesen".equals(s)) {
+						List<Staff> staffs = service.getStaffByName(s);
+
+						if (staffs.isEmpty()) {
+							unknownStaffs.add(s + " (nincs meg)");
+						} else if (staffs.size() > 1) {
+							unknownStaffs.add(s + " (több is van)");
+						}
+					}
+				}
+
+			} catch (Exception e) {
+				LOG.log(Level.WARNING, "Excel feldolgozási hiba", e);
+				error("Excel feldolgozási hiba", null, e);
+			}
+
+		} else {
+			error("Hiba", "Nincs kiválasztva a cafetéria excel!");
+			throw new AbortProcessingException();
+		}
+	}
+
 	public void importExcel() {
 
+	}
+
+	public void setFilePart(Part file) {
+		this.filePart = file;
+	}
+
+	public Part getFilePart() {
+		return filePart;
 	}
 }

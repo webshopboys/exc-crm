@@ -69,19 +69,11 @@
 		
 	 </h:form>
 		
-		<p:commandButton value="Export" actionListener="#{cafeController.exportExcel()}"  immediate="true"/>
-        <p:panel>
-			<h:form enctype="multipart/form-data">
-				<table style="width:100%;">
-					<tr>
-						<td >
-							<h:inputFile value="#{fileUploadController.filePart}" />
-						</td>
-						<td>
-							<p:commandButton value="Import" ajax="false" actionListener="#{cafeController.importExcel()}" />
-	    				</td>
-	    			</tr>
-	    		</table>
-	    	</h:form>
-	    </p:panel>	
+		<p:commandButton value="Export" actionListener="#{cafeController.exportExcel}" immediate="true" />
+		<p:commandButton value="Import" actionListener="#{cafeController.showImportDialog}" immediate="true">
+			<p:ajax event="dialogReturn" listener="#{cafeController.showImportDialog}" update="docListForm"/> 
+		</p:commandButton>	
+				
+						
+
 </ui:composition>   		
