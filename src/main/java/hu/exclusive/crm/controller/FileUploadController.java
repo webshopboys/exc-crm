@@ -5,12 +5,9 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
-import javax.servlet.http.Part;
 
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
@@ -35,7 +32,7 @@ public class FileUploadController extends Commontroller implements Serializable 
 	transient AttachmentService service;
 
 	private UploadedFile filedrDoc;
-	private Part filePart;
+
 	private Integer idDocument;
 	private ContractDoc template;
 	private Integer idStaff;
@@ -114,8 +111,7 @@ public class FileUploadController extends Commontroller implements Serializable 
 
 	public void uploadDrDoc() {
 		if (filedrDoc != null) {
-			FacesMessage message = new FacesMessage("Succesful", filedrDoc.getFileName() + " is uploaded.");
-			FacesContext.getCurrentInstance().addMessage(null, message);
+			message("Succesful", filedrDoc.getFileName() + " is uploaded.");
 		}
 	}
 
@@ -132,14 +128,6 @@ public class FileUploadController extends Commontroller implements Serializable 
 
 	public void setIdDocument(Integer idDocument) {
 		this.idDocument = idDocument;
-	}
-
-	public void setFilePart(Part file) {
-		this.filePart = file;
-	}
-
-	public Part getFilePart() {
-		return filePart;
 	}
 
 	public void uploadFileContract(Integer staffId) {
@@ -227,31 +215,6 @@ public class FileUploadController extends Commontroller implements Serializable 
 			error("Hiba", "Nincs kiválasztva a melléklet vagy a munkatárs!");
 			throw new AbortProcessingException();
 		}
-	}
-
-	private byte[] getBytesFromPart(Part part) throws IOException {
-		if (part != null) {
-			String fileName = getFileNameFromPart(part);
-			byte[] bin = ObjectUtils.serializeFile(fileName, part.getInputStream());
-			// return ObjectUtils.zip(bin, fileName); // problémás a zp docx
-			// újrazippelése
-			return bin;
-		}
-		return new byte[0];
-	}
-
-	private String getFileNameFromPart(Part part) {
-		if (part != null) {
-			final String partHeader = part.getHeader("content-disposition");
-			for (String content : partHeader.split(";")) {
-				if (content.trim().startsWith("filename")) {
-					String fileName = content.substring(content.indexOf('=') + 1).trim().replace("\"", "");
-					return fileName.length() > DocBean.MAX_URL_LENGTH ? fileName.substring(0, DocBean.MAX_URL_LENGTH)
-							: fileName;
-				}
-			}
-		}
-		return "";
 	}
 
 	public Integer getIdStaff() {

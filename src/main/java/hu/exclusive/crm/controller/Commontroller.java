@@ -14,11 +14,13 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
+import javax.servlet.http.Part;
 
 import org.primefaces.context.RequestContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import hu.exclusive.crm.model.DocBean;
 import hu.exclusive.dao.ServiceException;
 import hu.exclusive.dao.model.CrmUser;
 import hu.exclusive.dao.model.EntityCommons;
@@ -29,6 +31,52 @@ public abstract class Commontroller implements Serializable {
 	private static final long serialVersionUID = -814806420683471266L;
 	transient protected Logger log = Logger.getLogger(this.getClass().getName());
 	public static final SimpleDateFormat DATETIME = new SimpleDateFormat("yyyy.MM.dd HH:mm");
+	protected Part filePart;
+
+	public void setFilePart(Part file) {
+		this.filePart = file;
+	}
+
+	public Part getFilePart() {
+		return filePart;
+	}
+
+	protected boolean fileLoaded() {
+		return filePart != null;
+	}
+
+	protected String getUploadedFileName() {
+		return getFileNameFromPart(filePart);
+	}
+
+	protected String getFileNameFromPart(Part part) {
+		if (part != null) {
+			final String partHeader = part.getHeader("content-disposition");
+			for (String content : partHeader.split(";")) {
+				if (content.trim().startsWith("filename")) {
+					String fileName = content.substring(content.indexOf('=') + 1).trim().replace("\"", "");
+					return fileName.length() > DocBean.MAX_URL_LENGTH ? fileName.substring(0, DocBean.MAX_URL_LENGTH)
+							: fileName;
+				}
+			}
+		}
+		return "";
+	}
+
+	protected byte[] getUploadedFileBytes() throws IOException {
+		return getBytesFromPart(filePart);
+	}
+
+	protected byte[] getBytesFromPart(Part part) throws IOException {
+		if (part != null) {
+			String fileName = getFileNameFromPart(part);
+			byte[] bin = ObjectUtils.serializeFile(fileName, part.getInputStream());
+			// return ObjectUtils.zip(bin, fileName); // problémás a zp docx
+			// újrazippelése
+			return bin;
+		}
+		return new byte[0];
+	}
 
 	@PostConstruct
 	public void autowireBean() {

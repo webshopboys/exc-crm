@@ -1,12 +1,18 @@
 package hu.exclusive.crm.controller;
 
+import java.io.ByteArrayInputStream;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.event.AbortProcessingException;
+import javax.servlet.http.Part;
 
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.hibernate.service.spi.ServiceException;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.LazyDataModel;
@@ -40,6 +46,8 @@ public class CafeController extends Commontroller implements Serializable {
 	transient ParametersService parameters;
 
 	private StaffCafeteria staff;
+
+	private Part filePart;
 
 	public void init() {
 
@@ -146,7 +154,59 @@ public class CafeController extends Commontroller implements Serializable {
 
 	}
 
+	public void showImportDialog() {
+
+		Map<String, Object> options = new HashMap<String, Object>();
+		// options.put("height", 400);
+		// options.put("width", 700);
+
+		options.put("modal", true);
+		options.put("closeOnEscape", true);
+		options.put("draggable", false);
+		options.put("resizable", true);
+		options.put("dynamic", true);
+
+		options.put("contentHeight", 700);
+		options.put("contentWidth", 900);
+
+		RequestContext.getCurrentInstance().openDialog("cafeteria/cafeImportDialog", options, null);
+
+	}
+
+	public void checkExcel() {
+
+		if (fileLoaded()) {
+
+			try {
+
+				byte[] poibytes = getUploadedFileBytes();
+				java.io.ByteArrayInputStream in = new ByteArrayInputStream(poibytes);
+
+				Workbook wb = WorkbookFactory.create(in);
+				org.apache.poi.ss.usermodel.Sheet sheet = wb.getSheetAt(0);
+				for (int i = 0; i < sheet.getLastRowNum(); i++) {
+					System.out.println(sheet.getRow(i).getCell(0).getStringCellValue());
+				}
+
+			} catch (Exception e) {
+				error("Excel feldolgozási hiba", null, e);
+			}
+
+		} else {
+			error("Hiba", "Nincs kiválasztva a cafetéria excel!");
+			throw new AbortProcessingException();
+		}
+	}
+
 	public void importExcel() {
 
+	}
+
+	public void setFilePart(Part file) {
+		this.filePart = file;
+	}
+
+	public Part getFilePart() {
+		return filePart;
 	}
 }
