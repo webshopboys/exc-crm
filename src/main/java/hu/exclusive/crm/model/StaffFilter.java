@@ -1,6 +1,5 @@
 package hu.exclusive.crm.model;
 
-import java.util.Arrays;
 import java.util.Date;
 
 import hu.exclusive.dao.DaoFilter;
@@ -356,7 +355,6 @@ public class StaffFilter extends DaoFilter {
 
 	public void setStatus(String[] status) {
 		this.status = status;
-		System.out.println("filter statuses:" + Arrays.toString(status));
 
 		DaoFilter filter = getFilter("status", RELATION.IN, status);
 		if (status != null && status.length > 0) {

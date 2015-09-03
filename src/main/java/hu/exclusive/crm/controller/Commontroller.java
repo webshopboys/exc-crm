@@ -31,7 +31,7 @@ public abstract class Commontroller implements Serializable {
 	private static final long serialVersionUID = -814806420683471266L;
 	transient protected Logger LOG = Logger.getLogger(this.getClass().getName());
 	public static final SimpleDateFormat DATETIME = new SimpleDateFormat("yyyy.MM.dd HH:mm");
-	protected Part filePart;
+	transient protected Part filePart;
 
 	public void setFilePart(Part file) {
 		this.filePart = file;

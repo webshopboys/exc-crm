@@ -88,4 +88,6 @@ public interface IExcDaoService {
 
 	List<Staff> getStaffByName(String personName);
 
+	List<StaffCafeteria> getStaffCafByName(String personName, String tax);
+
 }

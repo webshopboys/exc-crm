@@ -6,7 +6,9 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 	<h:head>
-		<title>Enter Product mapping</title>
+		<title>Cafetéria Excel import</title>
+		<h:outputStylesheet name="exc-style.css" />
+   
 	</h:head>
 	
 	<h:body>
@@ -25,14 +27,45 @@
 			
 	    </p:panel>	
 		
-		 <p:panel>
-		 	<h:form enctype="multipart/form-data">
+		
+		<p:panel rendered="#{cafeController.validStaffs.size()>0}">
+			
+			<p:dataTable value="#{cafeController.validStaffs}" var="vs" >
+				<f:facet name="header">
+		            Feldolgozható munkatárs nevek
+		        </f:facet>
+				
+				<p:column headerText="Név">
+			        <h:outputText value="#{vs.staff.fullName}" />
+			    </p:column>
+				<p:column headerText="Adószám" styleClass="#{vs.getTaxCSS()}">
+			        <h:outputText value="#{vs.getComparedTaxNumber()}" />
+			    </p:column>
+				<p:column headerText="Belépés" styleClass="#{vs.getDateCSS()}">
+				    <h:outputText value="#{vs.getComparedStartDate()}" />
+			    </p:column>
+				<p:column headerText="Éves keret">
+			        <h:outputText value="#{vs.yearlyLimit}" />
+			    </p:column>
+				<p:column headerText="Korábbi keret">
+			        <h:outputText value="#{vs.staff.getYearlyLimit(-1)}" />
+			    </p:column>
+			    <p:column headerText="Csoport" styleClass="#{vs.getGroupCSS()}">
+			        <h:outputText value="#{vs.getComparedWorkGroup()}" />
+			    </p:column>
+    
+			</p:dataTable >
+			
+		
+			
+	    </p:panel>	
+		
+		<p:panel>
+		 	<h:form enctype="multipart/form-data" >
 		 	
-		    	<h:inputFile value="#{cafeController.filePart}" />
+		    	<h:inputFile value="#{cafeController.filePart}" style="width:70%;"/>
             	<p:commandButton value="Feltöltés" ajax="false" actionListener="#{cafeController.checkExcel()}" />
 			</h:form>
-			
-		 
 		 
 		 </p:panel>
 		 

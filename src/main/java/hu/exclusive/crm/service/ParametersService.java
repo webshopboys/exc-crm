@@ -2,6 +2,7 @@ package hu.exclusive.crm.service;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,15 @@ public class ParametersService {
 		DaoFilter filter = new DaoFilter("Workgroup.findById", "idWorkgroup", RELATION.NAMED_QUERY, wgid);
 		List<Workgroup> group = excDao.getWorkgroups(filter);
 		return group.isEmpty() ? new Workgroup() : group.get(0);
+	}
+
+	public Workgroup getWorkgroupByName(String name) {
+		if (StringUtils.isEmpty(name))
+			return null;
+		DaoFilter filter = new DaoFilter("Workgroup.findByName", "name", RELATION.NAMED_QUERY,
+				"%" + name.toUpperCase() + "%");
+		List<Workgroup> group = excDao.getWorkgroups(filter);
+		return group.isEmpty() ? null : group.get(0);
 	}
 
 	public List<Workgroup> getWorkgroups(DaoFilter filter) {

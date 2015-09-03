@@ -36,4 +36,8 @@ public class StaffService {
 		return excDao.getStaffByName(personName);
 	}
 
+	public List<StaffCafeteria> getStaffCafByName(String personName, String tax) {
+		return excDao.getStaffCafByName(personName, tax);
+	}
+
 }

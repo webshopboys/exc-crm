@@ -1,6 +1,8 @@
 package hu.exclusive.dao.service;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -11,6 +13,7 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -92,6 +95,16 @@ public class ExcDaoServiceImpl implements IExcDaoService {
 	@Override
 	public List<PCafeteriaLimit> getCafeteriaLimits(DaoFilter filter) {
 		return em.createNamedQuery("PCafeteriaLimit.findAll", PCafeteriaLimit.class).getResultList();
+	}
+
+	@Override
+	public List<StaffCafeteria> getStaffCafByName(String personName, String tax) {
+		if (StringUtils.isEmpty(tax))
+			return em.createNamedQuery("StaffCafeteria.getStaffByName", StaffCafeteria.class)
+					.setParameter("personName", personName).getResultList();
+		else
+			return em.createNamedQuery("StaffCafeteria.getStaffByNameTax", StaffCafeteria.class)
+					.setParameter("personName", personName).setParameter("tax", tax).getResultList();
 	}
 
 	@Transactional
@@ -452,12 +465,21 @@ public class ExcDaoServiceImpl implements IExcDaoService {
 		// return em.createQuery(query).getResultList();
 
 		if (filter != null && DaoFilter.RELATION.NAMED_QUERY == filter.getRelation()) {
-
+			if (filter.getValues() != null && filter.getValues() instanceof Map) {
+				// többelemű name query
+				TypedQuery<Workgroup> tq = em.createNamedQuery(filter.getEntity(), Workgroup.class);
+				Iterator<String> keys = ((Map) filter.getValues()).keySet().iterator();
+				while (keys.hasNext()) {
+					String field = keys.next();
+					tq.setParameter(field, filter.getValue(field));
+				}
+				return tq.getResultList();
+			}
 			return em.createNamedQuery(filter.getEntity(), Workgroup.class)
 					.setParameter(filter.getFieldName(), filter.getValues()).getResultList();
 
 		} else {
-			// FIXME itt lehet tenyleges szuroket bekotni
+			// FIXME itt lehetne tenyleges szuroket bekotni
 			return em.createNamedQuery("Workgroup.findAll", Workgroup.class).getResultList();
 		}
 

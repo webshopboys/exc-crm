@@ -111,7 +111,7 @@ public class ReportParameterProvider {
 			default:
 				return "-";
 			}
-		}
+		};
 
 		public static String getInfo() {
 			StringBuilder sb = new StringBuilder();

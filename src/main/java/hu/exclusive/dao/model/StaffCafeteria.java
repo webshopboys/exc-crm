@@ -25,7 +25,9 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "T_STAFF")
 @NamedQueries({
-		@NamedQuery(name = "StaffCafeteria.findStaff", query = "SELECT s FROM StaffCafeteria s WHERE s.idStaff = :idStaff") })
+		@NamedQuery(name = "StaffCafeteria.findStaff", query = "SELECT s FROM StaffCafeteria s WHERE s.idStaff = :idStaff"),
+		@NamedQuery(name = "StaffCafeteria.getStaffByName", query = "SELECT s FROM StaffCafeteria s WHERE s.status = 'Aktív' AND upper(s.fullName) like :personName "),
+		@NamedQuery(name = "StaffCafeteria.getStaffByNameTax", query = "SELECT s FROM StaffCafeteria s WHERE s.status = 'Aktív' AND upper(s.fullName) like :personName AND (s.taxSerial IS NULL OR s.taxSerial = :tax) ") })
 public class StaffCafeteria extends StaffBase implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -68,26 +70,23 @@ public class StaffCafeteria extends StaffBase implements Serializable {
 	 * @return
 	 */
 	public BigDecimal getYearlyLimit(int year) {
-
-		if (year == -1)
-			year = Calendar.getInstance().get(Calendar.YEAR);
-		for (CafeteriaInfo info : getInfos()) {
-			// System.out.println(getIdStaff() + " info is " + info);
-			if (year == info.getYearKey())
-				return info.getYearLimit();
-		}
-		return null;
+		return getYearlyInfo(year).getYearLimit();
 	}
 
 	/**
 	 * Az aktualis eves info rekord. Ebbe kerülnek a modosithato reszek es az
-	 * eves keret.
+	 * eves keret. Az adott eves info rekord.
 	 */
-	public CafeteriaInfo getYearlyInfo() {
+	public CafeteriaInfo getYearlyInfo(int year) {
 		CafeteriaInfo yearlyInfo = null;
+		if (year == -1)
+			year = Calendar.getInstance().get(Calendar.YEAR);
+
 		for (CafeteriaInfo info : getInfos()) {
-			yearlyInfo = info;
-			break;
+			if (year == info.getYearKey()) {
+				yearlyInfo = info;
+				break;
+			}
 		}
 		if (yearlyInfo == null) {
 			yearlyInfo = new CafeteriaInfo();

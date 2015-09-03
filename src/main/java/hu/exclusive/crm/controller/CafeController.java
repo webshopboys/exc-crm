@@ -2,6 +2,7 @@ package hu.exclusive.crm.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,12 +25,14 @@ import org.primefaces.model.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import hu.exclusive.crm.model.CafeFilter;
+import hu.exclusive.crm.model.CafeteriaExcel;
+import hu.exclusive.crm.model.StaffFactory;
+import hu.exclusive.crm.report.POIUtil;
 import hu.exclusive.crm.service.ParametersService;
 import hu.exclusive.crm.service.StaffService;
 import hu.exclusive.dao.DaoFilter;
 import hu.exclusive.dao.model.PCafeteriaCategory;
 import hu.exclusive.dao.model.PCafeteriaLimit;
-import hu.exclusive.dao.model.Staff;
 import hu.exclusive.dao.model.StaffCafeteria;
 import hu.exclusive.utils.FacesAccessor;
 
@@ -51,6 +54,7 @@ public class CafeController extends Commontroller implements Serializable {
 
 	private StaffCafeteria staff;
 	private List<String> unknownStaffs = new ArrayList<>();
+	private List<CafeteriaExcel> validStaffs = new ArrayList<>();
 
 	public void init() {
 
@@ -170,7 +174,7 @@ public class CafeController extends Commontroller implements Serializable {
 		options.put("dynamic", true);
 
 		options.put("contentHeight", 700);
-		options.put("contentWidth", 900);
+		options.put("contentWidth", 1100);
 
 		RequestContext.getCurrentInstance().openDialog("cafeteria/cafeImportDialog", options, null);
 
@@ -180,6 +184,10 @@ public class CafeController extends Commontroller implements Serializable {
 		return unknownStaffs;
 	}
 
+	public List<CafeteriaExcel> getValidStaffs() {
+		return validStaffs;
+	}
+
 	public void checkExcel() {
 
 		if (fileLoaded()) {
@@ -187,23 +195,43 @@ public class CafeController extends Commontroller implements Serializable {
 			try {
 
 				unknownStaffs.clear();
-
+				validStaffs.clear();
 				byte[] poibytes = getUploadedFileBytes();
 				java.io.ByteArrayInputStream in = new ByteArrayInputStream(poibytes);
 
 				Workbook wb = WorkbookFactory.create(in);
 				org.apache.poi.ss.usermodel.Sheet sheet = wb.getSheetAt(0);
-				for (int i = 2; i < sheet.getLastRowNum(); i++) {
-					String s = sheet.getRow(i) != null && sheet.getRow(i).getLastCellNum() > 0
-							? sheet.getRow(i).getCell(0).getStringCellValue().trim() : null;
 
-					if (StringUtils.isNotEmpty(s) && !"Összesen".equals(s)) {
-						List<Staff> staffs = service.getStaffByName(s);
+				for (int i = 2; i < sheet.getLastRowNum(); i++) {
+
+					String xname = POIUtil.getRowCell(sheet, i, POIUtil.CELL_CAF_XLS_NAME);
+
+					if (StringUtils.isNotEmpty(xname) && !"Összesen".equals(xname)) {
+
+						BigDecimal xtaxnum = POIUtil.getRowCellNumber(sheet, i, POIUtil.CELL_CAF_XLS_TAX);
+						String xtax = xtaxnum == null ? null : String.valueOf(xtaxnum.longValue());
+
+						if (xtaxnum != null)
+							System.out.println("excel " + xname + " xtaxnum:" + xtaxnum);
+
+						List<StaffCafeteria> staffs = service.getStaffCafByName(xname, xtax);
 
 						if (staffs.isEmpty()) {
-							unknownStaffs.add(s + " (nincs meg)");
+							unknownStaffs.add(xname + " (nincs meg)");
 						} else if (staffs.size() > 1) {
-							unknownStaffs.add(s + " (több is van)");
+							unknownStaffs.add(xname + " (több is van)");
+						} else {
+							BigDecimal xlimit = POIUtil.getRowCellNumber(sheet, i, POIUtil.CELL_CAF_XLS_LIMIT);
+							String xgroup = POIUtil.getRowCell(sheet, i, POIUtil.CELL_CAF_XLS_GROUP);
+
+							CafeteriaExcel ce = StaffFactory.createCafeteriaExcel(staffs.get(0));
+							ce.setYearlyLimit(xlimit);
+							ce.setTaxSerial(xtax);
+							ce.setWorkgroup(parameters.getWorkgroupByName(xgroup));
+
+							ce.setStartDate(POIUtil.getRowCellDate(sheet, i, POIUtil.CELL_CAF_XLS_START));
+
+							validStaffs.add(ce);
 						}
 					}
 				}

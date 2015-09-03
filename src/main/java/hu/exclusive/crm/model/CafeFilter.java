@@ -6,6 +6,7 @@ import java.util.Calendar;
 import hu.exclusive.dao.DaoFilter;
 import hu.exclusive.dao.StaffExistsCafeteria;
 import hu.exclusive.dao.StaffExistsWorkgroup;
+import hu.exclusive.dao.model.Staff;
 import hu.exclusive.utils.ObjectUtils;
 
 /**
@@ -38,14 +39,16 @@ public class CafeFilter extends DaoFilter implements Serializable {
 	}
 
 	private void prepareDefaultRestrictions() {
+
+		getFilterItems().clear();
 		// az egy évnél fiatalabb vagy kitöltetelen kezdésű munkatársak
-		// kitiltása
+		// kitiltása + csak az aktívak
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.YEAR, -1);
-		DaoFilter filter = getFilter("employStart", RELATION.LESSEQ, cal.getTime());
-		if (filter == null) {
-			addFilter("employStart", RELATION.LESSEQ, cal.getTime());
-		}
+		addFilter("employStart", RELATION.LESSEQ, cal.getTime());
+
+		addFilter("status", RELATION.EQUAL, Staff.AKTIV_STATUS);
+
 		setAnyEnought(false);
 	}
 
