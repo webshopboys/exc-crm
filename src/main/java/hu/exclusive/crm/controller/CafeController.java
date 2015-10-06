@@ -7,14 +7,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.AbortProcessingException;
-import javax.servlet.http.Part;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.hibernate.service.spi.ServiceException;
@@ -28,13 +30,16 @@ import hu.exclusive.crm.model.CafeFilter;
 import hu.exclusive.crm.model.CafeteriaExcel;
 import hu.exclusive.crm.model.StaffFactory;
 import hu.exclusive.crm.report.POIUtil;
+import hu.exclusive.crm.service.CafeteriaService;
 import hu.exclusive.crm.service.ParametersService;
-import hu.exclusive.crm.service.StaffService;
 import hu.exclusive.dao.DaoFilter;
+import hu.exclusive.dao.model.Cafeteria;
+import hu.exclusive.dao.model.CafeteriaInfo;
 import hu.exclusive.dao.model.PCafeteriaCategory;
 import hu.exclusive.dao.model.PCafeteriaLimit;
 import hu.exclusive.dao.model.StaffCafeteria;
 import hu.exclusive.utils.FacesAccessor;
+import hu.exclusive.utils.ObjectUtils;
 
 //@Component
 @ManagedBean(name = "cafeController")
@@ -47,22 +52,25 @@ public class CafeController extends Commontroller implements Serializable {
 	private CafeFilter cafeFilter;
 
 	@Autowired
-	transient StaffService service;
+	transient CafeteriaService service;
 
 	@Autowired
 	transient ParametersService parameters;
 
 	private StaffCafeteria staff;
-	private List<String> unknownStaffs = new ArrayList<>();
+
 	private List<CafeteriaExcel> validStaffs = new ArrayList<>();
+	private List<String> problems = new ArrayList<>();
 
 	public void init() {
 
-		if (service == null)
-			service = (StaffService) FacesAccessor.getManagedBean("staffService");
-
-		if (parameters == null)
-			parameters = (ParametersService) FacesAccessor.getManagedBean("parametersService");
+		// if (service == null)
+		// service = (CafeteriaService)
+		// FacesAccessor.getManagedBean("cafeteriaService");
+		//
+		// if (parameters == null)
+		// parameters = (ParametersService)
+		// FacesAccessor.getManagedBean("parametersService");
 
 		this.setStaffModel(new LazyDataModel<StaffCafeteria>() {
 			private static final long serialVersionUID = 1L;
@@ -127,11 +135,11 @@ public class CafeController extends Commontroller implements Serializable {
 	}
 
 	public List<PCafeteriaCategory> getCategories() {
-		return parameters.getCafeteriaCategories(null);
+		return service.getCafeteriaCategories(null);
 	}
 
 	public List<PCafeteriaLimit> getCafeLimits() {
-		return parameters.getCafeteriaLimits(null);
+		return service.getCafeteriaLimits(null);
 	}
 
 	public void setStaff(StaffCafeteria staff) {
@@ -176,31 +184,146 @@ public class CafeController extends Commontroller implements Serializable {
 		options.put("contentHeight", 700);
 		options.put("contentWidth", 1100);
 
-		RequestContext.getCurrentInstance().openDialog("cafeteria/cafeImportDialog", options, null);
+		RequestContext.getCurrentInstance().openDialog("/pages/cafeteria/cafeImportDialog", options, null);
 
 	}
 
-	public List<String> getUnknownStaffs() {
-		return unknownStaffs;
+	final Lock lock = new ReentrantLock();
+
+	public void showProcessLong() throws InterruptedException {
+		lock.lock();
+		try {
+			Thread.sleep(5000);
+		} finally {
+			lock.unlock();
+		}
+		System.out.println("processed...");
+	}
+
+	public void processCafeteria(boolean withCreation, boolean withUpdate) {
+		try {
+
+			// egy infó ami az éves keretet menti el, felülírva a mostanit
+			// StaffCafeteria.<CafeteriaInfo>[year]
+
+			// minden hónaphoz az összeg
+			// StaffCafeteria.<Cafeteria>[month]
+
+			for (CafeteriaExcel excel : validStaffs) {
+				if (excel.getYearlyLimit() != null && excel.getYearlyLimit().intValue() > 0) {
+
+					CafeteriaInfo info = excel.getStaff().getYearlyInfo(excel.getYear());
+					info.setYearLimit(excel.getYearlyLimit());
+					info.setIdStaff(excel.getStaff().getIdStaff());
+					info.setUpdater(getLoggedUser().getLoginName());
+					service.saveCafeteriaInfo(info);
+				}
+
+				// Itt egyszerre a régieket és az újakat is bejárjuk. Elsőnek a
+				// régit töröljük
+				for (Cafeteria cafeteria : excel.getStaff().getMonthlyCafes()) {
+					// az aktualis evre
+					if (excel.getYear() == cafeteria.getYearKey()) {
+						// adott honap adott kategoriaja most...
+						Cafeteria excelCafeteria = excel.getMonthlyCafeteria(cafeteria.getMonthKey(),
+								cafeteria.getCafeCategory());
+						// ha most is van akkor az alapadatokat atemeljuk
+						if (excelCafeteria != null && !ObjectUtils.isEmpty(excelCafeteria.getAmount())) {
+
+							excelCafeteria.setIdStaff(cafeteria.getIdStaff());
+							excelCafeteria.setIdCafeteria(cafeteria.getIdCafeteria());
+
+						} else { // most nincs vagy most üres, delete a honapra
+									// az adott kategoria
+							service.deleteCafeteria(excel.getStaff().getIdStaff(), cafeteria.getYearKey(),
+									cafeteria.getMonthKey(), cafeteria.getCafeCategory().getIdCafeteriaCat());
+
+						}
+					}
+				}
+
+				for (Cafeteria cafeteria : excel.getExcelMonthlyCafes()) {
+					// vagy van id vagy nincs
+					if (excel.getYear() == cafeteria.getYearKey() && !ObjectUtils.isEmpty(cafeteria.getAmount())) {
+
+						cafeteria.setUpdater(getLoggedUser().getLoginName());
+						service.saveCafeteria(cafeteria);
+					}
+				}
+
+			}
+
+		} catch (
+
+		Exception e)
+
+		{
+			LOG.log(Level.WARNING, "Cafetéria módosítás hiba", e);
+			error("Cafetéria módosítás hiba", null, e);
+		}
+
+	}
+
+	public List<String> getProblems() {
+		return problems;
+	}
+
+	public List<String[]> getProblems2() {
+		List<String[]> list2 = new ArrayList<>();
+		for (int i = 0; i < problems.size(); i++) {
+			String[] s = { "", "" };
+			s[0] = problems.get(i);
+			if (i + 1 < problems.size()) {
+				i++;
+				s[1] = problems.get(i);
+			}
+
+			list2.add(s);
+		}
+		return list2;
+	}
+
+	public List<String[]> getProblems3() {
+		List<String[]> list3 = new ArrayList<>();
+		for (int i = 0; i < problems.size(); i++) {
+			String[] s = { "", "", "" };
+			s[0] = problems.get(i);
+			if (i + 1 < problems.size()) {
+				i++;
+				s[1] = problems.get(i);
+			}
+			if (i + 1 < problems.size()) {
+				i++;
+				s[2] = problems.get(i);
+			}
+			list3.add(s);
+		}
+		return list3;
 	}
 
 	public List<CafeteriaExcel> getValidStaffs() {
 		return validStaffs;
 	}
 
+	/**
+	 * Az excel bejárása és a munkatársak kikeresése. Szétválogatva hibás és
+	 * valid listára. A validhoz az excel mezőkből az adatok átemelése.
+	 */
 	public void checkExcel() {
 
 		if (fileLoaded()) {
 
 			try {
 
-				unknownStaffs.clear();
+				problems.clear();
 				validStaffs.clear();
 				byte[] poibytes = getUploadedFileBytes();
 				java.io.ByteArrayInputStream in = new ByteArrayInputStream(poibytes);
 
 				Workbook wb = WorkbookFactory.create(in);
 				org.apache.poi.ss.usermodel.Sheet sheet = wb.getSheetAt(0);
+
+				List<String> wrongHeaders = checkExcelCategories(sheet);
 
 				for (int i = 2; i < sheet.getLastRowNum(); i++) {
 
@@ -211,15 +334,14 @@ public class CafeController extends Commontroller implements Serializable {
 						BigDecimal xtaxnum = POIUtil.getRowCellNumber(sheet, i, POIUtil.CELL_CAF_XLS_TAX);
 						String xtax = xtaxnum == null ? null : String.valueOf(xtaxnum.longValue());
 
-						if (xtaxnum != null)
-							System.out.println("excel " + xname + " xtaxnum:" + xtaxnum);
-
 						List<StaffCafeteria> staffs = service.getStaffCafByName(xname, xtax);
 
 						if (staffs.isEmpty()) {
-							unknownStaffs.add(xname + " (nincs meg)");
+							problems.add(POIUtil.asCell(i, POIUtil.CELL_CAF_XLS_NAME) + " '" + xname
+									+ "' nem taláható az adatbázisban.");
 						} else if (staffs.size() > 1) {
-							unknownStaffs.add(xname + " (több is van)");
+							problems.add(POIUtil.asCell(i, POIUtil.CELL_CAF_XLS_NAME) + " '" + xname
+									+ "' több ilyen nevű munkatárs is van.");
 						} else {
 							BigDecimal xlimit = POIUtil.getRowCellNumber(sheet, i, POIUtil.CELL_CAF_XLS_LIMIT);
 							String xgroup = POIUtil.getRowCell(sheet, i, POIUtil.CELL_CAF_XLS_GROUP);
@@ -231,31 +353,127 @@ public class CafeController extends Commontroller implements Serializable {
 
 							ce.setStartDate(POIUtil.getRowCellDate(sheet, i, POIUtil.CELL_CAF_XLS_START));
 
+							collectExcelCategories(sheet, ce, i, wrongHeaders);
+
 							validStaffs.add(ce);
 						}
 					}
 				}
 
+				// System.out.println(wrongHeaders);
+
+			} catch (java.lang.IllegalArgumentException iae) {
+				if ("Your InputStream was neither an OLE2 stream, nor an OOXML stream".equals(iae.getMessage())) {
+					LOG.log(Level.WARNING, "Excel feldolgozási hiba", iae);
+					error("Excel feldolgozási hiba", "A fájl nem tűnik Excelnek.");
+					problems.add("Excel feldolgozási hiba: A fájl nem tűnik Excelnek.");
+				} else {
+					LOG.log(Level.WARNING, "Excel feldolgozási hiba", iae);
+					error("Excel feldolgozási hiba", null, iae);
+					problems.add("Excel feldolgozási hiba " + iae);
+				}
 			} catch (Exception e) {
 				LOG.log(Level.WARNING, "Excel feldolgozási hiba", e);
 				error("Excel feldolgozási hiba", null, e);
+				problems.add("Excel feldolgozási hiba " + e);
 			}
 
 		} else {
 			error("Hiba", "Nincs kiválasztva a cafetéria excel!");
 			throw new AbortProcessingException();
 		}
-	}
-
-	public void importExcel() {
 
 	}
 
-	public void setFilePart(Part file) {
-		this.filePart = file;
+	/**
+	 * Az excel kategória oszlopait végigjárva a validStaff mezőibe beírja az
+	 * összegeket.
+	 * 
+	 * @param sheet
+	 */
+	private void collectExcelCategories(Sheet sheet, CafeteriaExcel bean, int rowIndex, List<String> unprocHeaders) {
+
+		String yearName = POIUtil.getRowCell(sheet, 0, 0);
+		yearName = ObjectUtils.getNumbers(yearName);
+
+		int year = yearName == null ? 0 : Integer.valueOf(yearName);
+		bean.setYear(year);
+
+		for (int c = POIUtil.CELL_CAF_XLS_CATFROM; c < sheet.getRow(rowIndex).getLastCellNum(); c++) {
+
+			if (!unprocHeaders.contains(POIUtil.asCell(c))) {
+
+				String catHeader = POIUtil.getRowCell(sheet, 1, c);
+				int monthValue = Integer.valueOf(ObjectUtils.getNumbers(catHeader));
+				String catKey = ObjectUtils.getAlphas(catHeader, "").trim();
+
+				List<PCafeteriaCategory> cat = parameters.getCafeteriaCategoryByName(catKey);
+
+				if (cat.size() == 1) {
+					BigDecimal amount = POIUtil.getRowCellNumber(sheet, rowIndex, c);
+					if (amount != null) {
+						// System.out.println(rowIndex + "" + POIUtil.asCell(c)
+						// + " ebben a hónapban " + monthValue
+						// + " ehhez a kategóriához " + catKey + " " + amount +
+						// " Ft...");
+						bean.getSetMonthlyCafeteria(monthValue, cat.get(0)).setYearKey(year);
+						bean.getSetMonthlyCafeteria(monthValue, cat.get(0)).setAmount(amount);
+					} else {
+						// TODO nothing: nincs összeg a hónaphoz
+					}
+
+				} else {
+					throw new IllegalStateException("Hibás feldolgozási pont! " + POIUtil.asCell(rowIndex, c));
+				}
+			}
+
+		}
+
 	}
 
-	public Part getFilePart() {
-		return filePart;
+	private List<String> checkExcelCategories(Sheet sheet) {
+
+		String yearName = POIUtil.getRowCell(sheet, 0, 0);
+		yearName = ObjectUtils.getNumbers(yearName);
+		List<String> unprocessedHeaders = new ArrayList<>();
+		if (StringUtils.isEmpty(yearName)) {
+			problems.add(POIUtil.asCell(0, 0) + " oszlopban nincs benne az év.");
+			unprocessedHeaders.add(POIUtil.asCell(0));
+		}
+
+		int lastProcessedCol = sheet.getRow(1).getLastCellNum() - 1;
+
+		for (int c = POIUtil.CELL_CAF_XLS_CATFROM; c < sheet.getRow(1).getLastCellNum(); c++) {
+
+			String catHeader = POIUtil.getRowCell(sheet, 1, c);
+			String monthValue = ObjectUtils.getNumbers(catHeader);
+			String catKey = ObjectUtils.getAlphas(catHeader, "").trim();
+
+			if (catKey.equals("Összesen cafeteria")) {
+				// ez és innen jobbra nem kell mar
+				lastProcessedCol = c - 1;
+			}
+			if (c < lastProcessedCol) {
+				if (StringUtils.isNotEmpty(monthValue) && StringUtils.isNotEmpty(catKey)) {
+					List<PCafeteriaCategory> cat = parameters.getCafeteriaCategoryByName(catKey);
+					if (cat.size() == 1) {
+						// valid
+					} else {
+						problems.add(POIUtil.asCell(1, c) + " Nem található a '" + catKey + "' kategória (" + cat.size()
+								+ " van).");
+						unprocessedHeaders.add(POIUtil.asCell(c));
+					}
+
+				} else {
+					problems.add(POIUtil.asCell(1, c) + " Nics beírva hónap és kategória (" + catHeader + ").");
+					unprocessedHeaders.add(POIUtil.asCell(c));
+				}
+			} else {
+				unprocessedHeaders.add(POIUtil.asCell(c));
+			}
+		}
+
+		return unprocessedHeaders;
 	}
+
 }

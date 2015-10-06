@@ -35,7 +35,7 @@ public abstract class Commontroller implements Serializable {
 
 	public void setFilePart(Part file) {
 		this.filePart = file;
-		System.out.println("setFilePart " + file);
+		// System.out.println("setFilePart " + file);
 	}
 
 	public Part getFilePart() {

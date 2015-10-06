@@ -41,7 +41,7 @@
 		    	</tr>
 		    	<tr>
 	        		<td><p:outputLabel for="yearLimit" value="Éves keret:"/></td>
-		            <td><h:outputText id="yearLimit" value="#{cafeController.staff.yearlyInfo.yearLimit}" /></td>
+		            <td><h:outputText id="yearLimit" value="#{cafeController.staff.getYearlyInfo(-1).yearLimit}" /></td>
 		        </tr>
             	<tr>
 	        		<td><p:outputLabel for="workgroup" value="Cég/Terület:"/></td>

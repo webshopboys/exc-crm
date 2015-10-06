@@ -4,6 +4,8 @@ import java.util.List;
 
 import hu.exclusive.dao.DaoFilter;
 import hu.exclusive.dao.model.Attachment;
+import hu.exclusive.dao.model.Cafeteria;
+import hu.exclusive.dao.model.CafeteriaInfo;
 import hu.exclusive.dao.model.ContractDoc;
 import hu.exclusive.dao.model.CrmUser;
 import hu.exclusive.dao.model.DrDoc;
@@ -89,5 +91,19 @@ public interface IExcDaoService {
 	List<Staff> getStaffByName(String personName);
 
 	List<StaffCafeteria> getStaffCafByName(String personName, String tax);
+
+	List<PCafeteriaCategory> getCafeteriaCategoryByName(String catKey);
+
+	void saveCafeteriaInfo(CafeteriaInfo info);
+
+	void saveCafeteria(Cafeteria monthlyCafe);
+
+	void deleteCafeteriaInfo(CafeteriaInfo info);
+
+	void deleteCafeteria(Cafeteria monthlyCafe);
+
+	void deleteCafeteria(int staff, int year, int month);
+
+	void deleteCafeteria(int staff, int year, int month, int category);
 
 }

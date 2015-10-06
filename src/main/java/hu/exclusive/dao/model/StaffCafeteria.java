@@ -73,6 +73,10 @@ public class StaffCafeteria extends StaffBase implements Serializable {
 		return getYearlyInfo(year).getYearLimit();
 	}
 
+	public CafeteriaInfo getYearlyInfo() {
+		return getYearlyInfo(-1);
+	}
+
 	/**
 	 * Az aktualis eves info rekord. Ebbe kerülnek a modosithato reszek es az
 	 * eves keret. Az adott eves info rekord.

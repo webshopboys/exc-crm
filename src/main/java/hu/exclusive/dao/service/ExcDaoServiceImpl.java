@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import hu.exclusive.dao.DaoFilter;
 import hu.exclusive.dao.model.Attachment;
+import hu.exclusive.dao.model.Cafeteria;
+import hu.exclusive.dao.model.CafeteriaInfo;
 import hu.exclusive.dao.model.ContractDoc;
 import hu.exclusive.dao.model.CrmUser;
 import hu.exclusive.dao.model.DrDoc;
@@ -44,6 +46,62 @@ public class ExcDaoServiceImpl implements IExcDaoService {
 	public ExcDaoServiceImpl() {
 		System.err.println("ExcDaoServiceImpl implements IExcDaoService created. " + hashCode());
 
+	}
+
+	@Transactional
+	@Override
+	public void saveCafeteriaInfo(CafeteriaInfo info) {
+
+		if (info.getIdCafInfo() == null || info.getIdCafInfo() == 0)
+			em.persist(info);
+		else
+			em.merge(info);
+
+		System.out.println(info + " info persisted? " + info);
+	}
+
+	@Transactional
+	@Override
+	public void deleteCafeteriaInfo(CafeteriaInfo info) {
+		info = em.merge(info);
+		em.remove(info);
+	}
+
+	@Override
+	public void deleteCafeteria(int staff, int year, int month) {
+		em.createNamedQuery("Cafeteria.deleteStaffYearMonth").setParameter("staff", staff).setParameter("year", year)
+				.setParameter("month", month).executeUpdate();
+	}
+
+	@Override
+	public void deleteCafeteria(int staff, int year, int month, int category) {
+
+		em.createNamedQuery("Cafeteria.deleteStaffYearMonthCategory").setParameter("staff", staff)
+				.setParameter("year", year).setParameter("month", month).setParameter("category", category)
+				.executeUpdate();
+
+	}
+
+	@Transactional
+	@Override
+	public void saveCafeteria(Cafeteria monthlyCafe) {
+
+		if (monthlyCafe.getIdCategory() == 0 && monthlyCafe.getCafeCategory() != null)
+			monthlyCafe.setIdCategory(monthlyCafe.getCafeCategory().getIdCafeteriaCat());
+		;
+		if (monthlyCafe.getIdCafeteria() == null || monthlyCafe.getIdCafeteria() == 0)
+			em.persist(monthlyCafe);
+		else
+			em.merge(monthlyCafe);
+
+		System.out.println(monthlyCafe + " monthlyCafe persisted? " + monthlyCafe);
+	}
+
+	@Transactional
+	@Override
+	public void deleteCafeteria(Cafeteria monthlyCafe) {
+		monthlyCafe = em.merge(monthlyCafe);
+		em.remove(monthlyCafe);
 	}
 
 	@Override
@@ -99,12 +157,21 @@ public class ExcDaoServiceImpl implements IExcDaoService {
 
 	@Override
 	public List<StaffCafeteria> getStaffCafByName(String personName, String tax) {
-		if (StringUtils.isEmpty(tax))
+		if (StringUtils.isEmpty(tax)) {
 			return em.createNamedQuery("StaffCafeteria.getStaffByName", StaffCafeteria.class)
-					.setParameter("personName", personName).getResultList();
-		else
+					.setParameter("personName", ("%" + personName + "%").toUpperCase()).getResultList();
+		} else {
+			// System.out.println("'" + personName + "','" + tax + "'");
 			return em.createNamedQuery("StaffCafeteria.getStaffByNameTax", StaffCafeteria.class)
-					.setParameter("personName", personName).setParameter("tax", tax).getResultList();
+					.setParameter("personName", ("%" + personName + "%").toUpperCase()).setParameter("tax", tax)
+					.getResultList();
+		}
+	}
+
+	@Override
+	public List<PCafeteriaCategory> getCafeteriaCategoryByName(String catKey) {
+		return em.createNamedQuery("PCafeteriaCategory.findByKey", PCafeteriaCategory.class)
+				.setParameter("name", ("%" + catKey + "%").toUpperCase()).getResultList();
 	}
 
 	@Transactional

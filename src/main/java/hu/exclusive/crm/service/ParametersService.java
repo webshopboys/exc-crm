@@ -12,7 +12,6 @@ import hu.exclusive.dao.model.CrmUser;
 import hu.exclusive.dao.model.Function;
 import hu.exclusive.dao.model.Jobtitle;
 import hu.exclusive.dao.model.PCafeteriaCategory;
-import hu.exclusive.dao.model.PCafeteriaLimit;
 import hu.exclusive.dao.model.Role;
 import hu.exclusive.dao.model.Workgroup;
 import hu.exclusive.dao.model.Workplace;
@@ -39,6 +38,15 @@ public class ParametersService {
 		if (StringUtils.isEmpty(name))
 			return null;
 		DaoFilter filter = new DaoFilter("Workgroup.findByName", "name", RELATION.NAMED_QUERY,
+				"%" + name.toUpperCase() + "%");
+		List<Workgroup> group = excDao.getWorkgroups(filter);
+		return group.isEmpty() ? null : group.get(0);
+	}
+
+	public Workgroup getWorkgroupByCompany(String name) {
+		if (StringUtils.isEmpty(name))
+			return null;
+		DaoFilter filter = new DaoFilter("Workgroup.findByCompany", "name", RELATION.NAMED_QUERY,
 				"%" + name.toUpperCase() + "%");
 		List<Workgroup> group = excDao.getWorkgroups(filter);
 		return group.isEmpty() ? null : group.get(0);
@@ -112,8 +120,8 @@ public class ParametersService {
 		return excDao.getCafeteriaCategories(filter);
 	}
 
-	public List<PCafeteriaLimit> getCafeteriaLimits(DaoFilter filter) {
-		return excDao.getCafeteriaLimits(filter);
+	public List<PCafeteriaCategory> getCafeteriaCategoryByName(String catKey) {
+		return excDao.getCafeteriaCategoryByName(catKey);
 	}
 
 }

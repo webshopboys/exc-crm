@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import hu.exclusive.dao.DaoFilter;
 import hu.exclusive.dao.model.Staff;
-import hu.exclusive.dao.model.StaffCafeteria;
 import hu.exclusive.dao.model.StaffDetail;
 
 @Service
@@ -28,16 +27,8 @@ public class StaffService {
 		excDao.saveStaff(staff);
 	}
 
-	public List<StaffCafeteria> getCafeteriaList(DaoFilter filter) {
-		return excDao.getCafeteriaList(filter);
-	}
-
 	public List<Staff> getStaffByName(String personName) {
 		return excDao.getStaffByName(personName);
-	}
-
-	public List<StaffCafeteria> getStaffCafByName(String personName, String tax) {
-		return excDao.getStaffCafByName(personName, tax);
 	}
 
 }

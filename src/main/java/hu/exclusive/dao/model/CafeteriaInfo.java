@@ -111,4 +111,11 @@ public class CafeteriaInfo implements Serializable {
 		this.idStaff = idStaff;
 	}
 
+	@Override
+	public String toString() {
+		return "CafeteriaInfo [idCafInfo=" + idCafInfo + ", idStaff=" + idStaff + ", info1=" + info1 + ", info2="
+				+ info2 + ", updated=" + updated + ", updater=" + updater + ", yearKey=" + yearKey + ", yearLimit="
+				+ yearLimit + "]";
+	}
+
 }

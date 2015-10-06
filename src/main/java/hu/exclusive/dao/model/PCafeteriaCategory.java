@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
@@ -16,78 +17,92 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "P_CAFETERIA_CAT")
-@NamedQuery(name = "PCafeteriaCategory.findAll", query = "SELECT p FROM PCafeteriaCategory p")
+
+@NamedQueries({ @NamedQuery(name = "PCafeteriaCategory.findAll", query = "SELECT p FROM PCafeteriaCategory p"),
+		@NamedQuery(name = "PCafeteriaCategory.findByName", query = "SELECT p FROM PCafeteriaCategory p WHERE upper(p.categoryName) like :name"),
+		@NamedQuery(name = "PCafeteriaCategory.findByKey", query = "SELECT p FROM PCafeteriaCategory p WHERE upper(p.categoryKeys) like :name"), })
 public class PCafeteriaCategory implements Serializable {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id_cafeteria_cat")
-    private Integer idCafeteriaCat;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id_cafeteria_cat")
+	private Integer idCafeteriaCat;
 
-    @Column(name = "category_info")
-    private String categoryInfo;
+	@Column(name = "category_info")
+	private String categoryInfo;
 
-    @Column(name = "category_name")
-    private String categoryName;
+	@Column(name = "category_name")
+	private String categoryName;
 
-    private boolean enabled;
+	@Column(name = "category_keys")
+	private String categoryKeys;
 
-    @Column(name = "monthly_limit")
-    private Integer monthlyLimit;
+	private boolean enabled;
 
-    @Column(name = "yearly_limit")
-    private Integer yearlyLimit;
+	@Column(name = "monthly_limit")
+	private Integer monthlyLimit;
 
-    public PCafeteriaCategory() {
-    }
+	@Column(name = "yearly_limit")
+	private Integer yearlyLimit;
 
-    public Integer getIdCafeteriaCat() {
-        return this.idCafeteriaCat;
-    }
+	public PCafeteriaCategory() {
+	}
 
-    public void setIdCafeteriaCat(Integer idCafeteriaCat) {
-        this.idCafeteriaCat = idCafeteriaCat;
-    }
+	public Integer getIdCafeteriaCat() {
+		return this.idCafeteriaCat;
+	}
 
-    public String getCategoryInfo() {
-        return this.categoryInfo;
-    }
+	public void setIdCafeteriaCat(Integer idCafeteriaCat) {
+		this.idCafeteriaCat = idCafeteriaCat;
+	}
 
-    public void setCategoryInfo(String categoryInfo) {
-        this.categoryInfo = categoryInfo;
-    }
+	public String getCategoryInfo() {
+		return this.categoryInfo;
+	}
 
-    public String getCategoryName() {
-        return this.categoryName;
-    }
+	public void setCategoryInfo(String categoryInfo) {
+		this.categoryInfo = categoryInfo;
+	}
 
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
-    }
+	public String getCategoryName() {
+		return this.categoryName;
+	}
 
-    public boolean isEnabled() {
-        return enabled;
-    }
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
+	}
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
+	public boolean isEnabled() {
+		return enabled;
+	}
 
-    public Integer getMonthlyLimit() {
-        return monthlyLimit;
-    }
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 
-    public void setMonthlyLimit(Integer monthlyLimit) {
-        this.monthlyLimit = monthlyLimit;
-    }
+	public Integer getMonthlyLimit() {
+		return monthlyLimit;
+	}
 
-    public Integer getYearlyLimit() {
-        return yearlyLimit;
-    }
+	public void setMonthlyLimit(Integer monthlyLimit) {
+		this.monthlyLimit = monthlyLimit;
+	}
 
-    public void setYearlyLimit(Integer yearlyLimit) {
-        this.yearlyLimit = yearlyLimit;
-    }
+	public Integer getYearlyLimit() {
+		return yearlyLimit;
+	}
+
+	public void setYearlyLimit(Integer yearlyLimit) {
+		this.yearlyLimit = yearlyLimit;
+	}
+
+	public String getCategoryKeys() {
+		return categoryKeys;
+	}
+
+	public void setCategoryKeys(String categoryKeys) {
+		this.categoryKeys = categoryKeys;
+	}
 
 }

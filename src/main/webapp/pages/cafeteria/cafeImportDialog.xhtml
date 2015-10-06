@@ -8,67 +8,97 @@
 	<h:head>
 		<title>Cafetéria Excel import</title>
 		<h:outputStylesheet name="exc-style.css" />
-   
+   		<h:outputScript name="exc.js" />
 	</h:head>
 	
 	<h:body>
 		 
-		<p:growl id="messages" showDetail="true" />
-		 
-	
-        <p:panel rendered="#{cafeController.unknownStaffs.size()>0}">
+	  <p:growl id="messages" showDetail="true" />
+	   
+	   <div class="ajaxProgressor2">
+	   
+		<p:panel rendered="#{cafeController.validStaffs.size()>0}" styleClass="ajaxProgressor">
 			
-			<p><h:outputLabel value="Problémás munkatárs nevek:" style="color:red;" /></p>
-			
-			<ui:repeat var="us" value="#{cafeController.unknownStaffs}">
-				<h:outputText value="#{us}" /><br/>
-				
-			</ui:repeat>
-			
-	    </p:panel>	
-		
-		
-		<p:panel rendered="#{cafeController.validStaffs.size()>0}">
-			
-			<p:dataTable value="#{cafeController.validStaffs}" var="vs" >
+			<p:dataTable value="#{cafeController.validStaffs}" var="vs" resizableColumns="true" resizeMode="expand">
 				<f:facet name="header">
 		            Feldolgozható munkatárs nevek
 		        </f:facet>
 				
-				<p:column headerText="Név">
+				<p:column headerText="Név" width="15%">
 			        <h:outputText value="#{vs.staff.fullName}" />
 			    </p:column>
-				<p:column headerText="Adószám" styleClass="#{vs.getTaxCSS()}">
+				<p:column headerText="Adószám" styleClass="#{vs.getTaxCSS()}" width="10%" >
 			        <h:outputText value="#{vs.getComparedTaxNumber()}" />
 			    </p:column>
-				<p:column headerText="Belépés" styleClass="#{vs.getDateCSS()}">
+				<p:column headerText="Belépés" styleClass="#{vs.getDateCSS()}" width="8%">
 				    <h:outputText value="#{vs.getComparedStartDate()}" />
 			    </p:column>
-				<p:column headerText="Éves keret">
-			        <h:outputText value="#{vs.yearlyLimit}" />
+				<p:column headerText="Éves keret" width="7%">
+			        <h:outputText value="#{vs.getComparedLimit()}" />
 			    </p:column>
-				<p:column headerText="Korábbi keret">
-			        <h:outputText value="#{vs.staff.getYearlyLimit(-1)}" />
+				<p:column headerText="Elosztás" width="40%" styleClass="nowrap">
+			       <ui:repeat var="c" value="#{vs.getExcelMonthlyCafes()}">
+			       		<h:outputText value="#{c.display()}" /><br />
+			       </ui:repeat>
 			    </p:column>
-			    <p:column headerText="Csoport" styleClass="#{vs.getGroupCSS()}">
+			    <p:column headerText="Csoport" styleClass="#{vs.getGroupCSS()}" width="20%">
 			        <h:outputText value="#{vs.getComparedWorkGroup()}" />
 			    </p:column>
     
 			</p:dataTable >
 			
+		</p:panel>	
 		
-			
-	    </p:panel>	
-		
+		<p:panel rendered="#{cafeController.validStaffs.size()>0}" styleClass="ajaxProgressor">
+		<h:form>
+			<h:panelGrid columns="3" style="width:100%">
+				<h:column style="width:33%">
+				<p:commandButton value="Cafetéria kitöltése, és a munkatársak kitöltése az excel alapadataival, a problémák kihagyása" ajax="true" styleClass="processButton" actionListener="#{cafeController.processCafeteria(true,true)}" style="width:100%;height:100%"/>
+				</h:column><h:column style="width:33%">
+				<p:commandButton value="Cafetéria kitöltése, és a munkatársak felülírása az excel adataival, problémák kihagyása" ajax="true" styleClass="processButton" actionListener="#{cafeController.processCafeteria(false, true)}" style="width:100%;height:100%"/>
+				</h:column><h:column style="width:33%">
+				<p:commandButton value="Cafetéria kitöltése csak a cafetéria adatokkal, a problémák kihagyásával" ajax="true" styleClass="processButton" actionListener="#{cafeController.processCafeteria(false, false)}" style="width:100%;height:100%"/>
+				</h:column>
+			</h:panelGrid>
+		</h:form>	
+		</p:panel> 
+		 
+        <p:panel rendered="#{cafeController.problems.size()>0}" styleClass="ajaxProgressor">
+		  		<h:dataTable var="us" value="#{cafeController.problems2}" 
+						styleClass="problem-table"
+		    			headerClass="problem-table-header"
+		    			rowClasses="problem-table-odd-row,problem-table-even-row"
+		    			style="width:100%"
+		    		> 	
+		    			<f:facet name="header">Problémák (ezek nem menthető állapotok)</f:facet>
+					    
+						<h:column>
+						    <h:outputText value="#{us[0]}" />
+					    </h:column>
+					    <h:column>
+					        <h:outputText value="#{us[1]}" />
+					    </h:column>
+					    
+				</h:dataTable>
+				
+	 	</p:panel>
+	 	
+	 	
 		<p:panel>
-		 	<h:form enctype="multipart/form-data" >
-		 	
-		    	<h:inputFile value="#{cafeController.filePart}" style="width:70%;"/>
-            	<p:commandButton value="Feltöltés" ajax="false" actionListener="#{cafeController.checkExcel()}" />
+		 	<h:form enctype="multipart/form-data" id="uploadForm" styleClass="ajaxProgressor">
+		 		<h:inputFile value="#{cafeController.filePart}" style="width:70%;"/>
+            	<p:commandButton value="Feltöltés" ajax="false" actionListener="#{cafeController.checkExcel()}" onclick="PF('bui').show()"/>
 			</h:form>
 		 
-		 </p:panel>
-		 
+		</p:panel>
+		
+		</div> 
+
+	    <p:blockUI block="@(.ajaxProgressor2)" widgetVar="bui" trigger="@(.processButton)" >
+        	Feltöltés....<br />
+        </p:blockUI> 
+        
+					
 	</h:body>
 
 </ui:composition>

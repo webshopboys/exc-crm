@@ -230,7 +230,10 @@ public class ObjectUtils {
 		if (o != null) {
 			if (o instanceof String) {
 				return ((String) o).trim().length() == 0;
+			} else if (o instanceof BigDecimal) {
+				return ((BigDecimal) o).doubleValue() == 0;
 			}
+
 			return false;
 		}
 		return true;
@@ -308,26 +311,10 @@ public class ObjectUtils {
 
 	public static void main(String[] args) {
 		try {
-			// Date ma = new Date();
-			// long egynap = 1000 * 60 * 60 * 24;
-			// Date tegnap = new Date(ma.getTime() - egynap);
-			//
-			// System.out.println(compareDays(null, null));
-			// System.out.println(compareDays(null, ma));
-			// System.out.println(compareDays(ma, null));
-			// System.out.println(compareDays(tegnap, ma));
-			// System.out.println(compareDays(ma, tegnap));
-			// System.out.println(compareDays(ma, ma));
-
-			double d = 8.412584163E9;
-			System.out.println(d);
-			System.out.println((int) d);
-			System.out.println((long) d);
-			System.out.println((int) (long) d);
-			System.out.println(new BigDecimal(d).intValue());
-			System.out.println(new Double(d).intValue());
-			System.out.println(new Double(d).longValue());
-
+			String s = "2015 év Best/East/Pannon";
+			System.out.println(getAlphas(s));
+			System.out.println(getNumbers(s));
+			System.out.println(s.replaceAll("[0-9]", ""));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -375,5 +362,41 @@ public class ObjectUtils {
 		String sb = SDF_YYYYMMDD.format(bDate);
 		int aBeforeB = sa.compareTo(sb);
 		return aBeforeB == 0 ? 0 : aBeforeB > 0 ? 1 : 2;
+	}
+
+	public static String getNumbers(String string, String def) {
+		String s = getNumbers(string);
+		return s == null ? def : s;
+	}
+
+	public static String getNumbers(String string) {
+		try {
+			if (string != null) {
+				// return string.replaceAll("\\D+", "");
+				return string.replaceAll("[^0-9]", "");
+				// return string.replace('/', 'X').replaceAll("[^A-Za-z]", "");
+			}
+		} catch (Exception e) {
+			new IllegalArgumentException(string, e).printStackTrace();
+		}
+		return null;
+	}
+
+	public static String getAlphas(String string, String def) {
+		String s = getAlphas(string);
+		return s == null ? def : s;
+	}
+
+	public static String getAlphas(String string) {
+		try {
+			if (string != null) {
+				// return string.replaceAll("\\D", "");
+				return string.replaceAll("[0-9]", "");
+				// return string.replace('/', 'X').replaceAll("[^A-Za-z]", "");
+			}
+		} catch (Exception e) {
+			new IllegalArgumentException(string, e).printStackTrace();
+		}
+		return null;
 	}
 }

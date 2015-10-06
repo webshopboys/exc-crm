@@ -22,6 +22,7 @@ import javax.persistence.Table;
 @NamedQueries({ @NamedQuery(name = "Workgroup.findAll", query = "SELECT w FROM Workgroup w"),
 		@NamedQuery(name = "Workgroup.findById", query = "SELECT w FROM Workgroup w WHERE w.idWorkgroup = :idWorkgroup"),
 		@NamedQuery(name = "Workgroup.findByName", query = "SELECT w FROM Workgroup w WHERE upper(w.groupName) like :name"),
+		@NamedQuery(name = "Workgroup.findByCompany", query = "SELECT w FROM Workgroup w WHERE upper(w.companyName) like :name"),
 		@NamedQuery(name = "Workgroup.findForStaff", query = "SELECT w FROM Workgroup w WHERE w.idWorkgroup in (SELECT k.id.idWorkgroup FROM StaffWorkgroupK k WHERE k.id.idStaff = :idStaff) ORDER BY w.groupName") })
 public class Workgroup extends EntityCommons implements Serializable {
 	private static final long serialVersionUID = 1L;
