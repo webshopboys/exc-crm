@@ -32,6 +32,10 @@ program2015
 	07-10-M Beosztás menü
 
 	08-05-M Cafetéria menü
+*	 08-05-11 Cafetéria limit beállítása
+	 08-05-11 Cafetéria limit beállítása 
+*	 08-05-12 Cafetéria kategóriák
+
 	
 	EBC-M Ellenõrzések menü
 

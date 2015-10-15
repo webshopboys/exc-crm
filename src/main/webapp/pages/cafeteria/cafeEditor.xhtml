@@ -4,16 +4,16 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets">
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
     
    	<h:outputStylesheet name="exc-style.css" />
-   
-	
+  
    	<h:form id="editorform" rendered="#{cafeController.staff != null}">
      
      	<h:inputHidden value="#{cafeController.staff.idStaff}" />
   
-		<p:growl showDetail="true" sticky="true" rendered="#{not facesContext.validationFailed}"/>  
+		<p:growl showDetail="true" sticky="true" rendered="#{not facesContext.validationFailed}" escape="false"/>  
 				
         <p:panel id="editPanel" styleClass="editorPanel imaged-panel">
           	
@@ -25,31 +25,62 @@
 		    <table class="editorTable">
 		    	<tr>
 	        		<td><p:outputLabel for="fullName" value="Teljes név:"/></td>
-		            <td><h:outputText id="fullName" value="#{cafeController.staff.fullName}" /></td>
+		            <td><h:inputText id="fullName" value="#{cafeController.staff.fullName}" disabled="#{sec:areNotGranted('02-01-01-01')}" style="width: 300px;"/></td>
 		        </tr>
 		        <tr>
 	        		<td><p:outputLabel for="tax" value="Adószám:"/></td>
-		            <td><h:outputText id="tax" value="#{cafeController.staff.taxSerial}" /></td>
+		            <td><h:inputText id="tax" value="#{cafeController.staff.taxSerial}"  disabled="#{sec:areNotGranted('02-01-01-01')}"/></td>
 		        </tr>
             	<tr>
 		            <td><p:outputLabel for="employStart" value="Belépés:" /></td>
 		            <td>
-		            	<h:outputText id="employStart" value="#{cafeController.staff.employStart}" >
-							<f:convertDateTime pattern="yyyy.MM.dd" />
-						</h:outputText>	
+		            	<p:calendar id="employStart" value="#{cafeController.staff.employStart}" disabled="#{sec:areNotGranted('02-01-01-01')}" 
+		            		required="false" showOn="button" pattern="yyyy.MM.dd" mask="true" styleClass="edit-input date-text" >
+		           		</p:calendar>
 					</td>
 		    	</tr>
 		    	<tr>
 	        		<td><p:outputLabel for="yearLimit" value="Éves keret:"/></td>
-		            <td><h:outputText id="yearLimit" value="#{cafeController.staff.getYearlyInfo(-1).yearLimit}" /></td>
+		            <td><h:inputText id="yearLimit" value="#{cafeController.staff.getYearlyInfo(-1).yearLimit}"  disabled="#{sec:areNotGranted('08-05-11')}"/></td>
 		        </tr>
             	<tr>
 	        		<td><p:outputLabel for="workgroup" value="Cég/Terület:"/></td>
-		            <td><h:outputText id="workgroup" value="#{cafeController.staff.workgroup.groupName}" /></td>
-		        </tr>
-		    	
+		            <td>
+		              <h:selectOneMenu id="workgroup" value="#{cafeController.staff.workgroup}" styleClass="edit-input wide-text" disabled="#{sec:areNotGranted('02-01-01-01')}" >
+		                <f:selectItems value="#{parameterView.workgroups}" var="workgroup" itemValue="#{workgroup}" itemLabel="#{workgroup.groupName}" />
+			            <f:attribute name="collectionType" value="java.util.ArrayList" />
+			          </h:selectOneMenu>
+			        </td>
+			    </tr>
+			    
             	<tr>
 	          	 	<td colspan="2"><p:separator  /></td>
+            	</tr>
+            	
+            	<tr>
+	          	 	<td colspan="2">
+	          	 		<table>
+						<ui:repeat var="monthlyCafe" value="#{cafeController.staff.monthlyCafes}" varStatus="x">
+							<tr>
+								<td><h:inputText value="#{monthlyCafe.yearKey}" disabled="#{sec:areNotGranted('08-05-11')}" styleClass="edit-input mini-text"/></td>
+								<td>
+								  <h:selectOneMenu value="#{monthlyCafe.monthKey}" styleClass="edit-input short-text">
+						            <f:selectItems value="#{parameterView.months}" var="m" itemValue="#{m.value}" itemLabel="#{m.label}"/>
+						           	<f:attribute name="collectionType" value="java.util.ArrayList" />
+					        	  </h:selectOneMenu>
+					        	</td>  
+					        	<td>
+					        	  <h:selectOneMenu value="#{monthlyCafe.cafeCategory}" styleClass="edit-input medium-text" disabled="#{sec:areNotGranted('08-05-11')}" title="#{monthlyCafe.cafeCategory.title}">
+					              	<f:selectItems value="#{parameterView.cafeteriaCategories}" var="cc" itemValue="#{cc}" itemLabel="#{cc.categoryName}" />
+						            <f:attribute name="collectionType" value="java.util.ArrayList" />
+						          </h:selectOneMenu>
+						        </td>
+								<td><h:inputText value="#{monthlyCafe.amount}" disabled="#{sec:areNotGranted('08-05-11')}" styleClass="edit-input short-text"/></td>
+								
+							</tr>
+						</ui:repeat>
+						</table>
+					</td>
             	</tr>
             	
             	
@@ -57,7 +88,9 @@
 		    
 	
 	 		<f:facet name="footer">
-	            <p:commandButton value="Adatok mentése" action="#{cafeController.saveCafeteria()}" validateClient="true" update="editorform"/>  
+	            <p:commandButton value="Munkatárs adatok mentése" actionListener="#{cafeController.saveStaff()}" validateClient="true" update="editorform" rendered="#{sec:areAnyGranted('02-01-01-01')}"/>  
+       			
+       			<p:commandButton value="Cafetéria mentése" action="#{cafeController.saveCafeteria()}" validateClient="true" update="editorform" rendered="#{sec:areAnyGranted('08-05-11')}"/>  
        			
        			<p:commandButton value="Bezárás" action="#{cafeController.closeCafeteria()}" ajax="true" immediate="true" >
        				<p:resetInput for="editorform" target="editorform"/>

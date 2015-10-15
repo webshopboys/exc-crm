@@ -11,6 +11,7 @@
 .edit-input.wide-text { width: 320px; }
 .edit-input.medium-text { width: 200px; }
 .edit-input.short-text { width: 100px; }
+.edit-input.mini-text { width: 60px; }
 .edit-input.date-text .hasDatepicker { width: 80px; }
 
 #headerContent {z-index:20 !important; }
@@ -114,3 +115,7 @@ div.editorNoteContainer .removeIcon { margin-left: 5px; margin-bottom: 15px; }
 	border-style: inset;
 	border-color: red;  
 } 
+
+.ui-growl { width: inherit !important; }
+
+.ui-growl-message { width: inherit !important; /* white-space:nowrap; */}

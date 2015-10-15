@@ -44,7 +44,7 @@
   				
   				 <p:submenu label="Cafetéria" icon="ui-icon-heart" rendered="#{sec:areAnyGranted('08-05-M')}">		
   				    <p:menuitem value="Keresés" action="#{navigator.setContent('cafeteria/cafeList','cafeteria/cafeListFilter')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
-  				    <p:menuitem value="Éves szabályok" action="#{navigator.setContent('cafeteria/cafeParams','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
+  				    <p:menuitem value="Éves kategóriák" action="#{navigator.setContent('cafeteria/cafeParams','slider')}" update=":mainContentPanel :sliderContentPanel" immediate="true"/>
   				    
 		         </p:submenu>
 		         
@@ -112,7 +112,6 @@
 		         </p:submenu>
   	
   				 
-  				 <p:menuitem value="Hibabejelentő" url="http://petnehazi.hu/bugfix/bug_report_page.php" target="_blank" styleClass="extraCell" style="margin-left:20px;"/>
       		</p:menubar>
 	      
 	      

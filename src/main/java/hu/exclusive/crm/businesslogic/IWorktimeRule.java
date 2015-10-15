@@ -1,19 +1,23 @@
 package hu.exclusive.crm.businesslogic;
 
+import hu.exclusive.dao.model.StaffBase;
+
 /**
- * Mindenféle ellenőrzési szabályok és műveletek általános interfésze.
+ * Mindenféle ellenőrzési szabályok és műveletek általános interfésze. A
+ * paraméter object-ek mindig egyediek, elhagyhatók és a szükséges segéd infókat
+ * hivatottak átvinni.
  * 
  * @author PK
  *
  */
 public interface IWorktimeRule {
 
-    void init(Object requiredBeans);
+	void init(StaffBase staff);
 
-    void calculateRule(Object requiredBeans);
+	boolean calculateRule(Object... params);
 
-    String infoMessage();
+	String infoMessage(String... additionalText);
 
-    String errorMessage();
+	String errorMessage(String... additionalText);
 
 }

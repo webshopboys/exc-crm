@@ -10,10 +10,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import hu.exclusive.crm.report.POIUtil;
@@ -38,15 +38,15 @@ public class Cafeteria implements Serializable {
 
 	private BigDecimal amount;
 
-	@OneToOne(fetch = FetchType.EAGER, optional = false)
-	@PrimaryKeyJoinColumn
+	@OneToOne(fetch = FetchType.EAGER, optional = true)
+	@JoinColumn(name = "id_cafeteria_cat")
 	private PCafeteriaCategory cafeCategory;
 
 	@Column(name = "id_staff")
 	private Integer idStaff;
 
-	@Column(name = "id_cafeteria_cat")
-	private int idCategory;
+	// @Column(name = "id_cafeteria_cat")
+	// private int idCategory;
 
 	@Column(name = "month_key")
 	private int monthKey;
@@ -93,13 +93,13 @@ public class Cafeteria implements Serializable {
 		this.idStaff = idStaff;
 	}
 
-	public int getIdCategory() {
-		return idCategory;
-	}
-
-	public void setIdCategory(int idCategory) {
-		this.idCategory = idCategory;
-	}
+	// public int getIdCategory() {
+	// return idCategory;
+	// }
+	//
+	// public void setIdCategory(int idCategory) {
+	// this.idCategory = idCategory;
+	// }
 
 	public int getMonthKey() {
 		return this.monthKey;

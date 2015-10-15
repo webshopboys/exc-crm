@@ -4,7 +4,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets">
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
    		
 	<h:form id="docListForm">
 	    <p:growl id="messages" showDetail="true" />
@@ -70,7 +71,7 @@
 	 </h:form>
 		
 		<p:commandButton value="Export" actionListener="#{cafeController.exportExcel}" immediate="true" />
-		<p:commandButton value="Import" actionListener="#{cafeController.showImportDialog}" immediate="true">
+		<p:commandButton value="Import" actionListener="#{cafeController.showImportDialog}" immediate="true" rendered="#{sec:areAnyGranted('08-05-11')}">
 			<p:ajax event="dialogReturn" listener="#{cafeController.showImportDialog}" update="docListForm"/> 
 		</p:commandButton>	
 				

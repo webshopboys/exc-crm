@@ -12,10 +12,10 @@ import hu.exclusive.dao.model.DrDoc;
 import hu.exclusive.dao.model.Function;
 import hu.exclusive.dao.model.Jobtitle;
 import hu.exclusive.dao.model.PCafeteriaCategory;
-import hu.exclusive.dao.model.PCafeteriaLimit;
 import hu.exclusive.dao.model.PSystem;
 import hu.exclusive.dao.model.Role;
 import hu.exclusive.dao.model.Staff;
+import hu.exclusive.dao.model.StaffBase;
 import hu.exclusive.dao.model.StaffCafeteria;
 import hu.exclusive.dao.model.StaffDetail;
 import hu.exclusive.dao.model.StaffNote;
@@ -66,6 +66,8 @@ public interface IExcDaoService {
 
 	void saveStaff(StaffDetail staff);
 
+	void saveStaff(StaffBase staff);
+
 	String getSystemParameter(String sysgroup, String syskey);
 
 	List<PSystem> getSystemParameters(String sysgroup, String syskey);
@@ -86,8 +88,6 @@ public interface IExcDaoService {
 
 	List<PCafeteriaCategory> getCafeteriaCategories(DaoFilter filter);
 
-	List<PCafeteriaLimit> getCafeteriaLimits(DaoFilter filter);
-
 	List<Staff> getStaffByName(String personName);
 
 	List<StaffCafeteria> getStaffCafByName(String personName, String tax);
@@ -105,5 +105,7 @@ public interface IExcDaoService {
 	void deleteCafeteria(int staff, int year, int month);
 
 	void deleteCafeteria(int staff, int year, int month, int category);
+
+	void saveCategory(PCafeteriaCategory cat);
 
 }

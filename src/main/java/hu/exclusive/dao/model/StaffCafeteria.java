@@ -47,6 +47,11 @@ public class StaffCafeteria extends StaffBase implements Serializable {
 	@JoinTable(name = "K_STAFF_WORKGROUP", joinColumns = @JoinColumn(name = "id_staff", nullable = false) , inverseJoinColumns = @JoinColumn(name = "id_workgroup", nullable = true) )
 	private Workgroup workgroup;
 
+	@Override
+	public String toString() {
+		return super.toString() + "\nmonthlyCafes=" + monthlyCafes + "\ninfos=" + infos;
+	}
+
 	public List<Cafeteria> getMonthlyCafes() {
 		return monthlyCafes;
 	}
@@ -71,10 +76,6 @@ public class StaffCafeteria extends StaffBase implements Serializable {
 	 */
 	public BigDecimal getYearlyLimit(int year) {
 		return getYearlyInfo(year).getYearLimit();
-	}
-
-	public CafeteriaInfo getYearlyInfo() {
-		return getYearlyInfo(-1);
 	}
 
 	/**

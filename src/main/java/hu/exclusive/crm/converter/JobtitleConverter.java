@@ -15,7 +15,7 @@ public class JobtitleConverter extends SelectItemsBaseConverter {
 	public String getAsString(FacesContext context, UIComponent component, Object value) {
 
 		if (value instanceof Jobtitle) {
-			String.valueOf(((Jobtitle) value).getIdJobtitle());
+			return String.valueOf(((Jobtitle) value).getIdJobtitle());
 		}
 		return String.valueOf(value);
 	}

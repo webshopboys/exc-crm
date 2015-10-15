@@ -23,6 +23,7 @@ public class Navigator implements Serializable {
 	private static final String PREFIX = "/pages/";
 	private static final String SUFIX = ".xhtml";
 	public static final String WELCOME = PREFIX + "welcome" + SUFIX;
+	public static final String EMPTYSLIDER = PREFIX + "slider" + SUFIX;
 
 	private String headerContent = PREFIX + "header" + SUFIX;
 	private String footerContent = PREFIX + "footer" + SUFIX;
@@ -47,6 +48,11 @@ public class Navigator implements Serializable {
 		setSliderContent(sliderContent);
 		setMainHeader(mainHeader);
 		setSliderHeader(sliderHeader);
+	}
+
+	public void goHome() {
+		setMainContent(Navigator.WELCOME);
+		setSliderContent(Navigator.EMPTYSLIDER);
 	}
 
 	public void setContent(String mainContent, String sliderContent) {

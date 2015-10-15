@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import hu.exclusive.dao.DaoFilter;
 import hu.exclusive.dao.model.Staff;
+import hu.exclusive.dao.model.StaffBase;
 import hu.exclusive.dao.model.StaffDetail;
 
 @Service
@@ -24,6 +25,10 @@ public class StaffService {
 	}
 
 	public void saveStaff(StaffDetail staff) {
+		excDao.saveStaff(staff);
+	}
+
+	public void saveStaff(StaffBase staff) {
 		excDao.saveStaff(staff);
 	}
 

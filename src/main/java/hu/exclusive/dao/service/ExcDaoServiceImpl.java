@@ -27,10 +27,10 @@ import hu.exclusive.dao.model.DrDoc;
 import hu.exclusive.dao.model.Function;
 import hu.exclusive.dao.model.Jobtitle;
 import hu.exclusive.dao.model.PCafeteriaCategory;
-import hu.exclusive.dao.model.PCafeteriaLimit;
 import hu.exclusive.dao.model.PSystem;
 import hu.exclusive.dao.model.Role;
 import hu.exclusive.dao.model.Staff;
+import hu.exclusive.dao.model.StaffBase;
 import hu.exclusive.dao.model.StaffCafeteria;
 import hu.exclusive.dao.model.StaffDetail;
 import hu.exclusive.dao.model.StaffNote;
@@ -86,8 +86,8 @@ public class ExcDaoServiceImpl implements IExcDaoService {
 	@Override
 	public void saveCafeteria(Cafeteria monthlyCafe) {
 
-		if (monthlyCafe.getIdCategory() == 0 && monthlyCafe.getCafeCategory() != null)
-			monthlyCafe.setIdCategory(monthlyCafe.getCafeCategory().getIdCafeteriaCat());
+		if (monthlyCafe.getCafeCategory() == null && monthlyCafe.getCafeCategory() != null)
+			monthlyCafe.setCafeCategory(monthlyCafe.getCafeCategory());
 		;
 		if (monthlyCafe.getIdCafeteria() == null || monthlyCafe.getIdCafeteria() == 0)
 			em.persist(monthlyCafe);
@@ -151,8 +151,12 @@ public class ExcDaoServiceImpl implements IExcDaoService {
 	}
 
 	@Override
-	public List<PCafeteriaLimit> getCafeteriaLimits(DaoFilter filter) {
-		return em.createNamedQuery("PCafeteriaLimit.findAll", PCafeteriaLimit.class).getResultList();
+	public void saveCategory(PCafeteriaCategory cat) {
+		System.err.println("ExcDaoServiceImpl.saveCategory(" + cat + ")");
+		if (cat.getIdCafeteriaCat() == null)
+			em.persist(cat);
+		else
+			em.merge(cat);
 	}
 
 	@Override
@@ -205,6 +209,16 @@ public class ExcDaoServiceImpl implements IExcDaoService {
 	@Transactional
 	@Override
 	public void saveStaff(StaffDetail staff) {
+		System.err.println("ExcDaoServiceImpl.saveStaff(" + staff + ")");
+		if (staff.getIdStaff() == null)
+			em.persist(staff);
+		else
+			em.merge(staff);
+	}
+
+	@Transactional
+	@Override
+	public void saveStaff(StaffBase staff) {
 		System.err.println("ExcDaoServiceImpl.saveStaff(" + staff + ")");
 		if (staff.getIdStaff() == null)
 			em.persist(staff);

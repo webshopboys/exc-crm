@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,17 +27,19 @@ import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import hu.exclusive.crm.businesslogic.CafeteriaRule;
 import hu.exclusive.crm.model.CafeFilter;
 import hu.exclusive.crm.model.CafeteriaExcel;
 import hu.exclusive.crm.model.StaffFactory;
 import hu.exclusive.crm.report.POIUtil;
 import hu.exclusive.crm.service.CafeteriaService;
 import hu.exclusive.crm.service.ParametersService;
+import hu.exclusive.crm.service.StaffService;
 import hu.exclusive.dao.DaoFilter;
 import hu.exclusive.dao.model.Cafeteria;
 import hu.exclusive.dao.model.CafeteriaInfo;
+import hu.exclusive.dao.model.CafeteriaUtil;
 import hu.exclusive.dao.model.PCafeteriaCategory;
-import hu.exclusive.dao.model.PCafeteriaLimit;
 import hu.exclusive.dao.model.StaffCafeteria;
 import hu.exclusive.utils.FacesAccessor;
 import hu.exclusive.utils.ObjectUtils;
@@ -52,15 +55,20 @@ public class CafeController extends Commontroller implements Serializable {
 	private CafeFilter cafeFilter;
 
 	@Autowired
-	transient CafeteriaService service;
+	transient CafeteriaService cafeService;
+
+	@Autowired
+	transient StaffService staffServive;
 
 	@Autowired
 	transient ParametersService parameters;
 
-	private StaffCafeteria staff;
+	private StaffCafeteria staffBean;
 
 	private List<CafeteriaExcel> validStaffs = new ArrayList<>();
 	private List<String> problems = new ArrayList<>();
+	private final CafeteriaUtil util = new CafeteriaUtil();
+	private List<PCafeteriaCategory> categories;
 
 	public void init() {
 
@@ -72,7 +80,7 @@ public class CafeController extends Commontroller implements Serializable {
 		// parameters = (ParametersService)
 		// FacesAccessor.getManagedBean("parametersService");
 
-		this.setStaffModel(new LazyDataModel<StaffCafeteria>() {
+		this.staffModel = (new LazyDataModel<StaffCafeteria>() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -105,7 +113,7 @@ public class CafeController extends Commontroller implements Serializable {
 		try {
 			filter.setStartIndex(first);
 			filter.setPageSize(pageSize);
-			staffList = service.getCafeteriaList(getFilter());
+			staffList = cafeService.getCafeteriaList(getFilter());
 			dataModel.setPageSize(pageSize);
 			dataModel.setRowCount((int) filter.getTotalCount());
 
@@ -135,31 +143,68 @@ public class CafeController extends Commontroller implements Serializable {
 	}
 
 	public List<PCafeteriaCategory> getCategories() {
-		return service.getCafeteriaCategories(null);
-	}
-
-	public List<PCafeteriaLimit> getCafeLimits() {
-		return service.getCafeteriaLimits(null);
+		if (categories == null || categories.isEmpty())
+			categories = cafeService.getCafeteriaCategories(null);
+		return categories;
 	}
 
 	public void setStaff(StaffCafeteria staff) {
-		this.staff = staff;
-		System.out.println("selectStaff " + staff);
+		this.staffBean = staff;
+		System.err.println("selectStaff " + staff);
 
 	}
 
 	public StaffCafeteria getStaff() {
-		return this.staff;
+		return this.staffBean;
+	}
+
+	public void saveCategories() {
+		System.err.println("saveCategories:: " + this.categories);
+		cafeService.saveCafeteriaCategories(categories);
+	}
+
+	public void saveStaff() {
+		// a munkatárs alapadatainak frissítése, amennyiben van rá joga
+		staffServive.saveStaff(staffBean);
 	}
 
 	public void saveCafeteria() {
 		// ez igy elegge mellebeszeles, mert igazabol havi kategoruiak és
 		// osszegek vannak mentve.
+		System.err.println("saveCafeteria:: " + this.staffBean);
+		CafeteriaRule ruler = new CafeteriaRule();
+		ruler.init(staffBean); // itt kell vajon munkaidőből valami?
+		ruler.setCategories(getCategories());
+		try {
+			if (ruler.calculateRule(Calendar.getInstance().get(Calendar.YEAR), staffBean.getInfos(),
+					staffBean.getMonthlyCafes())) {
+
+				cafeService.saveCafeteriaInfo(ruler.getUtil().getCurrentInfo());
+				cafeService.saveCafeterias(ruler.getUtil().getYearlyCafes(ruler.getUtil().getCurrentYear()));
+
+				message("Cafetéria frissítése", ruler.infoMessage("Sikeres frissítés"));
+			} else {
+				error("Cafetéria hibák", ruler.errorMessage());
+			}
+
+		} catch (Exception e) {
+			LOG.log(Level.WARNING, "Cafetéria módosítás hiba", e);
+			error("Cafetéria módosítás hiba", null, e);
+		}
+
 	}
 
 	public void closeCafeteria() {
 		Navigator navigator = (Navigator) FacesAccessor.getManagedBean("navigator");
 		navigator.setContent("cafeteria/cafeList", "cafeteria/cafeListFilter");
+
+		RequestContext.getCurrentInstance().update("mainContentPanel");
+		RequestContext.getCurrentInstance().update("sliderContentPanel");
+	}
+
+	public void closeCategories() {
+		Navigator navigator = (Navigator) FacesAccessor.getManagedBean("navigator");
+		navigator.goHome();
 
 		RequestContext.getCurrentInstance().update("mainContentPanel");
 		RequestContext.getCurrentInstance().update("sliderContentPanel");
@@ -216,7 +261,7 @@ public class CafeController extends Commontroller implements Serializable {
 					info.setYearLimit(excel.getYearlyLimit());
 					info.setIdStaff(excel.getStaff().getIdStaff());
 					info.setUpdater(getLoggedUser().getLoginName());
-					service.saveCafeteriaInfo(info);
+					cafeService.saveCafeteriaInfo(info);
 				}
 
 				// Itt egyszerre a régieket és az újakat is bejárjuk. Elsőnek a
@@ -235,7 +280,7 @@ public class CafeController extends Commontroller implements Serializable {
 
 						} else { // most nincs vagy most üres, delete a honapra
 									// az adott kategoria
-							service.deleteCafeteria(excel.getStaff().getIdStaff(), cafeteria.getYearKey(),
+							cafeService.deleteCafeteria(excel.getStaff().getIdStaff(), cafeteria.getYearKey(),
 									cafeteria.getMonthKey(), cafeteria.getCafeCategory().getIdCafeteriaCat());
 
 						}
@@ -247,17 +292,13 @@ public class CafeController extends Commontroller implements Serializable {
 					if (excel.getYear() == cafeteria.getYearKey() && !ObjectUtils.isEmpty(cafeteria.getAmount())) {
 
 						cafeteria.setUpdater(getLoggedUser().getLoginName());
-						service.saveCafeteria(cafeteria);
+						cafeService.saveCafeteria(cafeteria);
 					}
 				}
 
 			}
 
-		} catch (
-
-		Exception e)
-
-		{
+		} catch (Exception e) {
 			LOG.log(Level.WARNING, "Cafetéria módosítás hiba", e);
 			error("Cafetéria módosítás hiba", null, e);
 		}
@@ -334,7 +375,7 @@ public class CafeController extends Commontroller implements Serializable {
 						BigDecimal xtaxnum = POIUtil.getRowCellNumber(sheet, i, POIUtil.CELL_CAF_XLS_TAX);
 						String xtax = xtaxnum == null ? null : String.valueOf(xtaxnum.longValue());
 
-						List<StaffCafeteria> staffs = service.getStaffCafByName(xname, xtax);
+						List<StaffCafeteria> staffs = cafeService.getStaffCafByName(xname, xtax);
 
 						if (staffs.isEmpty()) {
 							problems.add(POIUtil.asCell(i, POIUtil.CELL_CAF_XLS_NAME) + " '" + xname

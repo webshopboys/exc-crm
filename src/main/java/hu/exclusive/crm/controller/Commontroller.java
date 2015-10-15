@@ -103,7 +103,8 @@ public abstract class Commontroller implements Serializable {
 	}
 
 	protected void message(String title, String message) {
-		message(title, message, (String) null);
+		if (message != null)
+			message(title, message, (String) null);
 	}
 
 	protected void message(String title, String message, String updateElements) {
@@ -115,7 +116,8 @@ public abstract class Commontroller implements Serializable {
 	}
 
 	protected void error(String title, String message) {
-		error(title, message, (String) null);
+		if (message != null)
+			error(title, message, (String) null);
 	}
 
 	protected void error(String title, String message, String updateElements) {

@@ -36,5 +36,9 @@
 	    <converter-for-class>hu.exclusive.dao.model.Jobtitle</converter-for-class>
 	    <converter-class>hu.exclusive.crm.converter.JobtitleConverter</converter-class>
 	</converter>
+	<converter>
+	    <converter-for-class>hu.exclusive.dao.model.PCafeteriaCategory</converter-for-class>
+	    <converter-class>hu.exclusive.crm.converter.CafeteriaCategoryConverter</converter-class>
+	</converter>
 	 
 </faces-config>

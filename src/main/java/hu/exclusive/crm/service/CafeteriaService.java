@@ -9,7 +9,6 @@ import hu.exclusive.dao.DaoFilter;
 import hu.exclusive.dao.model.Cafeteria;
 import hu.exclusive.dao.model.CafeteriaInfo;
 import hu.exclusive.dao.model.PCafeteriaCategory;
-import hu.exclusive.dao.model.PCafeteriaLimit;
 import hu.exclusive.dao.model.StaffCafeteria;
 
 @Service
@@ -22,16 +21,26 @@ public class CafeteriaService {
 		return excDao.getCafeteriaCategories(filter);
 	}
 
-	public List<PCafeteriaLimit> getCafeteriaLimits(DaoFilter filter) {
-		return excDao.getCafeteriaLimits(filter);
-	}
-
 	public List<PCafeteriaCategory> getCafeteriaCategoryByName(String catKey) {
 		return excDao.getCafeteriaCategoryByName(catKey);
 	}
 
+	public void saveCafeteriaCategories(List<PCafeteriaCategory> categories) {
+		if (categories == null)
+			return;
+		for (PCafeteriaCategory cat : categories) {
+			excDao.saveCategory(cat);
+		}
+	}
+
 	public void saveCafeteriaInfo(CafeteriaInfo info) {
 		excDao.saveCafeteriaInfo(info);
+	}
+
+	public void saveCafeterias(List<Cafeteria> monthlyCafes) {
+		for (Cafeteria m : monthlyCafes) {
+			saveCafeteria(m);
+		}
 	}
 
 	public void saveCafeteria(Cafeteria monthlyCafe) {

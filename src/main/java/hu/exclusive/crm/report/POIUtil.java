@@ -70,7 +70,6 @@ public class POIUtil {
 	}
 
 	public static Cell getRowCellCell(org.apache.poi.ss.usermodel.Sheet sheet, int row, int cell) {
-		Double d = null;
 		if (sheet.getLastRowNum() > row && sheet.getRow(row) != null && sheet.getRow(row).getLastCellNum() > cell) {
 			return sheet.getRow(row).getCell(cell);
 		}

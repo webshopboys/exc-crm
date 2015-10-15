@@ -29,6 +29,11 @@ public class PCafeteriaCategory implements Serializable {
 	@Column(name = "id_cafeteria_cat")
 	private Integer idCafeteriaCat;
 
+	// @OneToOne(fetch = FetchType.LAZY)
+	// // @PrimaryKeyJoinColumn
+	// @JoinColumn(name = "id_cafeteria_cat")
+	// private Cafeteria cafeteria;
+
 	@Column(name = "category_info")
 	private String categoryInfo;
 
@@ -48,6 +53,14 @@ public class PCafeteriaCategory implements Serializable {
 
 	public PCafeteriaCategory() {
 	}
+
+	// public Cafeteria getCafeteria() {
+	// return this.cafeteria;
+	// }
+	//
+	// public void setCafeteria(Cafeteria cafeteria) {
+	// this.cafeteria = cafeteria;
+	// }
 
 	public Integer getIdCafeteriaCat() {
 		return this.idCafeteriaCat;
@@ -105,4 +118,30 @@ public class PCafeteriaCategory implements Serializable {
 		this.categoryKeys = categoryKeys;
 	}
 
+	/**
+	 * A konverteren kívül kell az összehesonlítások felülírása is!
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj != null && obj instanceof PCafeteriaCategory) {
+			return this.idCafeteriaCat == ((PCafeteriaCategory) obj).idCafeteriaCat;
+		}
+		return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return Workplace.class.hashCode() + this.idCafeteriaCat;
+	}
+
+	@Override
+	public String toString() {
+		return "PCafeteriaCategory [idCafeteriaCat=" + idCafeteriaCat + ", categoryName=" + categoryName + "]";
+	}
+
+	public String getTitle() {
+		return (yearlyLimit == null || yearlyLimit.intValue() == 0 ? "" : "(éves limit: " + yearlyLimit + ")")
+				+ (monthlyLimit == null || monthlyLimit.intValue() == 0 ? "" : "(havi limit: " + monthlyLimit + ")")
+				+ " " + categoryInfo;
+	}
 }

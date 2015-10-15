@@ -4,11 +4,13 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets">
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:sec="http://www.springframework.org/security/tags">
    		
 	<h:form id="cafeForm">
 
 	    <p:growl id="messages" showDetail="true" />
+	    
 		<p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
 		    <p:graphicImage name="ajaxloadingbar.gif" />
 		</p:dialog>
@@ -25,11 +27,12 @@
 	    
             <p:columnGroup type="header">
 	            <p:row>
-	                <p:column  width="20%" colspan="1" headerText="Juttatás megnevezése"/>
-	                <p:column width="9%" colspan="1" headerText="Éves összeg"/>
-	                <p:column width="9%" colspan="1" headerText="Havi összeg"/>
-	                <p:column width="" colspan="1" headerText="Leírása"/>
-	                <p:column width="2%" colspan="1" headerText="Érvényes"/>
+	                <p:column  width="18%" colspan="1" headerText="Juttatás megnevezése"/>
+	                <p:column width="7%" colspan="1" headerText="Éves összeg"/>
+	                <p:column width="7%" colspan="1" headerText="Havi összeg"/>
+	                <p:column width="40%" colspan="1" headerText="Leírása"/>
+	                <p:column width="23%" colspan="1" headerText="Excel kulcsok"/>
+	                <p:column width="5%" colspan="1" headerText="Érvényes"/>
 	                
 	            </p:row>
 	        </p:columnGroup>
@@ -47,8 +50,19 @@
 				<h:inputTextarea value="#{c.categoryInfo}" style="width: 100%;"/>
 			</p:column>
 			<p:column>
+				<h:inputText value="#{c.categoryKeys}"  style="width: 100%;"/>
+			</p:column>
+			<p:column>
 				<p:selectBooleanCheckbox value="#{c.enabled}"/>
 			</p:column>
+
+			<f:facet name="footer">
+	            <p:commandButton value="Kategóriák mentése" action="#{cafeController.saveCategories()}" validateClient="false" update="cafeForm" rendered="#{sec:areAnyGranted('08-05-12')}"/>  
+       			
+       			<p:commandButton value="Bezárás" action="#{cafeController.closeCategories()}" ajax="true" immediate="true" >
+       				<p:resetInput for="cafeForm" target="cafeForm"/>
+       			</p:commandButton>	  			
+	 	    </f:facet>
 			
 		</p:dataTable>
 

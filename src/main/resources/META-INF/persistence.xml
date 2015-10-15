@@ -28,6 +28,5 @@ xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org
 		<class>hu.exclusive.dao.model.Cafeteria</class>
 		<class>hu.exclusive.dao.model.CafeteriaInfo</class>
 		<class>hu.exclusive.dao.model.StaffCafeteria</class>
-		<class>hu.exclusive.dao.model.PCafeteriaLimit</class>
 	</persistence-unit>
 </persistence>

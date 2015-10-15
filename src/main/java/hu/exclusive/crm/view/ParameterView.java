@@ -1,6 +1,7 @@
 package hu.exclusive.crm.view;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.primefaces.model.ScheduleModel;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import hu.exclusive.crm.controller.Commontroller;
+import hu.exclusive.crm.model.Label3Value;
 import hu.exclusive.crm.service.ParametersService;
 import hu.exclusive.dao.DaoFilter;
 import hu.exclusive.dao.DaoFilter.RELATION;
@@ -129,6 +131,25 @@ public class ParameterView extends Commontroller implements Serializable {
 			}
 		}
 		return sb.toString();
+	}
+
+	public List<Label3Value<Integer>> getMonths() {
+		List<Label3Value<Integer>> list = new ArrayList<>();
+
+		list.add(new Label3Value<Integer>("Január", 1));
+		list.add(new Label3Value<Integer>("Február", 2));
+		list.add(new Label3Value<Integer>("Március", 3));
+		list.add(new Label3Value<Integer>("Április", 4));
+		list.add(new Label3Value<Integer>("Május", 5));
+		list.add(new Label3Value<Integer>("Június", 6));
+		list.add(new Label3Value<Integer>("Július", 7));
+		list.add(new Label3Value<Integer>("Augusztus", 8));
+		list.add(new Label3Value<Integer>("Szeptember", 9));
+		list.add(new Label3Value<Integer>("Október", 10));
+		list.add(new Label3Value<Integer>("November", 11));
+		list.add(new Label3Value<Integer>("December", 12));
+
+		return list;
 	}
 
 	/**

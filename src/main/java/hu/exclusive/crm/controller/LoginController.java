@@ -120,6 +120,7 @@ public class LoginController extends Commontroller {
 	}
 
 	private void resetNavigator() {
+		// a default siderekre tenni?
 
 	}
 
