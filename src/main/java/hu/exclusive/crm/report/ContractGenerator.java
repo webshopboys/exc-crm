@@ -110,6 +110,7 @@ public class ContractGenerator {
 		return new byte[0];
 	}
 
+	
 	public void processByExtension(Map<String, String> replacement, OutputStream out) throws Exception {
 
 		if (this.template != null) {
