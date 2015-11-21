@@ -70,11 +70,34 @@
 		
 	 </h:form>
 		
-		<p:commandButton value="Export" actionListener="#{cafeController.exportExcel}" immediate="true" />
+		
+	<h:form>
+		<p:commandButton value="Export" actionListener="#{cafeController.exportExcel}"  immediate="true" ajax="false"/>
+		
 		<p:commandButton value="Import" actionListener="#{cafeController.showImportDialog}" immediate="true" rendered="#{sec:areAnyGranted('08-05-11')}">
 			<p:ajax event="dialogReturn" listener="#{cafeController.showImportDialog}" update="docListForm"/> 
 		</p:commandButton>	
-				
+		
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
+		    <p:graphicImage name="/ajaxloadingbar2.gif" />
+		</p:dialog>
+	
+		<script type="text/javascript">
+		// onclick="PrimeFaces.monitorDownload(start, stop);"
+		function start() {
+		    PF('statusDialog').show();
+		}
+		 
+		function stop() {
+		    PF('statusDialog').hide();
+		}
+		</script>
+	</h:form>
+	 
+	
+	
+	
+			
 						
 
 </ui:composition>   		

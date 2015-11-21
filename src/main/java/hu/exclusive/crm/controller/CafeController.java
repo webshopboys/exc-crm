@@ -1,17 +1,7 @@
 package hu.exclusive.crm.controller;
-import java.util.Date;
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFDataFormat;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 
+import java.io.ByteArrayInputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -25,6 +15,8 @@ import java.util.logging.Level;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 
 import org.apache.commons.lang.StringUtils;
@@ -43,6 +35,7 @@ import hu.exclusive.crm.model.CafeFilter;
 import hu.exclusive.crm.model.CafeteriaExcel;
 import hu.exclusive.crm.model.StaffFactory;
 import hu.exclusive.crm.report.POIUtil;
+import hu.exclusive.crm.service.AttachmentGenerator;
 import hu.exclusive.crm.service.CafeteriaService;
 import hu.exclusive.crm.service.ParametersService;
 import hu.exclusive.crm.service.StaffService;
@@ -222,49 +215,51 @@ public class CafeController extends Commontroller implements Serializable {
 	}
 
 	public void exportExcel() {
-		
+
 		try {
-			System.out.println("alma");
-			FileOutputStream fileOut = new FileOutputStream("poi-test.xls");
-			HSSFWorkbook workbook = new HSSFWorkbook();
-			HSSFSheet worksheet = workbook.createSheet("POI Worksheet");
+			FacesContext fc = FacesContext.getCurrentInstance();
+			ExternalContext ec = fc.getExternalContext();
+			ec.responseReset();
+			ec.setResponseContentType(AttachmentGenerator.MIME_XLSX);
+			// ec.setResponseContentLength(contentLength);
 
-			// index from 0,0... cell A1 is cell(0,0)
-			HSSFRow row1 = worksheet.createRow((short) 0);
+			OutputStream output = ec.getResponseOutputStream();
+			List<String> header = new ArrayList<>();
+			List<Map<String, Object>> rows = new ArrayList<>();
 
-			HSSFCell cellA1 = row1.createCell((short) 0);
-			cellA1.setCellValue("Hello");
-			HSSFCellStyle cellStyle = workbook.createCellStyle();
-			cellStyle.setFillForegroundColor(HSSFColor.GOLD.index);
-			cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-			cellA1.setCellStyle(cellStyle);
+			String name = fillExportParameters(header, rows);
+			ec.setResponseHeader("Content-Disposition", "attachment; filename=\"cafeteria-" + name + ".xlsx\"");
 
-			HSSFCell cellB1 = row1.createCell((short) 1);
-			cellB1.setCellValue("Goodbye");
-			cellStyle = workbook.createCellStyle();
-			cellStyle.setFillForegroundColor(HSSFColor.LIGHT_CORNFLOWER_BLUE.index);
-			cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-			cellB1.setCellStyle(cellStyle);
+			new AttachmentGenerator().createExcelXML("Csinált lap ez", header, rows, output);
 
-			HSSFCell cellC1 = row1.createCell((short) 2);
-			cellC1.setCellValue(true);
+			fc.responseComplete();
 
-			HSSFCell cellD1 = row1.createCell((short) 3);
-			cellD1.setCellValue(new Date());
-			cellStyle = workbook.createCellStyle();
-			cellStyle.setDataFormat(HSSFDataFormat
-					.getBuiltinFormat("m/d/yy h:mm"));
-			cellD1.setCellStyle(cellStyle);
-
-			workbook.write(fileOut);
-			fileOut.flush();
-			fileOut.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
+	}
+
+	private String fillExportParameters(List<String> header, List<Map<String, Object>> rows) {
+		header.add("aaaaa");
+		header.add("bbbbbb");
+		header.add("cccccc");
+		header.add("naaaaaaaaaaaaaaaaagyooooooooooooooooooon hoooooooooooooooooosszúúúúúúúúúúúúúúúúú");
+		header.add("ez\negy\ntobbsoros");
+
+		for (int i = 1; i < 11; i++) {
+			Map<String, Object> row = new HashMap<>();
+			row.put("aaaaa", "ez az " + i + ". sor 'a' cella");
+			row.put("bbbbbb", "ez az " + i + ". sor 'b' cella");
+			row.put("cccccc", "ez az " + i + ". sor 'c' cella\ntöbbsoros");
+			row.put("naaaaaaaaaaaaaaaaagyooooooooooooooooooon hoooooooooooooooooosszúúúúúúúúúúúúúúúúú",
+					"ez az " + i + ". sor 'széles' cella");
+			row.put("ez\negy\ntobbsoros", "ez az " + i + ". sor 'többsoros' cella egysorban, hehe.");
+
+			rows.add(row);
+		}
+
+		return "demo excel";
 	}
 
 	public void showImportDialog() {

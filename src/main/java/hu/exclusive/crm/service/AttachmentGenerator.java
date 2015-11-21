@@ -1,9 +1,22 @@
 package hu.exclusive.crm.service;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -17,6 +30,7 @@ public class AttachmentGenerator implements Serializable {
 	public static final String MIME_JPG = "image/jpg";
 	public static final String MIME_TEXT = "text/plain";
 
+	// http://www.iana.org/assignments/media-types
 	public static final String MIME_DOC = "application/vnd.ms-word.document.macroEnabled.12";
 	public static final String MIME_DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 	public static final String MIME_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml";
@@ -134,6 +148,135 @@ public class AttachmentGenerator implements Serializable {
 	public AttachmentGenerator setAttachmentPath(String attachmentPath) {
 		this.attachmentPath = attachmentPath;
 		return this;
+	}
+
+	public static final String ROW_INDEX = "row-index";
+	public static final String COL_INDEX = "col-index";
+
+	public void createExcelBIN(String sheetName, List<String> header, List<Map<String, Object>> rows,
+			OutputStream outStream) throws IOException {
+
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		HSSFSheet sheet = workbook.createSheet(sheetName);
+
+		CellStyle wordwrap = workbook.createCellStyle();
+		wordwrap.setWrapText(true);
+
+		try {
+
+			HSSFRow headerRow = sheet.createRow(0);
+			for (int i = 0; i < header.size(); i++) {
+				headerRow.createCell(i).setCellValue(header.get(i));
+				headerRow.getCell(i).setCellStyle(wordwrap);
+			}
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> inputRow = rows.get(i);
+				int rownum = i + 1;
+				if (inputRow.containsKey(ROW_INDEX)) {
+					rownum = (Integer) inputRow.get(ROW_INDEX);
+				}
+				HSSFRow row = sheet.createRow(rownum);
+				for (int j = 0; j < header.size(); j++) {
+
+					String name = header.get(j);
+					Object value = inputRow.get(name);
+
+					int c = inputRow.containsKey(COL_INDEX) ? (Integer) inputRow.get(ROW_INDEX) : j;
+
+					if (value != null) {
+						if (value instanceof java.lang.String) {
+							row.createCell(c).setCellValue((String) value);
+						} else if (value instanceof java.lang.Number) {
+							row.createCell(c).setCellValue(((Number) value).doubleValue());
+						} else if (value instanceof java.util.Date) {
+							row.createCell(c).setCellValue((Date) value);
+						} else if (value instanceof java.util.Calendar) {
+							row.createCell(c).setCellValue((Calendar) value);
+						} else if (value instanceof java.lang.Boolean) {
+							row.createCell(c).setCellValue((Boolean) value);
+						} else {
+							row.createCell(c).setCellValue(value.toString());
+						}
+						row.getCell(c).setCellStyle(wordwrap);
+					}
+				}
+			}
+
+			for (int i = 0; i < header.size(); i++) {
+				sheet.autoSizeColumn(i);
+			}
+
+			workbook.write(outStream);
+
+		} finally {
+			try {
+				workbook.close();
+			} catch (IOException e) {
+			}
+		}
+	}
+
+	public void createExcelXML(String sheetName, List<String> header, List<Map<String, Object>> rows,
+			OutputStream outStream) throws IOException {
+
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		XSSFSheet sheet = workbook.createSheet(sheetName);
+
+		CellStyle wordwrap = workbook.createCellStyle();
+		wordwrap.setWrapText(true);
+
+		try {
+
+			XSSFRow headerRow = sheet.createRow(0);
+			for (int i = 0; i < header.size(); i++) {
+				headerRow.createCell(i).setCellValue(header.get(i));
+				headerRow.getCell(i).setCellStyle(wordwrap);
+			}
+			for (int i = 0; i < rows.size(); i++) {
+				Map<String, Object> inputRow = rows.get(i);
+				int rownum = i + 1;
+				if (inputRow.containsKey(ROW_INDEX)) {
+					rownum = (Integer) inputRow.get(ROW_INDEX);
+				}
+				XSSFRow row = sheet.createRow(rownum);
+				for (int j = 0; j < header.size(); j++) {
+
+					String name = header.get(j);
+					Object value = inputRow.get(name);
+
+					int c = inputRow.containsKey(COL_INDEX) ? (Integer) inputRow.get(ROW_INDEX) : j;
+
+					if (value != null) {
+						if (value instanceof java.lang.String) {
+							row.createCell(c).setCellValue((String) value);
+						} else if (value instanceof java.lang.Number) {
+							row.createCell(c).setCellValue(((Number) value).doubleValue());
+						} else if (value instanceof java.util.Date) {
+							row.createCell(c).setCellValue((Date) value);
+						} else if (value instanceof java.util.Calendar) {
+							row.createCell(c).setCellValue((Calendar) value);
+						} else if (value instanceof java.lang.Boolean) {
+							row.createCell(c).setCellValue((Boolean) value);
+						} else {
+							row.createCell(c).setCellValue(value.toString());
+						}
+						row.getCell(c).setCellStyle(wordwrap);
+					}
+				}
+			}
+
+			for (int i = 0; i < header.size(); i++) {
+				sheet.autoSizeColumn(i);
+			}
+
+			workbook.write(outStream);
+
+		} finally {
+			try {
+				workbook.close();
+			} catch (IOException e) {
+			}
+		}
 	}
 
 }
