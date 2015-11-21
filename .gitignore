@@ -1,3 +1,11 @@
 /target/
 /.DS_Store
 /doc/.DS_Store
+/.classpath
+/.settings/org.eclipse.core.resources.prefs
+/.settings/org.eclipse.jdt.core.prefs
+/.settings/org.eclipse.wst.common.project.facet.core.xml
+/.settings/org.eclipse.wst.validation.prefs
+/doc/.DS_Store
+/.settings/org.eclipse.wst.jsdt.ui.prefs
+/.settings/org.eclipse.wst.xsl.core.prefs
